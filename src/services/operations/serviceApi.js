@@ -1,0 +1,39 @@
+import { apiConnector } from '../apiConnector';
+import { serviceEndpoints } from '../apis';
+import toast from 'react-hot-toast';
+
+export const getServices = async (token, dispatch) => {
+  try {
+    const toastId = toast.loading("Loading...");
+    const response = await apiConnector("GET", serviceEndpoints.GET_SERVICES, null, {
+      Authorization: `Bearer ${token}`,
+    });
+    if (!response?.data?.success) {
+      throw new Error("Could not fetch services");
+    }
+    toast.dismiss(toastId);
+    return response;
+  } catch (error) {
+    toast.dismiss();
+    toast.error(error.message);
+    throw error; 
+  }
+};
+
+export const createService = async (formData, token) => {
+  try {
+    const toastId = toast.loading("Creating service...");
+    const response = await apiConnector("POST", serviceEndpoints.CREATE_SERVICE, formData, {
+      Authorization: `Bearer ${token}`,
+    });
+    if (!response?.data?.success) {
+      throw new Error("Could not create service");
+    }
+    toast.dismiss(toastId);
+    return response;
+  } catch (error) {
+    toast.dismiss();
+    toast.error("Service creation failed");
+    throw error; 
+  }
+};

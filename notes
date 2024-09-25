@@ -1,0 +1,295 @@
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Loader from "../../Common/Loader";
+import {
+  getAllPosts,
+  likePost,
+  unlikePost,
+  deletePost,
+  comment,
+  commentDelete,
+} from "../../../services/operations/postApi";
+import {
+  Card,
+  CardHeader,
+  CardMedia,
+  CardContent,
+  CardActions,
+  Avatar,
+  IconButton,
+  Typography,
+  Popover,
+  Button,
+  TextField,
+  Grid,
+  Container,
+  Box,
+  Collapse,
+} from "@mui/material";
+import { red } from "@mui/material/colors";
+import {
+  Share as ShareIcon,
+  MoreVert as MoreVertIcon,
+  Favorite as FavoriteIcon,
+  FavoriteBorder as FavoriteBorderIcon,
+  Send as SendIcon,
+  Comment as CommentIcon,
+} from "@mui/icons-material";
+import { calculateTime } from "../../../utils/miliToHours";
+import { setPosts } from "../../../slices/postSlice";
+import CreatePost from "./CreatePost";
+
+const Posts = () => {
+  const dispatch = useDispatch();
+  const { token } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.profile);
+  const { posts } = useSelector((state) => state.post);
+  const [loading, setLoading] = useState(true);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedPost, setSelectedPost] = useState(null);
+  const [commentText, setCommentText] = useState("");
+  const [expandedPostId, setExpandedPostId] = useState(null);
+
+  useEffect(() => {
+    const getPosts = async () => {
+      try {
+        const response = await getAllPosts(token, dispatch);
+        dispatch(setPosts(response));
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+        setLoading(false);
+      }
+    };
+
+    getPosts();
+  }, [token, dispatch]);
+
+  const handleLike = async (postId) => {
+    try {
+      await likePost(postId, token, dispatch);
+    } catch (error) {
+      console.error("Error liking post:", error);
+    }
+  };
+
+  const handleUnlike = async (postId) => {
+    try {
+      await unlikePost(postId, token, dispatch);
+    } catch (error) {
+      console.error("Error unliking post:", error);
+    }
+  };
+
+  const handlePopoverOpen = (event, postId) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedPost(postId);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+    setSelectedPost(null);
+  };
+
+  const handleDeletePost = async () => {
+    try {
+      await deletePost(token, selectedPost);
+      const updatedPosts = posts.filter((post) => post._id !== selectedPost);
+      dispatch(setPosts(updatedPosts));
+      handlePopoverClose();
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
+
+  const handleComment = async (postId) => {
+    try {
+      await comment(postId, commentText, user._id, token, dispatch);
+      setCommentText("");
+    } catch (error) {
+      console.error("Error commenting post:", error);
+    }
+  };
+
+  const handleCommentDelete = async (postId, commentId) => {
+    try {
+      await commentDelete(postId, commentId, dispatch, token);
+    } catch (error) {
+      console.error("Error in commenting delete", error);
+    }
+  };
+
+  const handleExpandClick = (postId) => {
+    setExpandedPostId(expandedPostId === postId ? null : postId);
+  };
+
+  const open = Boolean(anchorEl);
+
+  return (
+    <Container>
+      <CreatePost />
+      <div className="sectionCenter bg-gray-100 p-4">
+        <div className="mainPosts bg-white rounded-lg mb-2">
+          <Grid container spacing={4}>
+            {loading ? (
+              <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+                <Loader />
+              </Box>
+            ) : (
+              posts.map((post) => (
+                <Grid item xs={12} key={post._id}>
+                  <Card sx={{ maxWidth: 800, mx: "auto", my: 4 }}>
+                    <CardHeader
+                      avatar={
+                        <Avatar
+                          sx={{ bgcolor: red[500] }}
+                          aria-label="user"
+                          src={post?.postByUser?.image}
+                        />
+                      }
+                      action={
+                        post.postByUser._id === user._id && (
+                          <IconButton
+                            aria-label="settings"
+                            onClick={(event) => handlePopoverOpen(event, post._id)}
+                          >
+                            <MoreVertIcon />
+                          </IconButton>
+                        )
+                      }
+                      title={post.postByUser?.firstName}
+                      subheader={calculateTime(post?.createdAt)}
+                    />
+                    <CardMedia
+                      component="img"
+                      height="400"
+                      className="post h-96 bg-cover rounded bg-center"
+                      image={post?.imgPath}
+                      alt="Post"
+                      sx={{ backgroundPosition: "center", backgroundSize: "cover" }}
+                    />
+                    <CardContent>
+                      <Typography className="description px-4" variant="h6" color="text.primary" gutterBottom>
+                        {post?.title}
+                      </Typography>
+                      <Typography className="description px-4" variant="body1" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                        {post?.content}
+                      </Typography>
+                    </CardContent>
+                    <CardActions sx={{ display: "flex", justifyContent: "space-between" }}>
+                      <Box>
+                        <IconButton
+                          aria-label="add to favorites"
+                          onClick={() =>
+                            post.likes.includes(user._id)
+                              ? handleUnlike(post._id)
+                              : handleLike(post._id)
+                          }
+                        >
+                          {post.likes.includes(user._id) ? (
+                            <FavoriteIcon sx={{ color: "red" }} />
+                          ) : (
+                            <FavoriteBorderIcon />
+                          )}
+                        </IconButton>
+                        <Typography variant="body2">{post.likes.length} Likes</Typography>
+                      </Box>
+                      <Box>
+                        <IconButton aria-label="comment" onClick={() => handleExpandClick(post._id)}>
+                          <CommentIcon />
+                        </IconButton>
+                        <Typography variant="body2">{post.comments.length} Comments</Typography>
+                      </Box>
+                      <IconButton aria-label="share">
+                        <ShareIcon />
+                      </IconButton>
+                    </CardActions>
+                    <Collapse in={expandedPostId === post._id} timeout="auto" unmountOnExit>
+                      <CardContent>
+                        <form
+                          onSubmit={(e) => {
+                            e.preventDefault();
+                            handleComment(post._id);
+                          }}
+                        >
+                          <TextField
+                            fullWidth
+                            variant="outlined"
+                            value={commentText}
+                            onChange={(e) => setCommentText(e.target.value)}
+                            placeholder="Add a comment..."
+                            InputProps={{
+                              endAdornment: (
+                                <IconButton type="submit" color="primary">
+                                  <SendIcon />
+                                </IconButton>
+                              ),
+                            }}
+                          />
+                        </form>
+                        {post.comments.map((comm) => (
+                          <Box
+                            key={comm._id}
+                            sx={{
+                              mt: 1,
+                              p: 1,
+                              bgcolor: "#f9f9f9",
+                              borderRadius: 1,
+                              boxShadow: 1,
+                            }}
+                          >
+                            <Typography variant="body2" color="text.primary">
+                              <strong>{comm.commentedBy.firstName}</strong>
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {comm.text}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {calculateTime(comm.commentedAt)}
+                            </Typography>
+                            <Button
+                              size="small"
+                              color="secondary"
+                              onClick={() => handleCommentDelete(post._id, comm._id)}
+                              sx={{ mt: 1 }}
+                            >
+                              Delete
+                            </Button>
+                          </Box>
+                        ))}
+                      </CardContent>
+                    </Collapse>
+                  </Card>
+                </Grid>
+              ))
+            )}
+          </Grid>
+          <Popover
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handlePopoverClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+          >
+            <Box p={2}>
+              <Button onClick={handleDeletePost} variant="contained" color="error" fullWidth>
+                Delete Post
+              </Button>
+              <Button variant="contained" color="secondary" fullWidth sx={{ mt: 2 }}>
+                Update Post
+              </Button>
+            </Box>
+          </Popover>
+        </div>
+      </div>
+    </Container>
+  );
+};
+
+export default Posts;

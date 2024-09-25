@@ -1,0 +1,47 @@
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+
+export const endpoints = {
+  SENDOTP_API: `${BASE_URL}/auth/sendotp`,
+  SIGNUP_API: `${BASE_URL}/auth/signup`,
+  LOGIN_API: `${BASE_URL}/auth/login`,
+  RESETPASSTOKEN_API: `${BASE_URL}/auth/reset-password-token`,
+  RESETPASSWORD_API: `${BASE_URL}/auth/reset-password`,
+  GOOGLE_DETAILS:`${BASE_URL}/auth/googledetails`,
+  SEARCH_USER:`${BASE_URL}/auth/search`,
+};
+
+export const postEndpoints = {
+  GET_ALL_POST: `${BASE_URL}/post/getcommunitypost`,
+  CREATE_POST:  `${BASE_URL}/post/createpost`,
+  SET_LIKE: `${BASE_URL}/like/setlike`,
+  UNLIKE: `${BASE_URL}/like/setunlike`,
+  DELETE_POST: `${BASE_URL}/post/deletepost`,
+  COMMENT: `${BASE_URL}/comment/createcomment`,
+  UNCOMMENT: `${BASE_URL}/comment/deletecomment`,
+  REPLY:`${BASE_URL}/comment/reply`,
+  LIKE_COMMENT:`${BASE_URL}/comment/like-comment`,
+  LIKE_REPLY:`${BASE_URL}/comment/like-reply`,
+};
+
+export const chatEndpoints= {
+ 
+  ACCESS_CHAT:`${BASE_URL}/chat`,
+  FETCH_CHAT:`${BASE_URL}/chat`,
+  GROUP_CHAT:`${BASE_URL}/chat/groupchat`,
+  RENAME:`${BASE_URL}/chat/rename`,
+  ADD_TO_GROUP:`${BASE_URL}/chat/addtogroup`,
+  REMOVE_FROM_GROUP:`${BASE_URL}/chat/removefromgroup`,
+  CREATE_MESSAGE:`${BASE_URL}/message`,
+  ALL_MESSAGE:`${BASE_URL}/message/:chatId`,
+}
+
+export const profileEndpoints={
+  DELETE_ACCOUNT:`${BASE_URL}/profile/deleteProfile`,
+  UPDATE_PROFILE:`${BASE_URL}/profile/updateProfile`,
+  UPDATE_PROFILE_PIC:`${BASE_URL}/profile/updateDisplayPicture`,
+  CHANGE_PASSWORD:`${BASE_URL}/profile/changepassword`
+}
+export const serviceEndpoints={
+  CREATE_SERVICE:`${BASE_URL}/services/createservice`,
+  GET_SERVICES:`${BASE_URL}/services/getservices`,
+}
