@@ -1,369 +1,248 @@
-import React, { useState, useEffect } from 'react';
-import toast from 'react-hot-toast';
-import { useDispatch } from 'react-redux';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { useNavigate } from 'react-router-dom';
-import { SetSignUpData } from '../../../slices/authSlice';
-import { FcGoogle } from "react-icons/fc";
-import {
-  Avatar,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Button,
-  CssBaseline,
-  TextField,
-  Box,
-  Link,
-  Typography,
-  Container,
-  Grid,
-  OutlinedInput,
-  InputAdornment,
-} from '@mui/material';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { StateSelect, CitySelect } from "react-country-state-city";
-import "react-country-state-city/dist/react-country-state-city.css";
-import { ROLES } from "../../../config/roles";
-import  Tab  from "../../Common/Tab";
-const Signup = () => {
-  const [accountType, setAccountType] = useState(ROLES.PEOPLE);
-  const [stateId, setStateId] = useState(null);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [showDropDown, setShowDropDown] = useState(false);
-  const [other, setOther] = useState(false);
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    state: "",
-    city: "",
-    phoneNumber: "",
-    postalCost: "",
-    password: "",
-    confirmPassword: "",
-    email: "",
-    community: "",
-    profession: "",
-    hourlyCharge: "",
-  
+import React, { useState } from 'react';
+import { z } from 'zod';
+import { useForm ,watch} from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import logo from '../../../assests/nityam_mlogo.png'; // Your logo file
+
+// Zod schema for validation
+const schema = z.object({
+  fullName: z.string().min(1, { message: 'Full name is required' }),
+  email: z.string().email({ message: 'Invalid email' }),
+  password: z.string().min(6, { message: 'Password must be at least 6 characters long' }),
+  confirmPassword: z.string().min(6, { message: 'Confirm your password' }),
+  phoneNumber: z.string().regex(/^[0-9]{10}$/, { message: 'Phone number must be 10 digits' }),
+  otp: z.string().min(6, { message: 'OTP must be 6 digits' }).optional(),
+  gender: z.enum(['male', 'female', 'other']),
+  state: z.string().min(1, { message: 'Please select a state' }),
+  city: z.string().min(1, { message: 'Please select a city' }),
+  pincode: z.string().regex(/^[0-9]{6}$/, { message: 'Pincode must be 6 digits' }),
+  verificationMethod: z.enum(['postcard', 'aadhaar']),
+  aadhaarFile: z.any().optional(),
+  profession: z.string().min(1, { message: 'Profession is required' }).optional(),
+  hourlyRate: z.number().min(0, { message: 'Hourly rate must be a positive number' }).optional(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: 'Passwords must match',
+  path: ['confirmPassword'],
+});
+
+function Signup() {
+  const [currentStep, setCurrentStep] = useState(1);
+  const { register, handleSubmit,watch, formState: { errors }, setValue } = useForm({
+    resolver: zodResolver(schema),
   });
 
-  useEffect(() => {
-    setOther(formData.profession === "Other");
-    // setOther(formData !=="other")
-  }, [formData.profession]);
-
-  const handleOnChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  const onSubmit = (data) => {
+    console.log(data); // Handle form submission
   };
 
-  const handleStateChange = (state) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      state: state?.name || "",
-    }));
-    setStateId(state?.id || null);
-  };
+  const nextStep = () => setCurrentStep((prev) => prev + 1);
+  const prevStep = () => setCurrentStep((prev) => prev - 1);
 
-  const handleCityChange = (city) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      city: city?.name || "",
-    }));
-  };
-
-  const defaultTheme = createTheme();
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const { password, confirmPassword } = formData;
-
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
-
-    // // Check if any required field is empty
-    // for (const key in formData) {
-    //   if (key !== "community" && !formData[key]) {
-    //     toast.error(`Please fill in the ${key} field`);
-    //     return;
-    //   }
-    // }
-
-    const signUpData = { formData };
-    // SetSignUpData(...formData,accountType);
-    dispatch(SetSignUpData(signUpData));
-    console.log(signUpData);
-    navigate('/community');
-
-    setFormData({
-      firstName: "",
-      lastName: "",
-      state: "",
-      city: "",
-      phoneNumber: "",
-      postalCost: "",
-      password: "",
-      confirmPassword: "",
-      email: "",
-      community: "",
-      profession: "",
-      hourlyCharge: "",
-    });
-  };
-
-  const handleToggleChange = () => {
-    setShowDropDown(!showDropDown);
-  };
-
-  const tabData = [
-    {
-      id: 1,
-      tabName: "People",
-      type: ROLES.PEOPLE,
-    },
-    {
-      id: 2,
-      tabName: "Business",
-      type: ROLES.BUSINESS,
-    },
-  ]
-  console.log(accountType);
-  return (
-    <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            mt: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            bgcolor: 'rgba(255, 255, 255, 0.8)',
-            p: 3,
-            borderRadius: 1,
-          }}
-        >
-          <Tab tabData={tabData} field={accountType} setField={setAccountType} />
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign Up
-          </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  autoComplete="given-name"
-                  name="firstName"
-                  required
-                  fullWidth
-                  value={formData.firstName}
-                  onChange={handleOnChange}
-                  id="firstName"
-                  label="First Name"
-                  autoFocus
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  id="lastName"
-                  label="Last Name"
-                  value={formData.lastName}
-                  onChange={handleOnChange}
-                  name="lastName"
-                  autoComplete="family-name"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleOnChange}
-                  autoComplete="email"
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleOnChange}
-                  id="password"
-                  autoComplete="new-password"
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  name="confirmPassword"
-                  label="Confirm Password"
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={handleOnChange}
-                  id="confirmPassword"
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <StateSelect
-                  countryid={101}
-                  value={formData.state}
-                  onChange={handleStateChange}
-                  placeHolder="Select State"
-                  required
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                {stateId && (
-                  <CitySelect
-                    countryid={101}
-                    stateid={stateId}
-                    value={formData.city}
-                    onChange={handleCityChange}
-                    placeHolder="Select City"
-                    required
-                  />
-                )}
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  name="phoneNumber"
-                  label="Phone Number"
-                  type="number"
-                  value={formData.phoneNumber}
-                  onChange={handleOnChange}
-                  id="phoneNumber"
-                  inputProps={{ maxLength: 6 }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <TextField
-                  required
-                  fullWidth
-                  name="postalCost"
-                  label="Postal Cost"
-                  type="number"
-                  value={formData.postalCost}
-                  onChange={handleOnChange}
-                  id="postalCost"
-                  inputProps={{ maxLength: 6 }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <label className="inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={showDropDown}
-                    onChange={handleToggleChange}
-                    className="sr-only peer"
-                  />
-                  <div className="relative w-14 h-7 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-                  <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">If you have any skills or profession you select it</span>
-                </label>
-              </Grid>
-              {showDropDown && (
-                <>
-                  <Grid item xs={12}>
-                    <FormControl fullWidth>
-                      <InputLabel id="demo-simple-select-label" shrink>
-                        Profession
-                      </InputLabel>
-                      <Select
-                        labelId="demo-simple-select-label"
-                        id="demo-simple-select"
-                        name="profession"
-                        value={formData.profession}
-                        onChange={handleOnChange}
-                        label="Profession"
-                      >
-                        <MenuItem value="Developer">Developer</MenuItem>
-                        <MenuItem value="Designer">Designer</MenuItem>
-                        <MenuItem value="Manager">Manager</MenuItem>
-                        <MenuItem value="Other">Other</MenuItem>
-                      </Select>
-                    </FormControl>
-                  </Grid>
-                  {other && (
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        label="Please provide some details about your profession"
-                        name="profession"
-                        value={formData.profession}
-                        onChange={handleOnChange}
-                      />
-                    </Grid>
-                  )}
-                  {formData.profession && (
-                    <Grid item xs={12}>
-                      <TextField
-                        fullWidth
-                        name="hourlyCharge"
-                        label="Please provide your hourly charge"
-                        type="number"
-                        value={formData.hourlyCharge}
-                        onChange={handleOnChange}
-                        InputProps={{
-                          startAdornment: <InputAdornment position="start">₹</InputAdornment>,
-                        }}
-                      />
-                    </Grid>
-                  )}
-                </>
-              )}
-            </Grid>
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="success"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign Up
-            </Button>
-            <Button
-              type="button"
-              variant="contained"
-              style={{ backgroundColor: '#D3D3D3', color: '#000', padding: '10px 0' }}
-              fullWidth
-              onClick={() => window.location.href = 'http://localhost:8080/api/v1/auth/google'}
-            >
-              <FcGoogle style={{ fontSize: '30px', marginRight: '10px' }} />
-              Continue with Google
-            </Button>
-            <Grid container justifyContent="flex-end">
-              <Grid item>
-                <Link href="/login" variant="body2">
-                  Already have an account? Sign in
-                </Link>
-              </Grid>
-            </Grid>
-          </Box>
-        </Box>
-      </Container>
-    </ThemeProvider>
+  // Render the progress bar
+  const renderProgressBar = () => (
+    <div className="flex justify-between mb-6">
+      {[1, 2, 3, 4].map((step) => (
+        <div key={step} className={`w-1/4 h-2 rounded-full ${currentStep >= step ? 'bg-green-500' : 'bg-gray-300'}`} />
+      ))}
+    </div>
   );
-};
+
+  // Render button for next/back
+  const renderStepNavigation = () => (
+    <div className="flex justify-between mt-6">
+      {currentStep > 1 && (
+        <button
+          type="button"
+          onClick={prevStep}
+          className="bg-gray-500 hover:bg-gray-700 text-white py-2 px-6 rounded-full"
+        >
+          Back
+        </button>
+      )}
+      {currentStep < 4 && (
+        <button
+          type="button"
+          onClick={nextStep}
+          className="bg-green-600 hover:bg-green-700 text-white py-2 px-6 rounded-full ml-auto"
+        >
+          Next
+        </button>
+      )}
+      {currentStep === 4 && (
+        <button
+          type="submit"
+          className="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-6 rounded-full ml-auto"
+        >
+          Submit
+        </button>
+      )}
+    </div>
+  );
+
+  // Steps of the form
+  const renderStep = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <div>
+            <h2 className="text-2xl font-bold mb-4 text-green-600">Personal Information</h2>
+            <p className="mb-6 text-gray-600">Enter your details to get started</p>
+            <div className="mb-4">
+              <input
+                {...register('fullName')}
+                type="text"
+                placeholder="Full Name"
+                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+              />
+              {errors.fullName && <p className="text-red-600">{errors.fullName.message}</p>}
+            </div>
+            <div className="mb-4">
+              <input
+                {...register('email')}
+                type="email"
+                placeholder="Email"
+                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+              />
+              {errors.email && <p className="text-red-600">{errors.email.message}</p>}
+            </div>
+            <div className="mb-4">
+              <input
+                {...register('password')}
+                type="password"
+                placeholder="Password"
+                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+              />
+              {errors.password && <p className="text-red-600">{errors.password.message}</p>}
+            </div>
+            <div className="mb-4">
+              <input
+                {...register('confirmPassword')}
+                type="password"
+                placeholder="Confirm Password"
+                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+              />
+              {errors.confirmPassword && <p className="text-red-600">{errors.confirmPassword.message}</p>}
+            </div>
+            <div className="mb-4">
+              <input
+                {...register('phoneNumber')}
+                type="text"
+                placeholder="Phone Number"
+                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+              />
+              {errors.phoneNumber && <p className="text-red-600">{errors.phoneNumber.message}</p>}
+            </div>
+          </div>
+        );
+      case 2:
+        return (
+          <div>
+            <h2 className="text-2xl font-bold mb-4 text-green-600">Phone Verification</h2>
+            <div className="mb-4">
+              <input
+                {...register('otp')}
+                type="text"
+                placeholder="Enter OTP"
+                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+              />
+              {errors.otp && <p className="text-red-600">{errors.otp.message}</p>}
+            </div>
+          </div>
+        );
+      case 3:
+        return (
+          <div>
+            <h2 className="text-2xl font-bold mb-4 text-green-600">Address Information</h2>
+            <div className="mb-4">
+              <input
+                {...register('state')}
+                type="text"
+                placeholder="State"
+                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+              />
+              {errors.state && <p className="text-red-600">{errors.state.message}</p>}
+            </div>
+            <div className="mb-4">
+              <input
+                {...register('city')}
+                type="text"
+                placeholder="City"
+                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+              />
+              {errors.city && <p className="text-red-600">{errors.city.message}</p>}
+            </div>
+            <div className="mb-4">
+              <input
+                {...register('pincode')}
+                type="text"
+                placeholder="Pincode"
+                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+              />
+              {errors.pincode && <p className="text-red-600">{errors.pincode.message}</p>}
+            </div>
+          </div>
+        );
+      case 4:
+        return (
+          <div>
+            <h2 className="text-2xl font-bold mb-4 text-green-600">Verification</h2>
+            <div className="mb-4">
+              <label className="block mb-2 text-gray-600">Verification Method</label>
+              <div className="flex items-center space-x-4">
+                <label>
+                  <input
+                    {...register('verificationMethod')}
+                    type="radio"
+                    value="postcard"
+                    className="mr-2"
+                  />
+                  Postcard
+                </label>
+                <label>
+                  <input
+                    {...register('verificationMethod')}
+                    type="radio"
+                    value="aadhaar"
+                    className="mr-2"
+                  />
+                  Aadhaar
+                </label>
+              </div>
+              {errors.verificationMethod && <p className="text-red-600">{errors.verificationMethod.message}</p>}
+            </div>
+            {watch('verificationMethod') === 'aadhaar' && (
+              <div className="mb-4">
+                <label className="block mb-2 text-gray-600">Upload Aadhaar</label>
+                <input
+                  {...register('aadhaarFile')}
+                  type="file"
+                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                />
+                {errors.aadhaarFile && <p className="text-red-600">{errors.aadhaarFile.message}</p>}
+              </div>
+            )}
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 flex justify-center items-center">
+      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-lg">
+        <div className="text-center mb-6">
+          <img src={logo} alt="Logo" className="mx-auto mb-2" />
+          <h1 className="text-3xl font-bold text-green-600">Sign Up</h1>
+        </div>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {renderProgressBar()}
+          {renderStep()}
+          {renderStepNavigation()}
+        </form>
+      </div>
+    </div>
+  );
+}
 
 export default Signup;

@@ -8,20 +8,20 @@ import axios from "axios";
 import Cookies from 'js-cookie'
 
 // this is for sending otp
-export function sendotp(email, navigate) {
+export function sendotp(phoneNumber, navigate) {
   return async (dispatch) => {
     const toastid = toast.loading("Loading");
     dispatch(setLoading(true));
     try {
       const response = await apiConnector("POST", endpoints.SENDOTP_API, {
-        email,
+        phoneNumber,
       });
       console.log("send otp api response", response);
       console.log(response.data.success);
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
-      toast.success("OTP sent succesfully");
+      toast.success("OTP sent succesfully on your given phone Number");
       navigate("/verifyemail");
     } catch (error) {
       console.log("Send otp error", error);
