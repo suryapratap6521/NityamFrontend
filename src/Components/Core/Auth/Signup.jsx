@@ -1,226 +1,174 @@
 import React, { useState } from 'react';
-import { z } from 'zod';
-import { useForm ,watch} from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import logo from '../../../assests/nityam_mlogo.png'; // Your logo file
-
+import * as z from 'zod';
+import logo from '../../../assests/nityam_mlogo.png'; // Import the logo image
+import {sendotp,signUp} from "../../../services/operations/authApi";
+import { useSelector,useDispatch } from "react-redux";
+import { useNavigate } from 'react-router-dom';
 // Zod schema for validation
 const schema = z.object({
-  fullName: z.string().min(1, { message: 'Full name is required' }),
-  email: z.string().email({ message: 'Invalid email' }),
-  password: z.string().min(6, { message: 'Password must be at least 6 characters long' }),
-  confirmPassword: z.string().min(6, { message: 'Confirm your password' }),
-  phoneNumber: z.string().regex(/^[0-9]{10}$/, { message: 'Phone number must be 10 digits' }),
-  otp: z.string().min(6, { message: 'OTP must be 6 digits' }).optional(),
-  gender: z.enum(['male', 'female', 'other']),
-  state: z.string().min(1, { message: 'Please select a state' }),
-  city: z.string().min(1, { message: 'Please select a city' }),
-  pincode: z.string().regex(/^[0-9]{6}$/, { message: 'Pincode must be 6 digits' }),
-  verificationMethod: z.enum(['postcard', 'aadhaar']),
-  aadhaarFile: z.any().optional(),
-  profession: z.string().min(1, { message: 'Profession is required' }).optional(),
-  hourlyRate: z.number().min(0, { message: 'Hourly rate must be a positive number' }).optional(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: 'Passwords must match',
-  path: ['confirmPassword'],
+  firstName: z.string().nonempty({ message: 'First Name is required' }),
+  lastName: z.string().nonempty({ message: 'Last Name is required' }),
+  email: z.string().email({ message: 'Invalid email address' }),
+  phone: z.string().min(10, 'Phone number must be at least 10 digits'),
+  password: z.string().min(6, 'Password must be at least 6 characters long'),
+  confirmPassword: z.string().min(6, 'Password confirmation is required'),
+  gender: z.string().nonempty({ message: 'Please select your gender' }),
+  state: z.string().nonempty({ message: 'State is required' }),
+  city: z.string().nonempty({ message: 'City is required' }),
+  pincode: z.string().min(6, 'Pincode must be 6 digits'),
+  profession: z.string().optional(),
+  hourlyCharge: z.string().optional(),
 });
 
 function Signup() {
-  const [currentStep, setCurrentStep] = useState(1);
-  const { register, handleSubmit,watch, formState: { errors }, setValue } = useForm({
+  const navigate=useNavigate();
+  const dispatch=useDispatch();
+  const [step, setStep] = useState(1);
+  const { register, handleSubmit, watch, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
   });
 
   const onSubmit = (data) => {
-    console.log(data); // Handle form submission
+    console.log(data);
   };
 
-  const nextStep = () => setCurrentStep((prev) => prev + 1);
-  const prevStep = () => setCurrentStep((prev) => prev - 1);
+  const firstName = watch("firstName");
+  const lastName = watch("lastName");
+  const phoneNumber = watch("phone");
+  const password = watch("password");
+  const confirmPassword = watch("confirmPassword");
+  const otp = watch("otp");
+  const email = watch("email");
+  
+  const nextStep = () => {
+    setStep(step + 1);
+    if (step === 1) {
+      dispatch(sendotp(phoneNumber));
+    }
+    if (step === 2) {
+      dispatch(signUp(firstName, lastName, email, password, confirmPassword, phoneNumber, otp, navigate));
+    }
+  };
+  
 
-  // Render the progress bar
+  const prevStep = () => {
+    setStep(step - 1);
+  };
+
+  const skipStep = () => {
+    setStep(step + 1); // Skips the profession step
+  };
+
   const renderProgressBar = () => (
-    <div className="flex justify-between mb-6">
-      {[1, 2, 3, 4].map((step) => (
-        <div key={step} className={`w-1/4 h-2 rounded-full ${currentStep >= step ? 'bg-green-500' : 'bg-gray-300'}`} />
+    <div className="flex justify-between mb-4">
+      {[1, 2, 3, 4, 5].map((number) => (
+        <div key={number} className={`w-1/5 h-2 rounded-full ${step >= number ? 'bg-green-600' : 'bg-gray-200'}`} />
       ))}
     </div>
   );
 
-  // Render button for next/back
   const renderStepNavigation = () => (
-    <div className="flex justify-between mt-6">
-      {currentStep > 1 && (
+    <div className="flex justify-between mt-4">
+      {step > 1 && (
         <button
           type="button"
           onClick={prevStep}
-          className="bg-gray-500 hover:bg-gray-700 text-white py-2 px-6 rounded-full"
+          className="px-4 py-2 rounded-full bg-yellow-400 text-white hover:bg-yellow-500"
         >
           Back
         </button>
       )}
-      {currentStep < 4 && (
-        <button
-          type="button"
-          onClick={nextStep}
-          className="bg-green-600 hover:bg-green-700 text-white py-2 px-6 rounded-full ml-auto"
-        >
-          Next
-        </button>
-      )}
-      {currentStep === 4 && (
-        <button
-          type="submit"
-          className="bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-6 rounded-full ml-auto"
-        >
-          Submit
-        </button>
-      )}
+      <button
+        type="button"
+        onClick={nextStep}
+        className="px-4 py-2 rounded-full bg-green-600 text-white hover:bg-green-700"
+      >
+        {step === 5 ? 'Finish' : 'Next'}
+      </button>
     </div>
   );
 
-  // Steps of the form
   const renderStep = () => {
-    switch (currentStep) {
+    switch (step) {
       case 1:
         return (
           <div>
-            <h2 className="text-2xl font-bold mb-4 text-green-600">Personal Information</h2>
-            <p className="mb-6 text-gray-600">Enter your details to get started</p>
-            <div className="mb-4">
-              <input
-                {...register('fullName')}
-                type="text"
-                placeholder="Full Name"
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-              />
-              {errors.fullName && <p className="text-red-600">{errors.fullName.message}</p>}
-            </div>
-            <div className="mb-4">
-              <input
-                {...register('email')}
-                type="email"
-                placeholder="Email"
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-              />
-              {errors.email && <p className="text-red-600">{errors.email.message}</p>}
-            </div>
-            <div className="mb-4">
-              <input
-                {...register('password')}
-                type="password"
-                placeholder="Password"
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-              />
-              {errors.password && <p className="text-red-600">{errors.password.message}</p>}
-            </div>
-            <div className="mb-4">
-              <input
-                {...register('confirmPassword')}
-                type="password"
-                placeholder="Confirm Password"
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-              />
-              {errors.confirmPassword && <p className="text-red-600">{errors.confirmPassword.message}</p>}
-            </div>
-            <div className="mb-4">
-              <input
-                {...register('phoneNumber')}
-                type="text"
-                placeholder="Phone Number"
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-              />
-              {errors.phoneNumber && <p className="text-red-600">{errors.phoneNumber.message}</p>}
-            </div>
+            <h2 className="text-xl font-semibold mb-4">Personal Information</h2>
+            <input {...register('firstName')} className="w-full p-2 mb-4 border rounded-lg" placeholder="First Name" />
+            {errors.firstName && <p className="text-red-600">{errors.firstName.message}</p>}
+
+            <input {...register('lastName')} className="w-full p-2 mb-4 border rounded-lg" placeholder="Last Name" />
+            {errors.lastName && <p className="text-red-600">{errors.lastName.message}</p>}
+
+            <input {...register('email')} className="w-full p-2 mb-4 border rounded-lg" placeholder="Email" />
+            {errors.email && <p className="text-red-600">{errors.email.message}</p>}
+
+            <input {...register('phone')} className="w-full p-2 mb-4 border rounded-lg" placeholder="Phone Number" />
+            {errors.phone && <p className="text-red-600">{errors.phone.message}</p>}
+
+            <input {...register('password')} className="w-full p-2 mb-4 border rounded-lg" placeholder="Password" type="password" />
+            {errors.password && <p className="text-red-600">{errors.password.message}</p>}
+
+            <input {...register('confirmPassword')} className="w-full p-2 mb-4 border rounded-lg" placeholder="Confirm Password" type="password" />
+            {errors.confirmPassword && <p className="text-red-600">{errors.confirmPassword.message}</p>}
           </div>
         );
       case 2:
         return (
           <div>
-            <h2 className="text-2xl font-bold mb-4 text-green-600">Phone Verification</h2>
-            <div className="mb-4">
-              <input
-                {...register('otp')}
-                type="text"
-                placeholder="Enter OTP"
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-              />
-              {errors.otp && <p className="text-red-600">{errors.otp.message}</p>}
-            </div>
+            <h2 className="text-xl font-semibold mb-4">Phone Verification</h2>
+            <input {...register('otp')} className="w-full p-2 mb-4 border rounded-lg" placeholder="Enter OTP" />
+            {errors.otp && <p className="text-red-600">{errors.otp.message}</p>}
           </div>
         );
       case 3:
         return (
           <div>
-            <h2 className="text-2xl font-bold mb-4 text-green-600">Address Information</h2>
-            <div className="mb-4">
-              <input
-                {...register('state')}
-                type="text"
-                placeholder="State"
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-              />
-              {errors.state && <p className="text-red-600">{errors.state.message}</p>}
-            </div>
-            <div className="mb-4">
-              <input
-                {...register('city')}
-                type="text"
-                placeholder="City"
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-              />
-              {errors.city && <p className="text-red-600">{errors.city.message}</p>}
-            </div>
-            <div className="mb-4">
-              <input
-                {...register('pincode')}
-                type="text"
-                placeholder="Pincode"
-                className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-              />
-              {errors.pincode && <p className="text-red-600">{errors.pincode.message}</p>}
-            </div>
+            <h2 className="text-xl font-semibold mb-4">Address</h2>
+            <input {...register('state')} className="w-full p-2 mb-4 border rounded-lg" placeholder="State" />
+            {errors.state && <p className="text-red-600">{errors.state.message}</p>}
+
+            <input {...register('city')} className="w-full p-2 mb-4 border rounded-lg" placeholder="City" />
+            {errors.city && <p className="text-red-600">{errors.city.message}</p>}
+
+            <input {...register('pincode')} className="w-full p-2 mb-4 border rounded-lg" placeholder="Pincode" />
+            {errors.pincode && <p className="text-red-600">{errors.pincode.message}</p>}
           </div>
         );
       case 4:
         return (
           <div>
-            <h2 className="text-2xl font-bold mb-4 text-green-600">Verification</h2>
-            <div className="mb-4">
-              <label className="block mb-2 text-gray-600">Verification Method</label>
-              <div className="flex items-center space-x-4">
-                <label>
-                  <input
-                    {...register('verificationMethod')}
-                    type="radio"
-                    value="postcard"
-                    className="mr-2"
-                  />
-                  Postcard
-                </label>
-                <label>
-                  <input
-                    {...register('verificationMethod')}
-                    type="radio"
-                    value="aadhaar"
-                    className="mr-2"
-                  />
-                  Aadhaar
-                </label>
-              </div>
-              {errors.verificationMethod && <p className="text-red-600">{errors.verificationMethod.message}</p>}
-            </div>
-            {watch('verificationMethod') === 'aadhaar' && (
-              <div className="mb-4">
-                <label className="block mb-2 text-gray-600">Upload Aadhaar</label>
-                <input
-                  {...register('aadhaarFile')}
-                  type="file"
-                  className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
-                />
-                {errors.aadhaarFile && <p className="text-red-600">{errors.aadhaarFile.message}</p>}
-              </div>
-            )}
+            <h2 className="text-xl font-semibold mb-4">Profession & Services</h2>
+            <input {...register('profession')} className="w-full p-2 mb-4 border rounded-lg" placeholder="Profession" />
+            {errors.profession && <p className="text-red-600">{errors.profession.message}</p>}
+
+            <input {...register('hourlyCharge')} className="w-full p-2 mb-4 border rounded-lg" placeholder="Hourly Charge (in ₹)" />
+            {errors.hourlyCharge && <p className="text-red-600">{errors.hourlyCharge.message}</p>}
+
+            <button
+              type="button"
+              onClick={skipStep}
+              className="px-4 py-2 rounded-full bg-gray-500 text-white hover:bg-gray-600"
+            >
+              Skip
+            </button>
+          </div>
+        );
+      case 5:
+        return (
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Verification</h2>
+            <label className="block mb-2">
+              <input {...register('verificationMethod')} type="radio" value="postcard" className="mr-2" />
+              Verify by Postcard
+            </label>
+
+            <label className="block mb-2">
+              <input {...register('verificationMethod')} type="radio" value="aadhaar" className="mr-2" />
+              Upload Aadhaar Card (PDF)
+            </label>
           </div>
         );
       default:
@@ -232,7 +180,7 @@ function Signup() {
     <div className="min-h-screen bg-gray-100 flex justify-center items-center">
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-lg">
         <div className="text-center mb-6">
-          <img src={logo} alt="Logo" className="mx-auto mb-2" />
+          <img src={logo} alt="Logo" className="mx-auto mb-4 w-24 h-24 object-contain" />
           <h1 className="text-3xl font-bold text-green-600">Sign Up</h1>
         </div>
         <form onSubmit={handleSubmit(onSubmit)}>

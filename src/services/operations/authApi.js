@@ -8,10 +8,11 @@ import axios from "axios";
 import Cookies from 'js-cookie'
 
 // this is for sending otp
-export function sendotp(phoneNumber, navigate) {
+export function sendotp(phoneNumber) {
   return async (dispatch) => {
     const toastid = toast.loading("Loading");
     dispatch(setLoading(true));
+    
     try {
       const response = await apiConnector("POST", endpoints.SENDOTP_API, {
         phoneNumber,
@@ -22,7 +23,7 @@ export function sendotp(phoneNumber, navigate) {
         throw new Error(response.data.message);
       }
       toast.success("OTP sent succesfully on your given phone Number");
-      navigate("/verifyemail");
+      
     } catch (error) {
       console.log("Send otp error", error);
       toast.error("Could not send otp");
@@ -40,14 +41,9 @@ export function signUp(
   password,
   confirmPassword,
   phoneNumber,
-  state,
-  city,
-  community,
-  postalCost,
-  profession,
-  hourlyCharge,
   otp,
-  navigate
+  navigate,
+  
 ) {
   console.log("yahan tak sahi h");
   return async (dispatch) => {
@@ -62,12 +58,6 @@ export function signUp(
         password,
         confirmPassword,
         phoneNumber,
-        state,
-        city,
-        community,
-        postalCost,
-        profession,
-        hourlyCharge,
         otp,
         navigate,
       });
@@ -77,7 +67,17 @@ export function signUp(
         throw new Error(response.data.message);
       }
       toast.success("Signup successful");
-      navigate("/login");
+      dispatch(setToken(response.data.token));
+      const userImage = response?.data?.user?.image
+        ? response.data.user.image
+        : `https://api.dicebear.com/5.x/initials/svg?seed=${response.data.user.firstName} ${response.data.user.lastName}`;
+      // dispatch(setUser({ ...(await response).data.user, image: userImage }));
+      // localStorage.setItem("token", JSON.stringify(response.data.token));
+      Cookies.set("token", JSON.stringify(response.data.token), { expires: 3});
+      console.log(response.data,"----------user from login")
+      // localStorage.setItem("user", JSON.stringify(response.data.user));
+      Cookies.set("user", JSON.stringify(response.data.user), { expires: 3 });
+      
     } catch (error) {
       console.log(error);
       toast.error("Could not signup");
@@ -87,6 +87,8 @@ export function signUp(
     toast.dismiss(toastId);
   };
 }
+
+
 
 // this is for login
 
@@ -183,6 +185,8 @@ export function resetPassword(password, confirmPassword, token) {
     dispatch(setLoading(false));
   };
 }
+
+
 
 export const search = async (token, search) => {
   try {
