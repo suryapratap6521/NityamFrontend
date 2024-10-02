@@ -117,65 +117,65 @@ const Signup = () => {
   };
 
   const nextStep = async () => {
-    setStep(step + 1);
-    // const isStepValid = await trigger();
-    // if (isStepValid) {
-    //   if (step === 2) {
-    //     try {
-    //       const response = await fetch('/api/auth/register-gender-dob', {
-    //         method: 'POST',
-    //         headers: {
-    //           'Content-Type': 'application/json',
-    //         },
-    //         body: JSON.stringify({
-    //           gender: watch('gender'),
-    //           dateOfBirth: watch('dateOfBirth'),
-    //         }),
-    //       });
-    //       const data = await response.json();
-    //       if (data.success) {
-    //         setStep(3);
-    //       }
-    //     } catch (error) {
-    //       console.log({
-    //         title: "Error",
-    //         description: error.message || "Failed to save gender and date of birth",
-    //         status: "error",
-    //       });
-    //     }
-    //   } else if (step === 3) {
-    //     try {
-    //       const response = await fetch('/api/auth/register-community-details', {
-    //         method: 'POST',
-    //         headers: {
-    //           'Content-Type': 'application/json',
-    //         },
-    //         body: JSON.stringify({
-    //           state: watch('state'),
-    //           city: watch('city'),
-    //           pincode: watch('pincode'),
-    //         }),
-    //       });
-    //       const data = await response.json();
-    //       if (data.success) {
-    //         const pincodeResponse = await fetch(`https://api.postalpincode.in/pincode/${watch('pincode')}`);
-    //         const pincodeData = await pincodeResponse.json();
-    //         if (pincodeData[0].Status === "Success") {
-    //           setCommunities(pincodeData[0].PostOffice.map(po => po.Name));
-    //         }
-    //         setStep(4);
-    //       }
-    //     } catch (error) {
-    //       console.log({
-    //         title: "Error",
-    //         description: error.message || "Failed to save community details",
-    //         status: "error",
-    //       });
-    //     }
-    //   } else if (step < 5) {
-    //     setStep(step + 1);
-    //   }
-    // }
+    // setStep(step + 1);
+    const isStepValid = await trigger();
+    if (isStepValid) {
+      if (step === 2) {
+        try {
+          const response = await fetch('/api/auth/register-gender-dob', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              gender: watch('gender'),
+              dateOfBirth: watch('dateOfBirth'),
+            }),
+          });
+          const data = await response.json();
+          if (data.success) {
+            setStep(3);
+          }
+        } catch (error) {
+          console.log({
+            title: "Error",
+            description: error.message || "Failed to save gender and date of birth",
+            status: "error",
+          });
+        }
+      } else if (step === 3) {
+        try {
+          const response = await fetch('/api/auth/register-community-details', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              state: watch('state'),
+              city: watch('city'),
+              pincode: watch('pincode'),
+            }),
+          });
+          const data = await response.json();
+          if (data.success) {
+            const pincodeResponse = await fetch(`https://api.postalpincode.in/pincode/${watch('pincode')}`);
+            const pincodeData = await pincodeResponse.json();
+            if (pincodeData[0].Status === "Success") {
+              setCommunities(pincodeData[0].PostOffice.map(po => po.Name));
+            }
+            setStep(4);
+          }
+        } catch (error) {
+          console.log({
+            title: "Error",
+            description: error.message || "Failed to save community details",
+            status: "error",
+          });
+        }
+      } else if (step < 5) {
+        setStep(step + 1);
+      }
+    }
   };
 
   const onSubmit = async (data) => {
