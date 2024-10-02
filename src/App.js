@@ -13,6 +13,7 @@ import UpdatePassword from './pages/UpdatePassword';
 import Myprofile from './Components/Core/Dashboard/Myprofile';
 import Error from './pages/Error';
 import SideBarPost from './Components/Core/Post/SideBarPost';
+import CreatePost from './Components/Core/Post/CreatePost';
 import ChatPage from './pages/ChatPage';
 import GoogleAfterDetails from './Components/Core/Auth/GoogleAfterDetails';
 import Settings from './Components/Core/Settings';
@@ -100,7 +101,8 @@ function App() {
 
         <Route path="/dashboard/services" element={
           <PrivateRoute>
-            <ServicePage />
+            {/* <ServicePage /> */}
+            <CreatePost/>
           </PrivateRoute>
         }></Route>
 
