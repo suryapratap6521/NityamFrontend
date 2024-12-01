@@ -1,4 +1,4 @@
-const BASE_URL = process.env.REACT_APP_BASE_URL;
+const BASE_URL = 'http://localhost:8080/api/v1'
 
 export const endpoints = {
   SENDOTP_API: `${BASE_URL}/auth/sendotp`,
@@ -8,6 +8,11 @@ export const endpoints = {
   RESETPASSWORD_API: `${BASE_URL}/auth/reset-password`,
   GOOGLE_DETAILS:`${BASE_URL}/auth/googledetails`,
   SEARCH_USER:`${BASE_URL}/auth/search`,
+  PROFILE_DETAILS:`${BASE_URL}/auth/profiledetails`,
+  COMMUNITY_ADDRESS:`${BASE_URL}/auth/communityaddress`,
+  COMMUNITY:`${BASE_URL}/auth/community`,
+  VERIFICATION:`${BASE_URL}/auth/verification`,
+  PROFESSION:`${BASE_URL}/auth/profession`,
 };
 
 export const postEndpoints = {

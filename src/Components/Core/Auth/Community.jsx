@@ -1,104 +1,87 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Typography, Button } from '@mui/material';
-import { SetSignUpData } from '../../../slices/authSlice';
-import { sendotp,googleDetails } from '../../../services/operations/authApi';
-import Loader from '../../Common/Loader'; // Import Loader component
+import { community } from '../../../services/operations/authApi'; // Assuming the API call is in services/api.js
+import { SetSignUpData } from '../../../slices/authSlice'; // Action to update signup data
+import axios from 'axios';
+import { toast } from 'react-hot-toast';
 
-
-function Community() {
-  const dispatch = useDispatch();
-  const { signUpData, loading } = useSelector((state) => state.auth); // Add loading state
-  
+const Community = () => {
+  const [areas, setAreas] = useState([]);
+  const [selectedArea, setSelectedArea] = useState('');
+  const { token, signUpData } = useSelector((state) => state.auth);
+  const pincode = signUpData?.formData?.pincode;
   const navigate = useNavigate();
-
-  const postalCost = signUpData?.formData?.postalCost;
-  console.log(SetSignUpData)
-  console.log(signUpData);
-  console.log(signUpData?.postalCost)
-  const [communityData, setCommunityData] = useState([]);
-  const [selectedCommunity, setSelectedCommunity] = useState('');
-
+  const dispatch = useDispatch();
+  console.log(pincode);
+  // Fetch areas based on pincode
   useEffect(() => {
-    if (!signUpData) {
-      navigate('/signup');
-    }
-  }, [signUpData, navigate]);
+    const fetchAreas = async () => {
+      if (pincode) {
+        try {
+          const response = await axios.get(`https://api.postalpincode.in/pincode/${pincode}`);
+          if (response.data[0].Status === "Success") {
+            setAreas(response.data[0].PostOffice);
+          } else {
+            toast.error('Invalid Pincode or no areas found');
+          }
+        } catch (error) {
+          console.log("Error fetching areas:", error);
+          toast.error('Could not fetch areas');
+        }
+      }
+    };
 
-  useEffect(() => {
-    console.log(postalCost);
-    if (postalCost) {
-      console.log(postalCost)
-      axios.get(`https://api.postalpincode.in/pincode/${postalCost}`)
-        .then(response => {
-          console.log(response);
-          setCommunityData(response.data[0]?.PostOffice || []);
-        })
-        .catch(error => {
-          console.error('Error fetching community data:', error);
-        });
-    }
-  }, [postalCost]);
+    fetchAreas();
+  }, [pincode]);
 
-  const handleSelectChange = (event) => {
-    setSelectedCommunity(event.target.value);
-  };
-
-  const handleSubmit = (e) => {
+  // Handle community submission
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const updatedFormData = { ...signUpData.formData, community: selectedCommunity };
-    
-    if (updatedFormData?.firstName) {
-      dispatch(SetSignUpData({ formData: updatedFormData }));
-      dispatch(sendotp(signUpData.formData.email, navigate));
+
+    if (!selectedArea) {
+      toast.error("Please select an area");
+      return;
     }
-    else{
-      const {city,state,postalCost,phoneNumber,community,profession,hourlyCharge}=updatedFormData;
-     dispatch(googleDetails(city,state,postalCost,phoneNumber,community,profession,hourlyCharge,navigate))
-    }
-   
+
+    const formData = {
+      community: selectedArea,
+    };
+
+    await community(formData, token, navigate, dispatch);
   };
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      {loading ? ( // Conditionally render Loader if loading is true
-        <Loader />
-      ) : (
-        <div>
-          <form onSubmit={handleSubmit}>
-            {communityData.length > 0 && (
-              <div>
-                <select
-                  value={selectedCommunity}
-                  onChange={handleSelectChange}
-                  style={{
-                    width: '23rem',
-                    height: '3rem',
-                    borderRadius: '20px',
-                    border: '2px solid #ccc',
-                    padding: '0.5rem',
-                    fontSize: '1rem',
-                    cursor: 'pointer',
-                  }}
-                >
-                  <option value="">Select a Community</option>
-                  {communityData.map((community, index) => (
-                    <option key={index} value={community.Name}>
-                      {community.Name}
-                    </option>
-                  ))}
-                </select>
-                <Button type='submit' variant="contained" color="success" sx={{ width: "6rem", borderRadius:"20px",ml:2,height:"3rem" }}>Continue</Button>
-              </div>
-            )}
-          </form>
+    <div className="community-page">
+      <h2 className="text-2xl font-semibold mb-4">Select Your Area</h2>
+      <form onSubmit={handleSubmit}>
+        <div className="mb-4">
+          <label htmlFor="area" className="block text-sm font-medium text-gray-700">
+            Area
+          </label>
+          <select
+            id="area"
+            value={selectedArea}
+            onChange={(e) => setSelectedArea(e.target.value)}
+            className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          >
+            <option value="">Select an area</option>
+            {areas.map((area, index) => (
+              <option key={index} value={area.Name}>
+                {area.Name}
+              </option>
+            ))}
+          </select>
         </div>
-      )}
+        <button
+          type="submit"
+          className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none"
+        >
+          Submit
+        </button>
+      </form>
     </div>
   );
-  
-}
+};
 
 export default Community;

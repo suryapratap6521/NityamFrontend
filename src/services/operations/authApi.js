@@ -7,9 +7,9 @@ import { setUser } from "../../slices/profileSlice";
 import axios from "axios";
 import Cookies from 'js-cookie'
 
-// this is for sending otp
-export function sendotp(phoneNumber) {
-  return async (dispatch) => {
+
+// Send OTP API
+export async function sendotp(phoneNumber, dispatch) {
     const toastid = toast.loading("Loading");
     dispatch(setLoading(true));
     
@@ -17,67 +17,53 @@ export function sendotp(phoneNumber) {
       const response = await apiConnector("POST", endpoints.SENDOTP_API, {
         phoneNumber,
       });
-      console.log("send otp api response", response);
-      console.log(response.data.success);
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
-      toast.success("OTP sent succesfully on your given phone Number");
-      
+      toast.success("OTP sent successfully to your phone number");
+      dispatch(setLoading(false));
+      toast.dismiss(toastid);
+      return response;
+     
     } catch (error) {
-      console.log("Send otp error", error);
-      toast.error("Could not send otp");
+      console.log("Send OTP error", error);
+      toast.error(error.response.data.message);
     }
     dispatch(setLoading(false));
     toast.dismiss(toastid);
-  };
 }
 
-//  this is for sign up
+// Sign Up API
 export function signUp(
-  firstName,
-  lastName,
-  email,
-  password,
-  confirmPassword,
-  phoneNumber,
-  otp,
-  navigate,
-  
+  firstName, lastName, email, password, confirmPassword, phoneNumber, otp, navigate
 ) {
-  console.log("yahan tak sahi h");
   return async (dispatch) => {
     const toastId = toast.loading("Loading");
     dispatch(setLoading(true));
     try {
-      console.log("yahan tak sahi h");
       const response = await apiConnector('POST', endpoints.SIGNUP_API, {
-        firstName,
-        lastName,
-        email,
-        password,
-        confirmPassword,
-        phoneNumber,
-        otp,
-        navigate,
+        firstName, lastName, email, password, confirmPassword, phoneNumber, otp
       });
-      console.log("signup api response", response);
-      console.log(response.data.success);
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
       toast.success("Signup successful");
+
       dispatch(setToken(response.data.token));
       const userImage = response?.data?.user?.image
         ? response.data.user.image
         : `https://api.dicebear.com/5.x/initials/svg?seed=${response.data.user.firstName} ${response.data.user.lastName}`;
-      // dispatch(setUser({ ...(await response).data.user, image: userImage }));
-      // localStorage.setItem("token", JSON.stringify(response.data.token));
-      Cookies.set("token", JSON.stringify(response.data.token), { expires: 3});
-      console.log(response.data,"----------user from login")
-      // localStorage.setItem("user", JSON.stringify(response.data.user));
-      Cookies.set("user", JSON.stringify(response.data.user), { expires: 3 });
+        
+      Cookies.set("token", JSON.stringify(response.data.token), { expires: 1 });
+      Cookies.set("user", JSON.stringify(response.data.user), { expires: 1 });
       
+      // Update the signup slice data
+      dispatch(SetSignUpData({
+        token: response.data.token,
+        user: { ...(response.data.user), image: userImage }
+      }));
+
+      navigate('/profiledetails');
     } catch (error) {
       console.log(error);
       toast.error("Could not signup");
@@ -88,7 +74,130 @@ export function signUp(
   };
 }
 
+// Profile Details API
+export async function profileDetails(formData, token, navigate, dispatch) {
+    const toastId = toast.loading("Loading");
+    try {
+      const response = await apiConnector('PUT', endpoints.PROFILE_DETAILS, formData, {
+        Authorization: `Bearer ${token}`,
+      });
+      if (!response.data.success) {
+        throw new Error(response.data.message);
+      }
+      toast.success("Profile details added successfully");
 
+      // Update signup data after profile details update
+      dispatch(SetSignUpData({
+        profileDetails: formData // You can add additional data as per your requirement
+      }));
+
+      navigate('/communityaddress');
+    } catch (error) {
+      console.log(error);
+      toast.error("Could not add the profile details");
+      navigate("/profiledetails");
+    }
+    toast.dismiss(toastId);
+}
+
+// Community Address API
+export async function communityAddress(formData, token, navigate, dispatch) {
+    const toastId = toast.loading("Loading");
+    try {
+      const response = await apiConnector('PUT', endpoints.COMMUNITY_ADDRESS, formData, {
+        Authorization: `Bearer ${token}`,
+      });
+      if (!response.data.success) {
+        throw new Error(response.data.message);
+      }
+      toast.success("Community address added successfully");
+
+      // Update signup data after community address update
+      dispatch(SetSignUpData({
+        formData
+      }));
+      
+      navigate('/community');
+    } catch (error) {
+      console.log(error);
+      toast.error("Could not add the community address");
+      navigate("/communityaddress");
+    }
+    toast.dismiss(toastId);
+}
+
+
+export async function community(formData, token, navigate, dispatch) {
+  const toastId = toast.loading("Loading");
+  try {
+    const response = await apiConnector('PUT', endpoints.COMMUNITY, formData, {
+      Authorization: `Bearer ${token}`,
+    });
+    if (!response.data.success) {
+      throw new Error(response.data.message);
+    }
+    toast.success("Community added successfully");
+
+    // Update signup data after community address update
+    dispatch(SetSignUpData({
+      formData
+    }));
+    
+    navigate('/verification');
+  } catch (error) {
+    console.log(error);
+    toast.error("Could not add the community");
+    navigate("/community");
+  }
+  toast.dismiss(toastId);
+}
+
+export async function verification(formData, token, navigate, dispatch) {
+  const toastId = toast.loading("Loading");
+  try {
+    const response = await apiConnector('PUT', endpoints.VERIFICATION, formData, {
+      Authorization: `Bearer ${token}`,
+    });
+    if (response.data.success) {
+      toast.success("Verification completed successfully!");
+      navigate("/profession");  // or navigate to the next step
+    } else {
+      throw new Error(response.data.message);
+    }
+
+    
+    navigate('/profession');
+  } catch (error) {
+    console.error("Verification error:", error);
+    toast.error(error.response?.data?.message || "Verification failed. Please try again.");
+    navigate("/verification");
+  }
+  toast.dismiss(toastId);
+}
+
+
+// Submit profession API function
+export async function profession(professionData, token, navigate, dispatch) {
+  const toastId = toast.loading("Submitting Profession...");
+  try {
+    const response = await apiConnector('PUT', endpoints.PROFESSION, professionData, {
+      Authorization: `Bearer ${token}`,
+    });
+    
+    if (response?.data?.success) {
+      toast.success("Profession added successfully!");
+      navigate("/dashboard");  
+    } else {
+      throw new Error(response.data.message);
+    }
+
+  } catch (error) {
+    console.error("profession error:", error);
+    toast.error(error.response?.data?.message || "Failed to add profession. Please try again.");
+  } finally {
+    toast.dismiss(toastId);
+  }
+}
 
 // this is for login
 
@@ -112,10 +221,10 @@ export function login(email, password, navigate) {
         : `https://api.dicebear.com/5.x/initials/svg?seed=${response.data.user.firstName} ${response.data.user.lastName}`;
       dispatch(setUser({ ...(await response).data.user, image: userImage }));
       // localStorage.setItem("token", JSON.stringify(response.data.token));
-      Cookies.set("token", JSON.stringify(response.data.token), { expires: 3});
+      Cookies.set("token", JSON.stringify(response.data.token), { expires: 1});
       console.log(response.data,"----------user from login")
       // localStorage.setItem("user", JSON.stringify(response.data.user));
-      Cookies.set("user", JSON.stringify(response.data.user), { expires: 3 });
+      Cookies.set("user", JSON.stringify(response.data.user), { expires: 1 });
       navigate("/dashboard");
     } catch (error) {
       console.log("LOGIN API Error", error);

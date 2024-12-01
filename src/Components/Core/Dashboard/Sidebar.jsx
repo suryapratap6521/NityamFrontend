@@ -14,7 +14,7 @@ const Sidebar = () => {
 
       <Link to="/discover" className="flex items-center md:items-start md:mb-6 hover:bg-gray-200 p-2 rounded-lg cursor-pointer transition-all duration-300 w-full">
         <FontAwesomeIcon icon={faCompass} className="text-3xl  md:text-gray-900 text-gray-500" />
-        <span className="text-sm font-semibold mt-1 ml-3 hidden md:inline">Discover</span>
+        <span className="text-sm font-semibold mt-1 ml-3 hidden md:inline">Events</span>
       </Link>
 
       <Link to="/dashboard/createpost" className="flex items-center md:items-start md:mb-6 hover:bg-gray-200 p-2 rounded-lg cursor-pointer transition-all duration-300 w-full">
@@ -22,10 +22,7 @@ const Sidebar = () => {
         <span className="text-sm font-semibold mt-1 ml-3 hidden md:inline">Post</span>
       </Link>
 
-      <Link to="/for-sale" className="flex items-center md:items-start md:mb-6 hover:bg-gray-200 p-2 rounded-lg cursor-pointer transition-all duration-300 w-full">
-        <FontAwesomeIcon icon={faTags} className="text-3xl md:text-gray-900 text-gray-500" />
-        <span className="text-sm font-semibold mt-1 ml-3 hidden md:inline">For Sale</span>
-      </Link>
+    
 
       <Link to="/dashboard/services" className="flex items-center md:items-start md:mb-6 hover:bg-gray-200 p-2 rounded-lg cursor-pointer transition-all duration-300 w-full">
         <FontAwesomeIcon icon={faPeopleCarryBox} className="text-3xl md:text-gray-900 text-gray-500" />
@@ -33,7 +30,7 @@ const Sidebar = () => {
       </Link>
       <Link to="/dashboard/chat" className="flex items-center md:items-start md:mb-6 hover:bg-gray-200 p-2 rounded-lg cursor-pointer transition-all duration-300 w-full">
         <FontAwesomeIcon icon={faPeopleCarryBox} className="text-3xl md:text-gray-900 text-gray-500" />
-        <span className="text-sm font-semibold mt-1 ml-3 hidden md:inline">Services</span>
+        <span className="text-sm font-semibold mt-1 ml-3 hidden md:inline">Chat</span>
       </Link>
       
     </div>

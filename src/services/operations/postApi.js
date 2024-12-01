@@ -27,21 +27,33 @@ export const getAllPosts = async (token, dispatch) => {
     throw error; // Rethrow the error for further handling
   }
 };
-
 export const createPost = async (formData, token) => {
+  const toastId = toast.loading("Creating post...");
   try {
+    
     const response = await apiConnector("POST", postEndpoints.CREATE_POST, formData, {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     });
-    console.log(response, "response");
-    if (!response?.data?.success) {
-      throw new Error("Could not create post");
+    
+    console.log(response, "Response");
+
+    // Handle non-201 status codes
+    if (!response || response.status !== 200) {
+      throw new Error(`Error: Received status code ${response?.status}`);
     }
+    toast.success("Post created successfully");
+    
   } catch (error) {
-    console.log(error);
+    console.error('Error in createPost API call:', error.response?.data || error.message);
+    toast.error(error.response?.data || error.message);
     throw error; // Re-throw the error to handle it in the component
+    
+  }
+  finally{
+  toast.dismiss(toastId);
   }
 };
+
 
 export const deletePost = async (token, postId) => {
   try {

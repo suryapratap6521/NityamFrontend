@@ -24,7 +24,11 @@ import ServicePage from './pages/ServicePage'
 import "./App.css";
 import CreateServicePage from './pages/CreateServicePage';
 import BusinessPage from './pages/BusinessPage';
-
+import ProfileDetails from "./Components/Core/Auth/ProfileDetails";
+import CommunityAddress from './Components/Core/Auth/CommunityAddress';
+import Verification from './Components/Core/Auth/Verification';
+import Profession from './Components/Core/Auth/Profession';
+import Page from './Components/Core/Page/Page';
 function App() {
   return (
 
@@ -46,6 +50,33 @@ function App() {
             <Signup />
           </OpenRoute>
         } />
+        <Route path="/profiledetails" element={
+          <PrivateRoute>
+            <ProfileDetails />
+          </PrivateRoute>
+        }/>
+        <Route path="/communityaddress" element={
+          <PrivateRoute>
+            <CommunityAddress />
+          </PrivateRoute>
+        }/>
+        <Route path='/community' element={
+          <PrivateRoute>
+            <Community />
+          </PrivateRoute>
+        } />
+        <Route path='/verification' element={
+          <PrivateRoute>
+            <Verification />
+          </PrivateRoute>
+        } />
+
+        <Route path="/profession" element={
+          <PrivateRoute>
+          <Profession />
+          </PrivateRoute>
+        }/>
+        
         
         <Route path='/details' element={
           <OpenRoute>
@@ -59,11 +90,7 @@ function App() {
           </OpenRoute>
         } />
 
-        <Route path='/community' element={
-          <OpenRoute>
-            <Community />
-          </OpenRoute>
-        } />
+        
 
 
 
@@ -125,6 +152,11 @@ function App() {
         } />
         <Route path="/dashboard/settings" element={<PrivateRoute>
           <Settings />
+        </PrivateRoute>
+        }
+        />
+        <Route path="/dashboard/page" element={<PrivateRoute>
+          <Page />
         </PrivateRoute>
         }
         />
