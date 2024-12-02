@@ -108,14 +108,14 @@ export default function Verification() {
         {verificationMethod === "postalCard" && (
           <div className="mb-4">
             <label className="block font-semibold mb-2">Enter Your Address</label>
-            <input
-              type="text"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder="Enter your address"
-              className="w-full px-3 py-2 border rounded-lg"
-              required
-            />
+            <textarea
+    value={address}
+    onChange={(e) => setAddress(e.target.value)}
+    placeholder="Enter your address"
+  className="w-full px-3 py-2 border rounded-lg"
+  required
+/>
+
           </div>
         )}
 
