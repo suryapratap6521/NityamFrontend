@@ -15,7 +15,6 @@ const Layout = () => {
     <>
       <Navbar />
       {/* <div className="flex h-screen"> {token && <Sidebar />}</div> */}
-     
       <Outlet />
       {isHomePage && <Footer />}
     </>

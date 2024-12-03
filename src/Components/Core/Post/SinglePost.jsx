@@ -175,7 +175,7 @@ const SinglePost = ({
               }
             >
               <img
-                src={post.likes.includes(user._id) ? like : unlike}
+                src={post.likes.includes(user?._id) ? like : unlike}
                 alt="like/unlike"
                 className="h-6 w-6 object-contain"
               />

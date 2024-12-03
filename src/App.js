@@ -128,8 +128,7 @@ function App() {
 
         <Route path="/dashboard/services" element={
           <PrivateRoute>
-            {/* <ServicePage /> */}
-            <CreatePost/>
+            <ServicePage />
           </PrivateRoute>
         }></Route>
 

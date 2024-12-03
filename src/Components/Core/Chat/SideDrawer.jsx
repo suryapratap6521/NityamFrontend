@@ -1,16 +1,15 @@
-// SideDrawer.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  Box, Tooltip, TextField, Modal, Typography, Grid, Button, Avatar, Paper,
+  Box, Tooltip, TextField, Modal, Typography, Grid,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { toast } from "react-hot-toast";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 import Loader from "../../Common/Loader";
 import { accessChat } from "../../../services/operations/chatApi";
-import { setChats, setSelectedChat } from "../../../slices/chatSlice";
+import { setChats } from "../../../slices/chatSlice";
 import UserCard from "./ReusableComponents/UserCard";
 
 const SideDrawer = () => {
@@ -25,12 +24,21 @@ const SideDrawer = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleSearch = async () => {
+  // Debounced search function
+  useEffect(() => {
     if (!search) {
-      toast.error("Please write something before searching.");
+      setSearchResult([]);
       return;
     }
 
+    const delayDebounceFn = setTimeout(() => {
+      handleSearch();
+    }, 50); // Wait 2 seconds before making the API call
+
+    return () => clearTimeout(delayDebounceFn); // Cleanup timeout on every re-render
+  }, [search]); // Runs whenever `search` changes
+
+  const handleSearch = async () => {
     try {
       setLoading(true);
       const config = {
@@ -40,7 +48,7 @@ const SideDrawer = () => {
       };
 
       const { data } = await axios.get(
-        `http://localhost:8080/api/v1/auth/search?search=${search}`,
+        `https://nityambackend.onrender.com/api/v1/auth/search?search=${search}`,
         config
       );
       setSearchResult(data);
@@ -50,12 +58,6 @@ const SideDrawer = () => {
       toast.error("An error occurred while searching.");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
-      handleSearch();
     }
   };
 
@@ -77,16 +79,15 @@ const SideDrawer = () => {
             backgroundColor: "#D5F5E3",
             padding: "5px",
             borderRadius: "20px",
-            width: { xs: '100%', md: '300px' }
+            width: { xs: "100%", md: "300px" },
           }}
           placeholder="Search Users..."
           variant="standard"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          onKeyPress={handleKeyPress}
           InputProps={{
             startAdornment: <SearchIcon sx={{ color: "black" }} />,
-            disableUnderline: true
+            disableUnderline: true,
           }}
         />
       </Tooltip>
@@ -102,7 +103,7 @@ const SideDrawer = () => {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: { xs: '90%', sm: 400 },
+            width: { xs: "90%", sm: 400 },
             bgcolor: "white",
             border: "2px solid #000",
             boxShadow: 24,
@@ -110,7 +111,10 @@ const SideDrawer = () => {
             p: 4,
           }}
         >
-          <CloseIcon onClick={handleClose} style={{ position: 'absolute', top: '10px', right: '10px', cursor: 'pointer' }} />
+          <CloseIcon
+            onClick={handleClose}
+            style={{ position: "absolute", top: "10px", right: "10px", cursor: "pointer" }}
+          />
           <Typography
             id="modal-modal-title"
             variant="h6"

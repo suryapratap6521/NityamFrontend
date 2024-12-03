@@ -46,7 +46,6 @@ const Signup = () => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!formData.firstName) formErrors.firstName = "First name is required.";
-    if (!formData.lastName) formErrors.lastName = "Last name is required.";
     if (!phonePattern.test(formData.phoneNumber))
       formErrors.phoneNumber = "Phone number must be 10 digits.";
     if (!emailPattern.test(formData.email))
@@ -127,7 +126,6 @@ const Signup = () => {
             value={formData.lastName}
             onChange={handleChange}
           />
-          {errors.lastName && <span className="error">{errors.lastName}</span>}
         </div>
 
         <div>

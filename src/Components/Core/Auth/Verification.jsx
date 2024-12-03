@@ -1,25 +1,76 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { verification } from "../../../services/operations/authApi"; // Import the verification API function
-import { setLoading, SetSignUpData } from "../../../slices/authSlice"; // Update signup data action
+import { verification } from "../../../services/operations/authApi";
+import { setLoading } from "../../../slices/authSlice";
+import axios from "axios";
+import { locationEndpoints } from "../../../services/apis";
 
 export default function Verification() {
   const [document, setDocument] = useState(null); // File state for Aadhaar upload
   const [verificationMethod, setVerificationMethod] = useState(""); // State for selected verification method
-  const [address, setAddress] = useState(""); // Address input
+  const [address, setAddress] = useState(""); // State for address
+  const [accessToken, setAccessToken] = useState(""); // State for access token
+  const [suggestions, setSuggestions] = useState([]); // State for address suggestions
+  const [typingTimeout, setTypingTimeout] = useState(null); // Timeout for debounce
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const token = useSelector((state) => state.auth.token); // Access token from Redux store
 
-  // Handle file upload (Aadhaar)
-  const handleDocumentUpload = (e) => {
-    setDocument(e.target.files[0]); // Store selected file in state
+  // Automatically fetch token every 24 hours
+  useEffect(() => {
+    access_token();
+    const interval = setInterval(() => {
+      access_token();
+    }, 24 * 60 * 60 * 1000); // 24 hours
+
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, []);
+
+  // Fetch access token
+  const access_token = async () => {
+    try {
+      const response = await axios.post(locationEndpoints.ACCESS_TOKEN);
+      setAccessToken(response.data.access_token); // Store access token
+      console.log(response.data.access_token, "----> Access Token");
+    } catch (error) {
+      console.error("Error fetching the token:", error);
+      toast.error("Failed to fetch access token.");
+    }
   };
-  const handleSkip=()=>{
-    navigate('/profession');
-  }
+
+  // Fetch location data with debounce
+  const handleAddressChange = (e) => {
+    setAddress(e.target.value);
+    if (typingTimeout) {
+      clearTimeout(typingTimeout);
+    }
+    setTypingTimeout(
+      setTimeout(() => {
+        fetchSuggestions(e.target.value);
+      }, 50)
+    );
+  };
+
+  // Fetch suggestions for address
+  const fetchSuggestions = async (query) => {
+    if (!query) return setSuggestions([]);
+    try {
+      const response = await axios.post(locationEndpoints.GET_AREAS, {
+        address: query,
+        access_token: accessToken,
+      });
+      setSuggestions(response.data.copResults || []);
+    } catch (error) {
+      console.error("Error fetching areas:", error);
+    }
+  };
+
+  // Skip handler
+  const handleSkip = () => {
+    navigate("/profession");
+  };
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -36,14 +87,14 @@ export default function Verification() {
         return;
       }
       formData.append("verificationByPostalCard", true);
-      formData.append("address", address); // Address is required for postal card verification
+      formData.append("address", address);
     } else if (verificationMethod === "aadhaar") {
       if (!document) {
         toast.error("Please upload Aadhaar card for verification.");
         dispatch(setLoading(false));
         return;
       }
-      formData.append("document", document); // Aadhaar upload required if selected
+      formData.append("document", document);
     } else {
       toast.error("Please select a verification method.");
       dispatch(setLoading(false));
@@ -63,7 +114,9 @@ export default function Verification() {
       <form onSubmit={handleSubmit}>
         {/* Radio Buttons for Verification Method */}
         <div className="mb-4">
-          <label className="block font-semibold mb-2">Choose Verification Method</label>
+          <label className="block font-semibold mb-2">
+            Choose Verification Method
+          </label>
           <div className="flex items-center mb-2">
             <input
               type="radio"
@@ -90,32 +143,45 @@ export default function Verification() {
           </div>
         </div>
 
-        {/* Aadhaar Upload (Visible only if Aadhaar is selected) */}
+        {/* Aadhaar Upload */}
         {verificationMethod === "aadhaar" && (
           <div className="mb-4">
-            <label className="block font-semibold mb-2">Upload Aadhaar Card</label>
+            <label className="block font-semibold mb-2">
+              Upload Aadhaar Card
+            </label>
             <input
               type="file"
-              onChange={handleDocumentUpload}
+              onChange={(e) => setDocument(e.target.files[0])}
               className="w-full px-3 py-2 border rounded-lg"
               accept=".jpg,.png,.pdf"
-              required
             />
           </div>
         )}
 
-        {/* Address Field (Visible only if Postal Card is selected) */}
+        {/* Address Field */}
         {verificationMethod === "postalCard" && (
           <div className="mb-4">
             <label className="block font-semibold mb-2">Enter Your Address</label>
-            <textarea
-    value={address}
-    onChange={(e) => setAddress(e.target.value)}
-    placeholder="Enter your address"
-  className="w-full px-3 py-2 border rounded-lg"
-  required
-/>
-
+            <input
+              type="text"
+              value={address}
+              onChange={handleAddressChange}
+              placeholder="Enter your address"
+              className="w-full px-3 py-2 border rounded-lg"
+            />
+            {suggestions.length > 0 && (
+              <ul className="mt-2 border border-gray-300 rounded-lg shadow-lg bg-white max-h-40 overflow-y-auto">
+                {suggestions.map((suggestion, index) => (
+                  <li
+                    key={index}
+                    className="p-2 hover:bg-gray-200 cursor-pointer"
+                    onClick={() => setAddress(suggestion.formattedAddress)}
+                  >
+                    {suggestion.formattedAddress}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
 
@@ -127,7 +193,13 @@ export default function Verification() {
           Submit Verification
         </button>
       </form>
-      <button onClick={handleSkip}>Skip</button>
+
+      <button
+        onClick={handleSkip}
+        className="mt-4 bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600"
+      >
+        Skip
+      </button>
     </div>
   );
 }

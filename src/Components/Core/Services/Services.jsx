@@ -15,7 +15,8 @@ const Services = () => {
   const [allUsers, setAllUsers] = useState([]);
   const { token } = useSelector(state => state.auth);
   const { user } = useSelector(state => state.profile);
-
+  console.log(allUsers,"--->alluers");
+  console.log(user,"user");
   useEffect(() => {
     const handleGetAllServices = async () => {
       try {

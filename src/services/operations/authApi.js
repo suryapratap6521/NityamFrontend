@@ -142,8 +142,9 @@ export async function community(formData, token, navigate, dispatch) {
     dispatch(SetSignUpData({
       formData
     }));
-    
+    Cookies.set("user", JSON.stringify(response.data.userDetails), { expires: 1 });
     navigate('/verification');
+    
   } catch (error) {
     console.log(error);
     toast.error("Could not add the community");
@@ -160,6 +161,7 @@ export async function verification(formData, token, navigate, dispatch) {
     });
     if (response.data.success) {
       toast.success("Verification completed successfully!");
+      Cookies.set("user", JSON.stringify(response.data.user), { expires: 1 });
       navigate("/profession");  // or navigate to the next step
     } else {
       throw new Error(response.data.message);
@@ -186,6 +188,7 @@ export async function profession(professionData, token, navigate, dispatch) {
     
     if (response?.data?.success) {
       toast.success("Profession added successfully!");
+      Cookies.set("user", JSON.stringify(response.data.userDetails), { expires: 1 });
       navigate("/dashboard");  
     } else {
       throw new Error(response.data.message);

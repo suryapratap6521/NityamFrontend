@@ -1,4 +1,5 @@
-const BASE_URL = 'https://nityambackend.onrender.com/api/v1'
+// const BASE_URL = 'https://nityambackend.onrender.com/api/v1'
+const BASE_URL = 'http://localhost:8080/api/v1'
 
 export const endpoints = {
   SENDOTP_API: `${BASE_URL}/auth/sendotp`,
@@ -50,3 +51,10 @@ export const serviceEndpoints={
   CREATE_SERVICE:`${BASE_URL}/services/createservice`,
   GET_SERVICES:`${BASE_URL}/services/getservices`,
 }
+
+export const locationEndpoints={
+  ACCESS_TOKEN:`${BASE_URL}/token/getaccesstoken`,
+  GET_AREAS:`${BASE_URL}/token/getareas`,
+}
+
+

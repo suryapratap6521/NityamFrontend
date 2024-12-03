@@ -161,8 +161,7 @@ const SideBarPost = () => {
       case 'post':
         return (
           <div className="space-y-4">
-            <input
-              type="text"
+            <textarea
               placeholder="Post Title"
               value={currentPost.title}
               onChange={(e) => setCurrentPost((prev) => ({ ...prev, title: e.target.value }))} 
@@ -174,11 +173,12 @@ const SideBarPost = () => {
                   <div key={index} className="relative">
                     <img src={preview} alt="Uploaded media" className="w-full h-24 object-cover rounded" />
                     <button
-                      onClick={() => removeMediaItem(index)}
-                      className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
-                    >
-                      Remove
-                    </button>
+  onClick={() => removeMediaItem(index)}
+  className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-0 h-0 flex items-center justify-center shadow-md"
+>
+  X
+</button>
+
                   </div>
                 ))}
               </div>

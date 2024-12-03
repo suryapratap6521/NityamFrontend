@@ -1,46 +1,56 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { community } from '../../../services/operations/authApi'; // Assuming the API call is in services/api.js
-import { SetSignUpData } from '../../../slices/authSlice'; // Action to update signup data
-import axios from 'axios';
-import { toast } from 'react-hot-toast';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { community } from "../../../services/operations/authApi"; // Assuming the API call is in services/api.js
+import { toast } from "react-hot-toast";
+import axios from "axios";
 
 const Community = () => {
   const [areas, setAreas] = useState([]);
-  const [selectedArea, setSelectedArea] = useState('');
+  const [selectedArea, setSelectedArea] = useState("");
   const { token, signUpData } = useSelector((state) => state.auth);
   const pincode = signUpData?.formData?.pincode;
+  const city = signUpData?.formData?.city; // Fetch the city from signUpData
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  console.log(pincode);
-  // Fetch areas based on pincode
+
+  console.log("Pincode:", pincode);
+  console.log("City:", city);
+
+  // Fetch areas based on pincode and filter by district matching city
   useEffect(() => {
     const fetchAreas = async () => {
       if (pincode) {
         try {
           const response = await axios.get(`https://api.postalpincode.in/pincode/${pincode}`);
           if (response.data[0].Status === "Success") {
-            setAreas(response.data[0].PostOffice);
+            const filteredAreas = response.data[0].PostOffice.filter(
+              (area) => area.District.toLowerCase() === city.toLowerCase()
+            );
+            if (filteredAreas.length > 0) {
+              setAreas(filteredAreas);
+            } else {
+              toast.error("No areas found for the provided city and pincode.");
+            }
           } else {
-            toast.error('Invalid Pincode or no areas found');
+            toast.error("Invalid Pincode or no areas found.");
           }
         } catch (error) {
-          console.log("Error fetching areas:", error);
-          toast.error('Could not fetch areas');
+          console.error("Error fetching areas:", error);
+          toast.error("Could not fetch areas. Please try again.");
         }
       }
     };
 
     fetchAreas();
-  }, [pincode]);
+  }, [pincode, city]);
 
   // Handle community submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!selectedArea) {
-      toast.error("Please select an area");
+      toast.error("Please select an area.");
       return;
     }
 
@@ -48,7 +58,13 @@ const Community = () => {
       community: selectedArea,
     };
 
-    await community(formData, token, navigate, dispatch);
+    try {
+      await community(formData, token, navigate, dispatch);
+      toast.success("Community submitted successfully!");
+    } catch (error) {
+      console.error("Error submitting community:", error);
+      toast.error("Could not submit community. Please try again.");
+    }
   };
 
   return (
