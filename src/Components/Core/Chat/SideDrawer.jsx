@@ -33,7 +33,7 @@ const SideDrawer = () => {
 
     const delayDebounceFn = setTimeout(() => {
       handleSearch();
-    }, 50); // Wait 2 seconds before making the API call
+    }, 90); // Wait 2 seconds before making the API call
 
     return () => clearTimeout(delayDebounceFn); // Cleanup timeout on every re-render
   }, [search]); // Runs whenever `search` changes
@@ -48,10 +48,11 @@ const SideDrawer = () => {
       };
 
       const { data } = await axios.get(
-        `https://nityambackend.onrender.com/api/v1/auth/search?search=${search}`,
+        `http://localhost:8080/api/v1/auth/search?search=${search}`,
         config
       );
       setSearchResult(data);
+      console.log(data);
       setOpen(true);
     } catch (error) {
       console.error("Error searching:", error);
