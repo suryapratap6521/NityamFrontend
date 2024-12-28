@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { sendotp, signUp } from "../../../services/operations/authApi"; // Import your APIs
+import { sendotp, signUp } from "../../../services/operations/authApi"; 
 import { useDispatch } from "react-redux";
-import Loader from "../../../Components/Common/Loader"; // Optional loading component
-import Modal from "react-modal"; // For modal
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
+import Modal from "react-modal";
+
 const Signup = () => {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -14,30 +14,26 @@ const Signup = () => {
     confirmPassword: "",
     otp: "",
   });
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [errors, setErrors] = useState({});
-  const [showOtpModal, setShowOtpModal] = useState(false); // Show OTP modal
-  const [otpInput, setOtpInput] = useState(""); // For OTP input in the modal
-  const [timer, setTimer] = useState(30); // OTP Timer
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [otpInput, setOtpInput] = useState("");
+  const [timer, setTimer] = useState(30);
   const dispatch = useDispatch();
 
-  // Timer countdown effect
   useEffect(() => {
     let countdown;
     if (showOtpModal && timer > 0) {
       countdown = setInterval(() => {
         setTimer((prevTimer) => prevTimer - 1);
       }, 1000);
-    } 
-    return () => clearInterval(countdown); // Cleanup interval on unmount
+    }
+    return () => clearInterval(countdown);
   }, [showOtpModal, timer]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({ ...formData, [name]: value });
   };
 
   const validateForm = () => {
@@ -55,7 +51,6 @@ const Signup = () => {
       formErrors.confirmPassword = "Passwords do not match.";
 
     setErrors(formErrors);
-
     return Object.keys(formErrors).length === 0;
   };
 
@@ -63,28 +58,19 @@ const Signup = () => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        // Await the result of the dispatch
         const res = await sendotp(formData.phoneNumber, dispatch);
-        console.log(res.data.success, "---------> OTP sent response");
-
-        // If OTP is successfully sent, show the OTP modal
         if (res.data.success === true) {
-          setShowOtpModal(true); // Show OTP modal
-          setTimer(30); // Reset timer
-        } else {
-          console.log("Failed to send OTP");
+          setShowOtpModal(true);
+          setTimer(30);
         }
       } catch (error) {
-        console.log("Error sending OTP:", error);
+        console.error("Error sending OTP:", error);
       }
-    } else {
-      console.log("Form contains errors.");
     }
   };
 
   const handleOtpSubmit = (e) => {
     e.preventDefault();
-    // Dispatch the signup action with the OTP included
     if (otpInput.length === 6) {
       dispatch(
         signUp(
@@ -98,122 +84,157 @@ const Signup = () => {
           navigate
         )
       );
-    } else {
-      console.log("Invalid OTP.");
     }
   };
 
   return (
-    <div className="signup-form">
-      <h2>Signup Form</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>First Name</label>
-          <input
-            type="text"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleChange}
-          />
-          {errors.firstName && <span className="error">{errors.firstName}</span>}
-        </div>
-
-        <div>
-          <label>Last Name</label>
-          <input
-            type="text"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleChange}
-          />
-        </div>
-
-        <div>
-          <label>Phone Number</label>
-          <input
-            type="text"
-            name="phoneNumber"
-            value={formData.phoneNumber}
-            onChange={handleChange}
-          />
-          {errors.phoneNumber && (
-            <span className="error">{errors.phoneNumber}</span>
-          )}
-        </div>
-
-        <div>
-          <label>Email</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-          />
-          {errors.email && <span className="error">{errors.email}</span>}
-        </div>
-
-        <div>
-          <label>Password</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-          />
-          {errors.password && <span className="error">{errors.password}</span>}
-        </div>
-
-        <div>
-          <label>Confirm Password</label>
-          <input
-            type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-          />
-          {errors.confirmPassword && (
-            <span className="error">{errors.confirmPassword}</span>
-          )}
-        </div>
-
-        <button type="submit">Signup</button>
-      </form>
-
-      {/* OTP Modal */}
-      <Modal isOpen={showOtpModal}>
-        <div className="otp-modal-header">
-          <h2>Enter OTP</h2>
-          <button onClick={() => setShowOtpModal(false)} className="close-modal">
-            &times; {/* Close button (cross icon) */}
-          </button>
-        </div>
-        <form onSubmit={handleOtpSubmit}>
-          <div>
-            <label>OTP</label>
-            <input
-              type="text"
-              value={otpInput}
-              onChange={(e) => setOtpInput(e.target.value)}
-              maxLength="6" // Assuming OTP is 6 digits
-            />
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-green-300 to-yellow-200">
+      <div className="w-full max-w-lg p-6 bg-white shadow-lg rounded-lg">
+        <h2 className="text-2xl font-semibold text-center text-green-600 mb-4">
+          Signup
+        </h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Parallel Input Fields: First Name and Last Name */}
+          <div className="flex flex-wrap gap-4">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700">
+                First Name
+              </label>
+              <input
+                type="text"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+                className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring focus:ring-green-400"
+              />
+              {errors.firstName && (
+                <p className="text-sm text-red-600">{errors.firstName}</p>
+              )}
+            </div>
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700">
+                Last Name
+              </label>
+              <input
+                type="text"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring focus:ring-green-400"
+              />
+            </div>
           </div>
 
-          <button type="submit">Submit OTP</button>
-        </form>
-        <p>Time remaining: {timer} seconds</p>
+          {/* Parallel Input Fields: Phone Number and Email */}
+          <div className="flex flex-wrap gap-4">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700">
+                Phone Number
+              </label>
+              <input
+                type="text"
+                name="phoneNumber"
+                value={formData.phoneNumber}
+                onChange={handleChange}
+                className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring focus:ring-green-400"
+              />
+              {errors.phoneNumber && (
+                <p className="text-sm text-red-600">{errors.phoneNumber}</p>
+              )}
+            </div>
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700">
+                Email
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring focus:ring-green-400"
+              />
+              {errors.email && (
+                <p className="text-sm text-red-600">{errors.email}</p>
+              )}
+            </div>
+          </div>
 
-        {/* "Resend OTP" button becomes visible when the timer reaches 0 */}
-        {timer === 0 && (
+          {/* Password Fields */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring focus:ring-green-400"
+            />
+            {errors.password && (
+              <p className="text-sm text-red-600">{errors.password}</p>
+            )}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring focus:ring-green-400"
+            />
+            {errors.confirmPassword && (
+              <p className="text-sm text-red-600">{errors.confirmPassword}</p>
+            )}
+          </div>
+
           <button
-            onClick={async () => {
-              await sendotp(formData.phoneNumber, dispatch);
-              setTimer(30); // Reset timer when OTP is resent
-            }}
+            type="submit"
+            className="w-full py-2 px-4 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300"
           >
-            Resend OTP
+            Signup
           </button>
-        )}
-      </Modal>
+        </form>
+
+        {/* OTP Modal */}
+        <Modal isOpen={showOtpModal} className="modal">
+          <div className="p-6">
+            <h2 className="text-lg font-semibold text-green-600">
+              Enter OTP
+            </h2>
+            <form onSubmit={handleOtpSubmit}>
+              <input
+                type="text"
+                value={otpInput}
+                onChange={(e) => setOtpInput(e.target.value)}
+                className="w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring focus:ring-green-400"
+                maxLength="6"
+              />
+              <button
+                type="submit"
+                className="w-full mt-4 py-2 px-4 bg-green-500 text-white rounded-md hover:bg-green-600"
+              >
+                Submit OTP
+              </button>
+            </form>
+            {timer === 0 && (
+              <button
+                onClick={async () => {
+                  await sendotp(formData.phoneNumber, dispatch);
+                  setTimer(30);
+                }}
+                className="mt-4 text-sm text-blue-600 underline"
+              >
+                Resend OTP
+              </button>
+            )}
+            <p className="text-sm mt-2">Time remaining: {timer} seconds</p>
+          </div>
+        </Modal>
+      </div>
     </div>
   );
 };

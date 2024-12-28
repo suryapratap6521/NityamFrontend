@@ -13,18 +13,19 @@ const CommunityAddress = () => {
   });
   const [countryId, setCountryId] = useState(0);
   const [stateId, setStateId] = useState(0);
-  const [pincodeList, setPincodeList] = useState([]); // Store pincodes
-  const [isOtherPincode, setIsOtherPincode] = useState(false); // Track "Other" option
+  const [pincodeList, setPincodeList] = useState([]);
+  const [isOtherPincode, setIsOtherPincode] = useState(false);
+
   const token = useSelector((state) => state.auth.token);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prevData) => ({
+      ...prevData,
       [name]: value,
-    });
+    }));
   };
 
   useEffect(() => {
@@ -36,12 +37,8 @@ const CommunityAddress = () => {
           );
           const data = await response.json();
           if (data[0]?.Status === "Success") {
-            // Filter by district name matching city
-            const filteredPincodes = data[0].PostOffice
-              .filter((office) => office.District.toLowerCase() === formData.city.toLowerCase())
-              .map((office) => office.Pincode);
-
-            setPincodeList([...new Set(filteredPincodes)]); // Remove duplicates
+            const filteredPincodes = data[0].PostOffice.map((office) => office.Pincode);
+            setPincodeList([...new Set(filteredPincodes)]);
           } else {
             setPincodeList([]);
           }
@@ -59,17 +56,16 @@ const CommunityAddress = () => {
     const { value } = e.target;
     if (value === "Other") {
       setIsOtherPincode(true);
-      setFormData({ ...formData, pincode: "" });
+      setFormData((prevData) => ({ ...prevData, pincode: "" }));
     } else {
       setIsOtherPincode(false);
-      setFormData({ ...formData, pincode: value });
+      setFormData((prevData) => ({ ...prevData, pincode: value }));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate pincode
     if (isOtherPincode && (!formData.pincode || formData.pincode.length !== 6 || isNaN(formData.pincode))) {
       alert("Please enter a valid 6-digit pincode.");
       return;
@@ -84,16 +80,16 @@ const CommunityAddress = () => {
   };
 
   return (
-    <div className="community-address-form">
-      <h2>Community Address</h2>
-      <form onSubmit={handleSubmit}>
+    <div className="community-address-form max-w-lg mx-auto p-6 border rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold mb-4">Community Address</h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
         {/* Country Dropdown */}
         <div>
-          <label>Country</label>
+          <label className="block font-semibold mb-2">Country</label>
           <CountrySelect
             onChange={(selectedCountry) => {
               setCountryId(selectedCountry.id);
-              setFormData({ ...formData, country: selectedCountry.name });
+              setFormData((prevData) => ({ ...prevData, country: selectedCountry.name }));
             }}
             placeHolder="Select Country"
           />
@@ -101,12 +97,12 @@ const CommunityAddress = () => {
 
         {/* State Dropdown */}
         <div>
-          <label>State</label>
+          <label className="block font-semibold mb-2">State</label>
           <StateSelect
             countryid={countryId}
             onChange={(selectedState) => {
               setStateId(selectedState.id);
-              setFormData({ ...formData, state: selectedState.name });
+              setFormData((prevData) => ({ ...prevData, state: selectedState.name }));
             }}
             placeHolder="Select State"
             disabled={!countryId}
@@ -115,12 +111,12 @@ const CommunityAddress = () => {
 
         {/* City Dropdown */}
         <div>
-          <label>City</label>
+          <label className="block font-semibold mb-2">City</label>
           <CitySelect
             countryid={countryId}
             stateid={stateId}
             onChange={(selectedCity) => {
-              setFormData({ ...formData, city: selectedCity.name });
+              setFormData((prevData) => ({ ...prevData, city: selectedCity.name }));
             }}
             placeHolder="Select City"
             disabled={!stateId}
@@ -129,11 +125,12 @@ const CommunityAddress = () => {
 
         {/* Pincode Dropdown with "Other" Option */}
         <div>
-          <label>Pincode</label>
+          <label className="block font-semibold mb-2">Pincode</label>
           <select
             name="pincode"
             value={isOtherPincode ? "Other" : formData.pincode}
             onChange={handlePincodeChange}
+            className="w-full px-3 py-2 border rounded-lg"
             disabled={!pincodeList.length}
           >
             <option value="">Select Pincode</option>
@@ -149,7 +146,7 @@ const CommunityAddress = () => {
         {/* Manual Pincode Input */}
         {isOtherPincode && (
           <div>
-            <label>Enter Pincode</label>
+            <label className="block font-semibold mb-2">Enter Pincode</label>
             <input
               type="text"
               name="pincode"
@@ -157,11 +154,17 @@ const CommunityAddress = () => {
               onChange={handleChange}
               maxLength="6"
               placeholder="Enter Pincode"
+              className="w-full px-3 py-2 border rounded-lg"
             />
           </div>
         )}
 
-        <button type="submit">Submit</button>
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+        >
+          Submit
+        </button>
       </form>
     </div>
   );

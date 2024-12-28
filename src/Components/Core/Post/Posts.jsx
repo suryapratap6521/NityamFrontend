@@ -64,10 +64,10 @@ const Posts = () => {
     setSelectedPost(null);
   };
 
-  const handleDeletePost = async () => {
+  const handleDeletePost = async (postId) => {
     try {
-      await deletePost(token, selectedPost);
-      const updatedPosts = posts.filter((post) => post._id !== selectedPost);
+      await deletePost(token, postId);
+      const updatedPosts = posts.filter((post) => post._id !== postId);
       dispatch(setPosts(updatedPosts));
       handlePopoverClose();
     } catch (error) {
