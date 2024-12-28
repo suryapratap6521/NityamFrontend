@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { profileDetails } from "../../../services/operations/authApi"
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
+import { profileDetails } from "../../../services/operations/authApi";
+import { useDispatch, useSelector } from "react-redux";
+
 const ProfileDetails = () => {
   const [formData, setFormData] = useState({
     gender: "",
@@ -37,69 +37,80 @@ const ProfileDetails = () => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        // Call the profileDetails API
-        await profileDetails(formData, token, navigate,dispatch);
+        await profileDetails(formData, token, navigate, dispatch);
       } catch (error) {
         console.log("Error submitting profile details:", error);
-        
       }
     }
   };
 
   return (
-    <div className="gender-dateOfBirth-form">
-      <h2>Profile Details</h2>
-      <form onSubmit={handleSubmit}>
-        {/* Gender Radio Buttons */}
-        <div>
-          <label>Gender</label>
-          <div>
-            <input
-              type="radio"
-              name="gender"
-              value="Male"
-              checked={formData.gender === "Male"}
-              onChange={handleChange}
-            />
-            <label>Male</label>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-green-400 to-yellow-300 p-6">
+      <div className="bg-white shadow-lg rounded-lg w-full max-w-md p-8">
+        <h2 className="text-2xl font-semibold text-center text-green-600 mb-6">Profile Details</h2>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Gender Selection */}
+          <div className="space-y-2">
+            <label className="block text-gray-700 font-medium">Gender</label>
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center">
+                <input
+                  type="radio"
+                  name="gender"
+                  value="Male"
+                  checked={formData.gender === "Male"}
+                  onChange={handleChange}
+                  className="w-4 h-4 text-green-500 focus:ring-green-400"
+                />
+                <label className="ml-2 text-gray-600">Male</label>
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="radio"
+                  name="gender"
+                  value="Female"
+                  checked={formData.gender === "Female"}
+                  onChange={handleChange}
+                  className="w-4 h-4 text-green-500 focus:ring-green-400"
+                />
+                <label className="ml-2 text-gray-600">Female</label>
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="radio"
+                  name="gender"
+                  value="Other"
+                  checked={formData.gender === "Other"}
+                  onChange={handleChange}
+                  className="w-4 h-4 text-green-500 focus:ring-green-400"
+                />
+                <label className="ml-2 text-gray-600">Other</label>
+              </div>
+            </div>
+            {errors.gender && <span className="text-red-500 text-sm">{errors.gender}</span>}
           </div>
-          <div>
-            <input
-              type="radio"
-              name="gender"
-              value="Female"
-              checked={formData.gender === "Female"}
-              onChange={handleChange}
-            />
-            <label>Female</label>
-          </div>
-          <div>
-            <input
-              type="radio"
-              name="gender"
-              value="Other"
-              checked={formData.gender === "Other"}
-              onChange={handleChange}
-            />
-            <label>Other</label>
-          </div>
-          {errors.gender && <span className="error">{errors.gender}</span>}
-        </div>
 
-        {/* Date of Birth */}
-        <div>
-          <label>Date of Birth</label>
-          <input
-            type="date"
-            name="dateOfBirth"
-            value={formData.dateOfBirth}
-            onChange={handleChange}
-          />
-          {errors.dateOfBirth && <span className="error">{errors.dateOfBirth}</span>}
-        </div>
+          {/* Date of Birth */}
+          <div className="space-y-2">
+            <label className="block text-gray-700 font-medium">Date of Birth</label>
+            <input
+              type="date"
+              name="dateOfBirth"
+              value={formData.dateOfBirth}
+              onChange={handleChange}
+              className="w-full px-4 py-2 border rounded-md text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
+            />
+            {errors.dateOfBirth && <span className="text-red-500 text-sm">{errors.dateOfBirth}</span>}
+          </div>
 
-        <button type="submit">Submit</button>
-      </form>
+          <button
+            type="submit"
+            className="w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md shadow-md transition duration-300"
+          >
+            Submit
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
