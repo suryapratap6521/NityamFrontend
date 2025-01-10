@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPageData } from "../../../slices/pageSlice";
 import PagePreview from "./PagePreview";
 import { createPage } from "../../../services/operations/pageApi";
 
-const Page = () => {
+const PageAd = () => {
   const [step, setStep] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useDispatch();
@@ -61,6 +61,10 @@ const Page = () => {
   const handleNext = () => {
     if (step < 3) setStep(step + 1);
   };
+
+  useEffect(() => {
+    console.log(pageData)
+}, []);
 
   const handleBack = () => {
     if (step > 1) setStep(step - 1);
@@ -311,4 +315,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default PageAd;
