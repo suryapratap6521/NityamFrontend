@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { verification } from "../../../services/operations/authApi";
 import { setLoading } from "../../../slices/authSlice";
-import { fetchAccessToken, fetchAreaSuggestions } from "../../../config/fetching_location";
+import axios from "axios";
+import { locationEndpoints } from "../../../services/apis";
 
 export default function Verification() {
   const [document, setDocument] = useState(null);
@@ -18,17 +19,10 @@ export default function Verification() {
   const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
-    // Fetch access token and set interval to refresh it every 24 hours
-    const fetchToken = async () => {
-      try {
-        const token = await fetchAccessToken();
-        setAccessToken(token);
-      } catch (error) {
-        console.error("Error initializing access token:", error);
-      }
-    };
-    fetchToken();
-    const interval = setInterval(fetchToken, 24 * 60 * 60 * 1000);
+    access_token();
+    const interval = setInterval(() => {
+      access_token();
+    }, 24 * 60 * 60 * 1000); // 24 hours
 
     return () => clearInterval(interval);
   }, []);
@@ -45,7 +39,9 @@ export default function Verification() {
 
   const handleAddressChange = (e) => {
     setAddress(e.target.value);
-    if (typingTimeout) clearTimeout(typingTimeout);
+    if (typingTimeout) {
+      clearTimeout(typingTimeout);
+    }
     setTypingTimeout(
       setTimeout(() => {
         fetchSuggestions(e.target.value);
@@ -75,6 +71,7 @@ export default function Verification() {
     dispatch(setLoading(true));
 
     const formData = new FormData();
+
     if (verificationMethod === "postalCard") {
       if (!address) {
         toast.error("Please provide an address for postal verification.");

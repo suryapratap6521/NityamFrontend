@@ -105,8 +105,7 @@ function Navbar() {
             </Typography>
 
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
-              {!token && <Button component={Link} to="/business" sx={{ color: "black" }}> Business</Button>}
-              {token && pathname === '/dashboard/chat' && <SideDrawer />}
+             
             </Box>
 
             {token && (
