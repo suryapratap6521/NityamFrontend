@@ -57,4 +57,10 @@ export const locationEndpoints = {
 };
 export const pageEndpoints = {
   CREATE_PAGE: `${BASE_URL}/page/createpage`,
+  VIEW_PAGE: `${BASE_URL}/page/page`,
+  GET_PAGES: `${BASE_URL}/page/allpages`,
+};
+export const adEndpoints = {
+  GET_COMMUNITIES: `${BASE_URL}/advpost/getcommunities`,
+  CREATE_AD: `${BASE_URL}/advpost/createadvpost`,
 };

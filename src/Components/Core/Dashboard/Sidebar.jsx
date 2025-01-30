@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faCompass, faPlusCircle, faTags,faPersonCirclePlus,faPeopleCarryBox,faComments } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faCompass, faPlusCircle, faTags, faPersonCirclePlus, faPeopleCarryBox, faComments, faUsers } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 
 
@@ -23,7 +23,7 @@ const Sidebar = () => {
         <span className="text-sm font-semibold mt-1 ml-3 hidden md:inline">Post</span>
       </Link>
 
-    
+
 
       <Link to="/dashboard/services" className="flex items-center md:items-start md:mb-10 hover:bg-gray-200 p-2 rounded-lg cursor-pointer transition-all duration-300 w-full">
         <FontAwesomeIcon icon={faPeopleCarryBox} className="text-3xl md:text-gray-900 text-gray-500" />
@@ -33,10 +33,16 @@ const Sidebar = () => {
         <FontAwesomeIcon icon={faComments} className="text-3xl md:text-gray-900 text-gray-500" />
         <span className="text-sm font-semibold mt-1 ml-3 hidden md:inline">Chat</span>
       </Link>
-      
+
+      <Link to="/dashboard/page" className="flex items-center md:items-start md:mb-10 hover:bg-gray-200 p-2 rounded-lg cursor-pointer transition-all duration-300 w-full">
+        <FontAwesomeIcon icon={faUsers} className="text-3xl md:text-gray-900 text-gray-500" />
+        <span className="text-sm font-semibold mt-1 ml-3 hidden md:inline">Page</span>
+      </Link>
+
+
     </div>
-    
-    
+
+
   );
 }
 

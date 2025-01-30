@@ -1,17 +1,18 @@
-import React, { useState,useEffect } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPageData } from "../../../slices/pageSlice";
-import PagePreview from "./PagePreview";
+import PagePreview from "./ReusesableComponents/PagePreview";
 import { createPage } from "../../../services/operations/pageApi";
 
-const PageAd = () => {
+const CreatePage = () => {
   const [step, setStep] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useDispatch();
   const pageData = useSelector((state) => state.page.pageData || {});
   const token = useSelector((state) => state.auth.token);
+  const [loading, setLoading] = useState(false);
 
-  const businessTypes = [
+  const businessCategorys = [
     "Retail & E-commerce",
     "Clothing & Accessories",
     "Electronics",
@@ -54,17 +55,13 @@ const PageAd = () => {
     "Seasonal Shops",
   ];
 
-  const filteredBusinessTypes = businessTypes.filter((type) =>
+  const filteredbusinessCategorys = businessCategorys.filter((type) =>
     type.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleNext = () => {
     if (step < 3) setStep(step + 1);
   };
-
-  useEffect(() => {
-    console.log(pageData)
-}, []);
 
   const handleBack = () => {
     if (step > 1) setStep(step - 1);
@@ -81,22 +78,22 @@ const PageAd = () => {
     try {
       const formData = new FormData();
       formData.append("businessName", pageData.businessName);
-      formData.append("businessCategory", pageData.businessType);
-      formData.append("businessDescription", pageData.businessBio);
-      formData.append("businessUrl", pageData.website);
-      formData.append("businessPhoneNumber", pageData.phoneNumber);
-      formData.append("businessEmail", pageData.emailAddress);
-      formData.append("businessAddress", pageData.address);
-      formData.append("businessCity", pageData.city);
-      formData.append("businessPostCode", pageData.postCode);
+      formData.append("businessCategory", pageData.businessCategory);
+      formData.append("businessDescription", pageData.businessDescription);
+      formData.append("businessUrl", pageData.businessUrl);
+      formData.append("businessPhoneNumber", pageData.businessPhoneNumber);
+      formData.append("businessEmail", pageData.businessEmail);
+      formData.append("businessAddress", pageData.businessAddress);
+      formData.append("businessCity", pageData.businessCity);
+      formData.append("businessPostCode", pageData.businessPostCode);
       formData.append(
         "businessProfilePicture",
         pageData.businessProfilePicture
       );
 
-      const response = await createPage(formData, token);
-      alert("Business page created successfully!");
-      console.log("Response:", response);
+      const response = await createPage(formData, dispatch, token);
+      // alert("Business page created successfully!");
+      // console.log("Response:", response);
     } catch (error) {
       console.error("Error:", error);
       alert("Failed to create business page. Please try again.");
@@ -159,18 +156,18 @@ const PageAd = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="businessType" className="block font-medium">
+                <label htmlFor="businessCategory" className="block font-medium">
                   Business Type
                 </label>
                 <select
-                  id="businessType"
-                  name="businessType"
-                  value={pageData.businessType || ""}
+                  id="businessCategory"
+                  name="businessCategory"
+                  value={pageData.businessCategory || ""}
                   onChange={handleChange}
                   className="border rounded w-full p-2"
                 >
                   <option value="">Select Business Type</option>
-                  {filteredBusinessTypes.map((type, index) => (
+                  {filteredbusinessCategorys.map((type, index) => (
                     <option key={index} value={type}>
                       {type}
                     </option>
@@ -178,13 +175,13 @@ const PageAd = () => {
                 </select>
               </div>
               <div className="mb-4">
-                <label htmlFor="businessBio" className="block font-medium">
+                <label htmlFor="businessDescription" className="block font-medium">
                   Business Bio
                 </label>
                 <textarea
-                  id="businessBio"
-                  name="businessBio"
-                  value={pageData.businessBio || ""}
+                  id="businessDescription"
+                  name="businessDescription"
+                  value={pageData.businessDescription || ""}
                   onChange={handleChange}
                   className="border rounded w-full p-2"
                 />
@@ -198,40 +195,40 @@ const PageAd = () => {
             <h2 className="text-lg font-semibold">Contact Information</h2>
             <form>
               <div className="mb-4">
-                <label htmlFor="website" className="block font-medium">
-                  Website
+                <label htmlFor="businessUrl" className="block font-medium">
+                  businessUrl
                 </label>
                 <input
                   type="text"
-                  id="website"
-                  name="website"
-                  value={pageData.website || ""}
+                  id="businessUrl"
+                  name="businessUrl"
+                  value={pageData.businessUrl || ""}
                   onChange={handleChange}
                   className="border rounded w-full p-2"
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="phoneNumber" className="block font-medium">
+                <label htmlFor="businessPhoneNumber" className="block font-medium">
                   Phone Number
                 </label>
                 <input
                   type="text"
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  value={pageData.phoneNumber || ""}
+                  id="businessPhoneNumber"
+                  name="businessPhoneNumber"
+                  value={pageData.businessPhoneNumber || ""}
                   onChange={handleChange}
                   className="border rounded w-full p-2"
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="emailAddress" className="block font-medium">
+                <label htmlFor="businessEmail" className="block font-medium">
                   Email Address
                 </label>
                 <input
                   type="email"
-                  id="emailAddress"
-                  name="emailAddress"
-                  value={pageData.emailAddress || ""}
+                  id="businessEmail"
+                  name="businessEmail"
+                  value={pageData.businessEmail || ""}
                   onChange={handleChange}
                   className="border rounded w-full p-2"
                 />
@@ -244,40 +241,40 @@ const PageAd = () => {
             <h2 className="text-lg font-semibold">Address Information</h2>
             <form>
               <div className="mb-4">
-                <label htmlFor="address" className="block font-medium">
+                <label htmlFor="businessAddress" className="block font-medium">
                   Address
                 </label>
                 <input
                   type="text"
-                  id="address"
-                  name="address"
-                  value={pageData.address || ""}
+                  id="businessAddress"
+                  name="businessAddress"
+                  value={pageData.businessAddress || ""}
                   onChange={handleChange}
                   className="border rounded w-full p-2"
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="city" className="block font-medium">
+                <label htmlFor="businessCity" className="block font-medium">
                   City
                 </label>
                 <input
                   type="text"
-                  id="city"
-                  name="city"
-                  value={pageData.city || ""}
+                  id="businessCity"
+                  name="businessCity"
+                  value={pageData.businessCity || ""}
                   onChange={handleChange}
                   className="border rounded w-full p-2"
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="postCode" className="block font-medium">
+                <label htmlFor="businessPostCode" className="block font-medium">
                   Postal Code
                 </label>
                 <input
                   type="email"
-                  id="postCode"
-                  name="postCode"
-                  value={pageData.postCode || ""}
+                  id="businessPostCode"
+                  name="businessPostCode"
+                  value={pageData.businessPostCode || ""}
                   onChange={handleChange}
                   className="border rounded w-full p-2"
                 />
@@ -315,4 +312,4 @@ const PageAd = () => {
   );
 };
 
-export default PageAd;
+export default CreatePage;

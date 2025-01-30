@@ -25,45 +25,52 @@ const PagePreview = () => {
               alt="Profile"
               className="w-[150px] h-[150px] rounded-full object-cover border-4 border-white"
             />
+          ) : pageData.businessProfilePicture ? (
+            <img
+              src={pageData.businessProfilePicture}
+              alt="Profile"
+              className="w-[150px] h-[150px] rounded-full object-cover border-4 border-white"
+            />
           ) : (
             <AccountCircleIcon style={{ fontSize: "150px", fill: "#949494" }} />
           )}
+
         </div>
       </div>
       <div className="mt-[54px] w-full">
         <h3 className="text-2xl">{pageData.businessName || "Business Name"}</h3>
         <h6 className="text-xs mt-1 bg-[#2dd56a5e] text-[#1a8e44] w-fit px-4 py-1 rounded-lg text-center">
-          {pageData.businessType || "Business Type"}
+          {pageData.businessCategory || "Business Type"}
         </h6>
         <p className="text-sm mt-2 text-[#5a5a5a] w-fit">
-          {pageData.businessBio || "Your Business Bio..."}
+          {pageData.businessDescription || "Your Business Bio..."}
         </p>
         <div className="flex items-center gap-2 mt-4 pt-3 border-t border-[#dedede] w-full">
           <LanguageIcon style={{ fontSize: "24px", fill: "#797979" }} />
           <p className="text-base text-black w-fit">
-            {pageData.website || "Website URL"}
+            {pageData.businessUrl || "Website URL"}
           </p>
         </div>
         <div className="flex items-center gap-2 mt-4 w-full">
           <LocalPhoneIcon style={{ fontSize: "24px", fill: "#797979" }} />
           <p className="text-base text-black w-fit">
-            {pageData.phoneNumber || "Phone Number"}
+            {pageData.businessPhoneNumber || "Phone Number"}
           </p>
         </div>
         <div className="flex items-center gap-2 mt-4 w-full">
           <AlternateEmailIcon style={{ fontSize: "24px", fill: "#797979" }} />
           <p className="text-base text-black w-fit">
-            {pageData.emailAddress || "Email Address"}
+            {pageData.businessEmail || "Email Address"}
           </p>
         </div>
         <div className="flex gap-1 flex-col mt-4 pt-3 border-t border-[#dedede] w-full">
           <p className="text-sm text-[#5a5a5a] w-fit">Address</p>
           <p className="text-sm text-black w-fit">
-            {pageData.address || "Your Business Address..."}
+            {pageData.businessAddress || "Your Business Address..."}
           </p>
           <p className="text-sm text-black w-fit">
-            {pageData.city
-              ? `${pageData.city}, ${pageData.postCode || ""}`
+            {pageData.businessCity
+              ? `${pageData.businessCity}, ${pageData.businessPostCode || ""}`
               : ""}
           </p>
         </div>

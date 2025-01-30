@@ -28,8 +28,10 @@ import ProfileDetails from "./Components/Core/Auth/ProfileDetails";
 import CommunityAddress from "./Components/Core/Auth/CommunityAddress";
 import Verification from "./Components/Core/Auth/Verification";
 import Profession from "./Components/Core/Auth/Profession";
-import Page from "./Components/Core/Page/Page";
-import PageAd from "./Components/Core/Page/PageAd"
+import CreatePage from "./Components/Core/Page/CreatePage";
+import ViewPage from "./Components/Core/Page/ViewPage"
+import AdCenter from "./Components/Core/Page/AdCenter"
+import Pages from "./pages/Pages";
 function App() {
   return (
     <div>
@@ -209,16 +211,32 @@ function App() {
             path="/dashboard/page"
             element={
               <PrivateRoute>
-                <Page />
+                <Pages />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/dashboard/page/create"
+            element={
+              <PrivateRoute>
+                <CreatePage />
               </PrivateRoute>
             }
           />
            <Route
-            path="/dashboard/page/ad"
+            path="/dashboard/page/view"
             element={
               <PrivateRoute>
-                <PageAd />
+                <ViewPage />
               </PrivateRoute>
+            }
+          />
+          <Route
+            path="/dashboard/page/adCenter"
+            element={
+             
+                <AdCenter />
+          
             }
           />
           <Route
