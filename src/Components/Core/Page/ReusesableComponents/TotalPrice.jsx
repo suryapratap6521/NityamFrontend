@@ -26,7 +26,6 @@ const TotalPrice = () => {
     } else if (adData.audianceType === "byCity" && adData.city) {
         numberOfItems = adData.city.length; // Assuming `city` is an array
     } else if (adData.audianceType === "byCommunity" && adData.communities) {
-        console.log("cc", adData.communities)
         numberOfItems = adData.communities.length; // Assuming `communities` is an array
     }
 
