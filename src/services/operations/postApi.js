@@ -173,3 +173,16 @@ export const replyLike=async(postId,commentId,replyId,dispatch,token)=>{
     throw error;
   }
 }
+
+export const nestedReply=async( postId, commentId, replyId,text,dispatch,token)=>{
+  try {
+    const response=await apiConnector("POST",postEndpoints.NESTED_REPLY,{postId, commentId, replyId,text},{
+      Authorization: `Bearer ${token}`,
+    })
+   
+  } catch (error) {
+    console.error("Error commenting post:", error);
+    toast.error("Error commenting post");
+    throw error;
+  }
+}

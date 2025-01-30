@@ -6,6 +6,7 @@ import SinglePost from "./SinglePost";
 import 'tailwindcss/tailwind.css';
 import CommentSection from "./CommentsSection";
 
+
 const Posts = () => {
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
@@ -77,7 +78,7 @@ const Posts = () => {
  
   console.log(token,"--------------token");
   console.log(posts);
-  if(posts===null || posts.length===0){
+  if(posts===null || posts?.length===0){
     return <div>No Posts available</div>
   }
 
@@ -124,6 +125,9 @@ const Posts = () => {
   const handleExpandClick = (postId) => {
     setExpandedPostId(expandedPostId === postId ? null : postId);
   };
+
+
+
 
   return (
     <div className="posts-container">
