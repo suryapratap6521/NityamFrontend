@@ -3,6 +3,9 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     pageData: null,
     loading: false,
+    userPage:null,
+    adData:[]
+
 };
 
 const pageSlice = createSlice({
@@ -15,8 +18,14 @@ const pageSlice = createSlice({
         setLoading(state, action) {
             state.loading = action.payload;
         },
+        setUserPages(state, action) {
+            state.userPage = action.payload;
+        },
+        setAdPages(state, action) {
+            state.adData = action.payload;
+        }
     },
 });
 
-export const { setPageData, setLoading } = pageSlice.actions;
+export const { setPageData, setLoading,setUserPages,setAdPages } = pageSlice.actions;
 export default pageSlice.reducer;

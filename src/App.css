@@ -1292,3 +1292,10 @@ html {
     transform: translate3d(0, 0, 0);
   }
 }
+.slick-prev, .slick-next {
+    color: black !important; /* Change the arrow color to black */
+  }
+  
+  .slick-prev:before, .slick-next:before {
+    color: black !important; /* Change the arrow icon color */
+  }
