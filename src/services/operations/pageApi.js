@@ -40,10 +40,10 @@ export const fetchPagesByUser = async (userId, token, dispatch, isLoading) => {
   };
 
   try {
-    const response = await apiConnector("GET", pageEndpoints.GET_PAGES, body, {
+    const response = await apiConnector("GET", pageEndpoints.GET_PAGES,null,{
       Authorization: `Bearer ${token}`,
     });
-    console.log(response.data);
+    console.log(response.data,"------>pages data");
     dispatch(setUserPages(response.data.data));
     
     return response.data; // Return the response data
@@ -58,27 +58,27 @@ export const fetchPagesByUser = async (userId, token, dispatch, isLoading) => {
 };
 
 
-export const fetchPageDetails = async (pageId,token, dispatch) => {
-  const toastId = toast.loading("Loading...");
-  dispatch(setLoading(true));
-  let body ={
-    pageId: pageId
-  }
-  try {
-      const response = await apiConnector("GET",  pageEndpoints.VIEW_PAGE, body, {
-          Authorization: `Bearer ${token}`,
-      });
-      console.log(response.data);
-      dispatch(setPageData(response.data.data));
-      
-      return response.data; // Return the response data
+export const fetchPageDetails = async (pageId, token, dispatch) => {
+  if (!pageId || !token) return; // Prevent API call if no ID or token
 
+  dispatch(setLoading(true));
+  const toastId = toast.loading("Loading...");
+
+  try {
+    const response = await apiConnector("POST", pageEndpoints.VIEW_PAGE, { pageId }, {
+      Authorization: `Bearer ${token}`,
+    });
+
+    if (!response?.data?.success) throw new Error("Could not fetch page details");
+
+    dispatch(setPageData(response.data.data)); // Update Redux state
+    return response.data;
   } catch (error) {
-      console.error(error);
-      toast.error("Problem in fetching the page details");
-      throw error; // Rethrow the error so that it can be caught in the component
+    console.error("Error fetching page details:", error);
+    toast.error("Failed to load page details");
+    throw error;
   } finally {
-      dispatch(setLoading(false));
-      toast.dismiss(toastId);
+    dispatch(setLoading(false));
+    toast.dismiss(toastId);
   }
-}
+};

@@ -26,17 +26,19 @@ const AdCenter = () => {
   const [selectedCities, setSelectedCities] = useState([]);
 
 
-  const handleStateChange = (selectedState) => {
-    setSelectedStates(selectedState);
-    dispatch(setAdData({ state: selectedState.name }));
-    setSelectedCities([]); // Reset city selection when state changes
-    dispatch(setAdData({ city: "" }));
+  const handleStateChange = (selectedStates) => {
+    setSelectedStates(selectedStates);
+    dispatch(setAdData({ states: selectedStates.map(state => state.name) })); // Fix: store array of states
+    setSelectedCities([]); // Reset city selection
+    dispatch(setAdData({ cities: [] })); // Fix: Reset cities when state changes
   };
+  
 
-  const handleCityChange = (selectedCity) => {
-    setSelectedCities(selectedCity);
-    dispatch(setAdData({ city: selectedCity.name }));
+  const handleCityChange = (selectedCities) => {
+    setSelectedCities(selectedCities);
+    dispatch(setAdData({ cities: selectedCities.map(city => city.name) })); // Fix: store array of cities
   };
+  
   const businessTypes = [
     "Contact Us",
     "Send Enquiry",
@@ -68,13 +70,19 @@ const AdCenter = () => {
   );
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-
+    
     if (files.length > 5) {
       alert("You can only upload up to 5 images.");
       return;
     }
-
-    dispatch(setAdData({ images: files }));
+  
+    // Convert files to an array of objects for preview purposes
+    const imagePreviews = files.map(file => ({
+      url: URL.createObjectURL(file),
+      file: file
+    }));
+  
+    dispatch(setAdData({ images: imagePreviews }));
   };
 
 
@@ -85,94 +93,87 @@ const AdCenter = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const today = new Date().toISOString().split("T")[0]; // Get today's date (YYYY-MM-DD)
-    const startIsoString = new Date(`${today}T${adData.start}:00.000Z`).toISOString();
-    const endIsoString = new Date(`${today}T${adData.end}:00.000Z`).toISOString();
+  
+    const today = new Date().toISOString().split("T")[0];
     const startDateTime = new Date(adData.startDate);
     const endDateTime = new Date(adData.endDate);
-
-    let state, city, communities;
-
-    // Determine which field to include based on audianceType
-    if (adData.audianceType === 'byState') {
-      state = adData.state;
-    } else if (adData.audianceType === 'byCity') {
-      city = adData.city;
-    } else if (adData.audianceType === 'byCommunity') {
-      communities = adData.communities;
+  
+    if (startDateTime < new Date(today)) {
+      alert("Start date cannot be in the past.");
+      return;
     }
-
-    // Construct the data object
-    const data = {
-      title: adData.title,
-      timeSlot: {
-        start: startIsoString,
-        end: endIsoString,
-      },
-      ageGroup: {
-        minAge: adData.minAge,
-        maxAge: adData.maxAge,
-      },
-      dateSlot: {
-        startDate: startDateTime,
-        endDate: endDateTime,
-      },
-      optionType: adData.audianceType,
-      pageId: pageData._id,
-      price: 1000,
-      buttonLabel: {
-        type: adData.type,
-        value: adData.value,
-      },
-      ...(state && { state }),        // Add state only if defined
-      ...(city && { city }),          // Add city only if defined
-      ...(communities && { communities }), // Add communities only if defined
-    };
-    //console.log(data)
-
+  
+    if (endDateTime <= startDateTime) {
+      alert("End date must be after the start date.");
+      return;
+    }
+  
+    if (adData.minAge < 5 || adData.maxAge > 90 || adData.minAge > adData.maxAge) {
+      alert("Invalid age range. Min age must be at least 5, and max age cannot exceed 90.");
+      return;
+    }
+  
+    let selectedStates, selectedCities, selectedCommunities;
+  
+    if (adData.audianceType === "byState") {
+      selectedStates = adData.states;
+    } else if (adData.audianceType === "byCity") {
+      selectedCities = adData.cities;
+    } else if (adData.audianceType === "byCommunity") {
+      selectedCommunities = adData.communities;
+    }
+  
+    // Create FormData
     const formData = new FormData();
     formData.append("title", adData.title);
     formData.append("pageId", pageData._id);
-    formData.append("price", 1000);
-
-    // Append time slot
-    formData.append("timeSlot[start]", startIsoString);
-    formData.append("timeSlot[end]", endIsoString);
-
+    formData.append("price", 1000); // Assuming price is static
+  
     // Append age group
     formData.append("ageGroup[minAge]", adData.minAge);
     formData.append("ageGroup[maxAge]", adData.maxAge);
-
+  
     // Append date slot
-    formData.append("dateSlot[startDate]", startDateTime);
-    formData.append("dateSlot[endDate]", endDateTime);
-
-    // Append option type
-    formData.append("optionType", adData.optionType);
-
-    // Append locations
-    // adData.states.forEach((state) => formData.append("states[]", state));
-    // adData.cities.forEach((city) => formData.append("cities[]", city));
-
-    // Append selected communities
-    formData.append("communities[]", communities);
-
-    // Append button label
+    formData.append("dateSlot[startDate]", startDateTime.toISOString());
+    formData.append("dateSlot[endDate]", endDateTime.toISOString());
+  
+    // Append audience type (optionType)
+    formData.append("optionType", adData.audianceType);  // ✅ Fixed this
+    console.log(adData.audianceType)
+    // Append location filters based on selected option
+    if (selectedStates) {
+      selectedStates.forEach((state) => formData.append("states", state));
+    }
+    if (selectedCities) {
+      selectedCities.forEach((city) => formData.append("cities", city));
+    }
+    if (selectedCommunities) {
+      selectedCommunities.forEach((community) => formData.append("communities", community));
+    }
+  
+    // Append button data
     formData.append("buttonLabel[type]", adData.type);
     formData.append("buttonLabel[value]", adData.value);
-
-    // Append images
-    //adData.images.forEach((image) => formData.append("media", image));
+  
+    // Append image files (for uploads)
+    if (adData.images && Array.isArray(adData.images)) {
+      adData.images.forEach((imageObj) => {
+        formData.append("imagesArray", imageObj.file);
+      });
+    }
+  
     try {
-      const response = await createAd(data, dispatch, token);
-      // alert("Business page created successfully!");
-      // console.log("Response:", response);
+      const response = await createAd(formData, dispatch, token);
+      alert("Ad created successfully!");
+      console.log("Response:", response);
     } catch (error) {
       console.error("Error:", error);
-      alert("Failed to create business page. Please try again.");
+      alert("Failed to create ad. Please try again.");
     }
   };
-
+  
+  
+  
   return (
     <div className="container items-start border-t-0 flex flex-row mx-auto p-6">
       <div className="w-3/5 p-4">
@@ -295,7 +296,7 @@ const AdCenter = () => {
             </div>
 
             {/* Time Slot */}
-            <label className="text-lg font-semibold">Time Slot</label>
+            {/* <label className="text-lg font-semibold">Time Slot</label>
             <div className="flex gap-2">
               <div className="mb-4 flex-1">
                 <label htmlFor="start" className="block text-gray-600 font-medium">Start Date</label>
@@ -319,7 +320,7 @@ const AdCenter = () => {
                   className="border rounded w-full p-2"
                 />
               </div>
-            </div>
+            </div> */}
 
             {/* Age Group */}
             <label className="text-lg font-semibold">Target Audience Age Group</label>

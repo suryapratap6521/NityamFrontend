@@ -1,125 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPageData } from "../../../slices/pageSlice";
 import PagePreview from "./ReusesableComponents/PagePreview";
-import { createPage, fetchPageDetails } from "../../../services/operations/pageApi";
+import { fetchPageDetails } from "../../../services/operations/pageApi";
+import { Link } from "react-router-dom";
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import InsightsIcon from '@mui/icons-material/Insights';
 import AdsClickIcon from '@mui/icons-material/AdsClick';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import RocketIcon from '@mui/icons-material/Rocket';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { Link } from 'react-router-dom';
+
 const ViewPage = () => {
   const [step, setStep] = useState(1);
-  const [id, setId] = useState("678611ced44199055cb22c60");
-  const [searchTerm, setSearchTerm] = useState("");
+  const pageId = "678611ced44199055cb22c60";  // Assuming this is fixed
   const dispatch = useDispatch();
   const pageData = useSelector((state) => state.page.pageData || {});
   const token = useSelector((state) => state.auth.token);
-  const { user } = useSelector((state) => state.profile);
-
-  //console.log("678611ced44199055cb22c60");
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await fetchPageDetails(id, token, dispatch);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchData();
-  }, [token, dispatch]);
-  const businessTypes = [
-    "Retail & E-commerce",
-    "Clothing & Accessories",
-    "Electronics",
-    "Grocery Stores",
-    "Jewelry & Watches",
-    "Furniture Stores",
-    "Books & Stationery",
-    "Beauty & Cosmetics",
-    "Sports Equipment",
-    "Pet Supplies",
-    "Toy Stores",
-    "Kitchenware",
-    "Outdoor Gear",
-    "Footwear Stores",
-    "Home Appliances",
-    "Gifts & Souvenirs",
-    "Eyewear Shops",
-    "Organic Products",
-    "Baby Products",
-    "Medical Supplies",
-    "Automotive Parts",
-    "Craft Supplies",
-    "Thrift Stores",
-    "Custom Merchandise",
-    "Antiques & Collectibles",
-    "Gardening Supplies",
-    "Art Supplies",
-    "Luxury Goods",
-    "Mobile Phones & Accessories",
-    "Health Supplements",
-    "Musical Instruments",
-    "Tech Gadgets",
-    "Luggage & Travel Gear",
-    "Lighting & Fixtures",
-    "Party Supplies",
-    "Stationery Artifacts",
-    "DIY Craft Stores",
-    "Discount Outlets",
-    "Flagship Stores",
-    "Seasonal Shops",
-  ];
-
-  const filteredBusinessTypes = businessTypes.filter((type) =>
-    type.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const handleNext = () => {
-    if (step < 3) setStep(step + 1);
-  };
+  const hasFetched = useRef(false);  // Prevent duplicate API calls
 
   useEffect(() => {
-    console.log(pageData)
-  }, []);
+    if (!token || hasFetched.current) return; // Ensure token exists & avoid double calls
+    hasFetched.current = true; // Mark as fetched to avoid re-fetching
+    fetchPageDetails(pageId, token, dispatch);
+  }, [token, dispatch]); // Only dependent on token changes
 
-  const handleBack = () => {
-    if (step > 1) setStep(step - 1);
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    dispatch(setPageData({ ...pageData, [name]: value }));
-  };
-
-  const getPageData = async (e) => {
-    try {
-
-      const response = await fetchPageDetails(id, token);
-      console.log("Response:", response);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
-
-  const handleProfilePicChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        dispatch(
-          setPageData({
-            ...pageData,
-            profilePic: reader.result,
-            businessProfilePicture: file,
-          })
-        );
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  const handleNext = () => setStep((prev) => Math.min(prev + 1, 3));
+  const handleBack = () => setStep((prev) => Math.max(prev - 1, 1));
 
   return (
     <div className="container items-start border-t-0 flex flex-row mx-auto p-6">

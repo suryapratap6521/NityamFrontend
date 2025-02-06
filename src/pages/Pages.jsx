@@ -11,12 +11,12 @@ const Pages = () => {
     const dispatch = useDispatch();
     const pageData = useSelector((state) => state.page.userPage || []);
     const loading = useSelector((state) => state.page.loading || false);
-    const token = useSelector((state) => state.auth.token);
+    const {token} = useSelector((state) => state.auth);
     const { user } = useSelector((state) => state.profile);
-
-    //console.log("678611ced44199055cb22c60");
+   
     useEffect(() => {
         const fetchData = async () => {
+            
             try {
                 if (!loading) {
                     await fetchPagesByUser(user._id, token, dispatch);
