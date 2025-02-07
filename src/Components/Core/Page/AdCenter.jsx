@@ -7,7 +7,7 @@ import { fetchAllCommunities } from "../../../services/operations/adApi";
 import Select from "react-select";
 import { CitySelect, StateSelect } from "react-country-state-city";
 import { createAd } from "../../../services/operations/adApi";
-
+import axios from "axios";
 const cityOptions = [
   { value: "new-york", label: "New York" },
   { value: "los-angeles", label: "Los Angeles" },
@@ -22,23 +22,27 @@ const AdCenter = () => {
   const pageData = useSelector((state) => state.page.pageData || {});
   const communitiesData = useSelector((state) => state.ad.communities || []);
   const token = useSelector((state) => state.auth.token);
+  const [states, setStates] = useState([]);
+  const [cities, setCities] = useState([]);
   const [selectedStates, setSelectedStates] = useState([]);
   const [selectedCities, setSelectedCities] = useState([]);
-
-
-  const handleStateChange = (selectedStates) => {
-    setSelectedStates(selectedStates);
-    dispatch(setAdData({ states: selectedStates.map(state => state.name) })); // Fix: store array of states
-    setSelectedCities([]); // Reset city selection
-    dispatch(setAdData({ cities: [] })); // Fix: Reset cities when state changes
+  console.log(selectedCities);
+  console.log(selectedStates);
+  const API_KEY = "emRDWFZrcTRpMWxUNHdhTEluQktQbFFoZUhoRFhLS2Znc2RNSHJnRQ==";
+  const BASE_URL = "https://api.countrystatecity.in/v1/countries/IN";
+  console.log(selectedStates);
+  console.log(selectedCities)
+  const handleStateChange = (selectedState) => {
+    setSelectedStates(selectedState);
+    dispatch(setAdData({ state: selectedState.name }));
+    setSelectedCities([]); // Reset city selection when state changes
+    dispatch(setAdData({ city: "" }));
   };
-  
 
-  const handleCityChange = (selectedCities) => {
-    setSelectedCities(selectedCities);
-    dispatch(setAdData({ cities: selectedCities.map(city => city.name) })); // Fix: store array of cities
+  const handleCityChange = (selectedCity) => {
+    setSelectedCities(selectedCity);
+    dispatch(setAdData({ city: selectedCity.name }));
   };
-  
   const businessTypes = [
     "Contact Us",
     "Send Enquiry",
@@ -49,6 +53,54 @@ const AdCenter = () => {
     "Subscribe Us",
     "Fill Form"
   ];
+
+  useEffect(() => {
+    const fetchStates = async () => {
+      try {
+        const response = await axios.get(`${BASE_URL}/states`, {
+          headers: { "X-CSCAPI-KEY": API_KEY },
+        });
+        setStates(
+          response.data.map((state) => ({
+            value: state.iso2,
+            label: state.name,
+          }))
+        );
+      } catch (error) {
+        console.error("Error fetching states:", error);
+      }
+    };
+    fetchStates();
+  }, []);
+
+  useEffect(() => {
+    if (selectedStates.length > 0) {
+      const fetchCities = async () => {
+        try {
+          let allCities = [];
+          for (let state of selectedStates) {
+            const response = await axios.get(`${BASE_URL}/states/${state.value}/cities`, {
+              headers: { "X-CSCAPI-KEY": API_KEY },
+            });
+            allCities = [
+              ...allCities,
+              ...response.data.map((city) => ({
+                value: city.name,
+                label: city.name,
+              })),
+            ];
+          }
+          setCities(allCities);
+        } catch (error) {
+          console.error("Error fetching cities:", error);
+        }
+      };
+      fetchCities();
+    } else {
+      setCities([]);
+    }
+  }, [selectedStates]);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -113,13 +165,13 @@ const AdCenter = () => {
       return;
     }
   
-    let selectedStates, selectedCities, selectedCommunities;
+    let  selectedCommunities;
   
-    if (adData.audianceType === "byState") {
-      selectedStates = adData.states;
-    } else if (adData.audianceType === "byCity") {
-      selectedCities = adData.cities;
-    } else if (adData.audianceType === "byCommunity") {
+    // if (adData.audianceType === "byState") {
+    //   selectedStates = adData.states;
+    // } else if (adData.audianceType === "byCity") {
+    //   selectedCities = adData.cities;
+    if (adData.audianceType === "byCommunity") {
       selectedCommunities = adData.communities;
     }
   
@@ -139,13 +191,17 @@ const AdCenter = () => {
   
     // Append audience type (optionType)
     formData.append("optionType", adData.audianceType);  // ✅ Fixed this
-    console.log(adData.audianceType)
+    // console.log(adaudianceType)
     // Append location filters based on selected option
     if (selectedStates) {
-      selectedStates.forEach((state) => formData.append("states", state));
+      console.log(selectedStates);
+      let statesLabels = selectedStates.map(item => item.label);
+      console.log(statesLabels);
+      formData.append("states", JSON.stringify(statesLabels)); // Use JSON.stringify to ensure proper array formatting in the form data
     }
     if (selectedCities) {
-      selectedCities.forEach((city) => formData.append("cities", city));
+      let cityLabels = selectedCities.map(item => item.label);
+       formData.append("cities", JSON.stringify(cityLabels));
     }
     if (selectedCommunities) {
       selectedCommunities.forEach((community) => formData.append("communities", community));
@@ -244,25 +300,25 @@ const AdCenter = () => {
               {adData.audianceType === "byState" || adData.audianceType === "byCity" ? (
                 <div className="mb-4 flex-1">
                   <label className="block text-gray-600 font-medium">Select State</label>
-                  <StateSelect
-                    isMulti
-                    countryid={101} // Fixed to India (Country ID 101)
-                    onChange={handleStateChange}
-                    placeHolder="Select State"
-                  />
+                  <Select
+          isMulti
+          options={states}
+        value={selectedStates}
+        onChange={setSelectedStates}
+      />
                 </div>
               ) : null}
 
               {adData.audianceType === "byCity" ? (
                 <div className="mb-4 flex-1">
                   <label className="block text-gray-600 font-medium">Select Cities</label>
-                  <CitySelect
-                    countryid={101}
-                    stateid={selectedStates.id}
-                    onChange={handleCityChange}
-                    placeHolder="Select City"
-                    disabled={!selectedStates.id}
-                  />
+                  <Select
+        isMulti
+        options={cities}
+        value={selectedCities}
+        onChange={setSelectedCities}
+        isDisabled={selectedStates.length === 0}
+      />
                 </div>
               ) : null}
 
