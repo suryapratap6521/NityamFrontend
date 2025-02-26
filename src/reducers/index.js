@@ -6,13 +6,17 @@ import postSlice from '../slices/postSlice';
 import chatSlice from '../slices/chatSlice';
 import pageSlice from "../slices/pageSlice";
 import adSlice from "../slices/adSlice";
+import notificationSlice from "../slices/notificationSlice";
 const rootReducer = combineReducers({
   auth: authSlice,
   profile: profileSlice,
   post: postSlice,
   chat:chatSlice,
   page:pageSlice,
-  ad: adSlice
+  ad: adSlice,
+  notification: notificationSlice,
+
+
 });
 
 export default rootReducer;

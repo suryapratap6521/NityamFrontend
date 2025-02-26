@@ -1,295 +1,454 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import Loader from "../../Common/Loader";
-import {
-  getAllPosts,
-  likePost,
-  unlikePost,
-  deletePost,
-  comment,
-  commentDelete,
-} from "../../../services/operations/postApi";
-import {
-  Card,
-  CardHeader,
-  CardMedia,
-  CardContent,
-  CardActions,
-  Avatar,
-  IconButton,
-  Typography,
-  Popover,
-  Button,
-  TextField,
-  Grid,
-  Container,
-  Box,
-  Collapse,
-} from "@mui/material";
-import { red } from "@mui/material/colors";
-import {
-  Share as ShareIcon,
-  MoreVert as MoreVertIcon,
-  Favorite as FavoriteIcon,
-  FavoriteBorder as FavoriteBorderIcon,
-  Send as SendIcon,
-  Comment as CommentIcon,
-} from "@mui/icons-material";
-import { calculateTime } from "../../../utils/miliToHours";
-import { setPosts } from "../../../slices/postSlice";
-import CreatePost from "./CreatePost";
+import React, { useState, useRef } from 'react';
+import { createPost } from '../../../services/operations/postApi';
+import { useSelector } from 'react-redux';
+import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faTimes, 
+  faPencilAlt, 
+  faChartBar, 
+  faCalendarAlt,
+  faPhotoVideo,
+  faFile,
+  faSmile,
+  faUserCircle,
+  faPlus,
+  faTrashAlt,
+  faMapMarkerAlt
+} from '@fortawesome/free-solid-svg-icons';
+import EmojiPicker from 'emoji-picker-react';
 
-const Posts = () => {
-  const dispatch = useDispatch();
-  const { token } = useSelector((state) => state.auth);
-  const { user } = useSelector((state) => state.profile);
-  const { posts } = useSelector((state) => state.post);
-  const [loading, setLoading] = useState(true);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [selectedPost, setSelectedPost] = useState(null);
-  const [commentText, setCommentText] = useState("");
-  const [expandedPostId, setExpandedPostId] = useState(null);
+const SideBarPost = () => {
+  const [isOpen, setIsOpen] = useState(true);
+  const [activeTab, setActiveTab] = useState('post');
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const textareaRef = useRef(null);
+  
+  // Post states
+  const [currentPost, setCurrentPost] = useState({ 
+    title: '', 
+    postType: 'post', 
+    mediaFiles: [], 
+    mediaPreviews: [] 
+  });
+  
+  const [currentPoll, setCurrentPoll] = useState({ 
+    title: '', 
+    postType: 'poll', 
+    options: ['', ''] 
+  });
+  
+  const [currentEvent, setCurrentEvent] = useState({
+    title: '',
+    postType: 'event',
+    location: '',
+    startDate: '',
+    endDate: '',
+    hostedBy: '',
+    venue: '',
+    description: '',
+    media: null,
+  });
+  
+  const navigate = useNavigate();
+  const { token, user } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    const getPosts = async () => {
-      try {
-        const response = await getAllPosts(token, dispatch);
-        dispatch(setPosts(response));
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-        setLoading(false);
-      }
-    };
+  // Emoji Picker Handler
+  const handleEmojiClick = (emojiData) => {
+    const textarea = textareaRef.current;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const value = textarea.value;
+    
+    const newValue = 
+      value.substring(0, start) + 
+      emojiData.emoji + 
+      value.substring(end);
+    
+    setCurrentPost(prev => ({
+      ...prev,
+      title: newValue
+    }));
+    
+    // Move cursor position
+    setTimeout(() => {
+      textarea.selectionStart = textarea.selectionEnd = start + emojiData.emoji.length;
+    }, 0);
+    
+    setShowEmojiPicker(false);
+  };
 
-    getPosts();
-  }, [token, dispatch]);
+  // Media Handling
+  const handleMediaUpload = (e) => {
+    const files = Array.from(e.target.files);
+    const previews = files.map((file) => URL.createObjectURL(file));
+    setCurrentPost(prev => ({
+      ...prev,
+      mediaFiles: [...prev.mediaFiles, ...files],
+      mediaPreviews: [...prev.mediaPreviews, ...previews],
+    }));
+  };
 
-  const handleLike = async (postId) => {
-    try {
-      await likePost(postId, token, dispatch);
-    } catch (error) {
-      console.error("Error liking post:", error);
+  const removeMediaItem = (index) => {
+    setCurrentPost(prev => ({
+      ...prev,
+      mediaFiles: prev.mediaFiles.filter((_, i) => i !== index),
+      mediaPreviews: prev.mediaPreviews.filter((_, i) => i !== index),
+    }));
+  };
+
+  // Poll Handlers
+  const addPollOption = () => {
+    setCurrentPoll(prev => ({ ...prev, options: [...prev.options, ''] }));
+  };
+
+  const updatePollOption = (index, value) => {
+    setCurrentPoll(prev => ({
+      ...prev,
+      options: prev.options.map((option, i) => (i === index ? value : option)),
+    }));
+  };
+
+  const removePollOption = (index) => {
+    setCurrentPoll(prev => ({
+      ...prev,
+      options: prev.options.filter((_, i) => i !== index),
+    }));
+  };
+
+  // Event Media Handling
+  const handleEventMediaUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setCurrentEvent(prev => ({ ...prev, media: file }));
     }
   };
 
-  const handleUnlike = async (postId) => {
+  // Submit Handler
+  const handleSubmit = async () => {
     try {
-      await unlikePost(postId, token, dispatch);
+      const formData = new FormData();
+      // Add your validation and form data handling here
+      await createPost(formData, token);
+      closeModal();
     } catch (error) {
-      console.error("Error unliking post:", error);
+      console.error('Error creating post:', error);
     }
   };
 
-  const handlePopoverOpen = (event, postId) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedPost(postId);
+  // Modal Controls
+  const closeModal = () => {
+    navigate('/dashboard');
+    resetForms();
+    setActiveTab('post');
   };
 
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-    setSelectedPost(null);
+  const resetForms = () => {
+    setCurrentPost({ title: '', postType: 'post', mediaFiles: [], mediaPreviews: [] });
+    setCurrentPoll({ title: '', postType: 'poll', options: ['', ''] });
+    setCurrentEvent({
+      title: '',
+      postType: 'event',
+      location: '',
+      startDate: '',
+      endDate: '',
+      hostedBy: '',
+      venue: '',
+      description: '',
+      media: null,
+    });
   };
-
-  const handleDeletePost = async () => {
-    try {
-      await deletePost(token, selectedPost);
-      const updatedPosts = posts.filter((post) => post._id !== selectedPost);
-      dispatch(setPosts(updatedPosts));
-      handlePopoverClose();
-    } catch (error) {
-      console.error("Error deleting post:", error);
-    }
-  };
-
-  const handleComment = async (postId) => {
-    try {
-      await comment(postId, commentText, user._id, token, dispatch);
-      setCommentText("");
-    } catch (error) {
-      console.error("Error commenting post:", error);
-    }
-  };
-
-  const handleCommentDelete = async (postId, commentId) => {
-    try {
-      await commentDelete(postId, commentId, dispatch, token);
-    } catch (error) {
-      console.error("Error in commenting delete", error);
-    }
-  };
-
-  const handleExpandClick = (postId) => {
-    setExpandedPostId(expandedPostId === postId ? null : postId);
-  };
-
-  const open = Boolean(anchorEl);
 
   return (
-    <Container>
-      <CreatePost />
-      <div className="sectionCenter bg-gray-100 p-4">
-        <div className="mainPosts bg-white rounded-lg mb-2">
-          <Grid container spacing={4}>
-            {loading ? (
-              <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
-                <Loader />
-              </Box>
-            ) : (
-              posts.map((post) => (
-                <Grid item xs={12} key={post._id}>
-                  <Card sx={{ maxWidth: 800, mx: "auto", my: 4 }}>
-                    <CardHeader
-                      avatar={
-                        <Avatar
-                          sx={{ bgcolor: red[500] }}
-                          aria-label="user"
-                          src={post?.postByUser?.image}
-                        />
-                      }
-                      action={
-                        post.postByUser._id === user._id && (
-                          <IconButton
-                            aria-label="settings"
-                            onClick={(event) => handlePopoverOpen(event, post._id)}
-                          >
-                            <MoreVertIcon />
-                          </IconButton>
-                        )
-                      }
-                      title={post.postByUser?.firstName}
-                      subheader={calculateTime(post?.createdAt)}
-                    />
-                    <CardMedia
-                      component="img"
-                      height="400"
-                      className="post h-96 bg-cover rounded bg-center"
-                      image={post?.imgPath}
-                      alt="Post"
-                      sx={{ backgroundPosition: "center", backgroundSize: "cover" }}
-                    />
-                    <CardContent>
-                      <Typography className="description px-4" variant="h6" color="text.primary" gutterBottom>
-                        {post?.title}
-                      </Typography>
-                      <Typography className="description px-4" variant="body1" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-                        {post?.content}
-                      </Typography>
-                    </CardContent>
-                    <CardActions sx={{ display: "flex", justifyContent: "space-between" }}>
-                      <Box>
-                        <IconButton
-                          aria-label="add to favorites"
-                          onClick={() =>
-                            post.likes.includes(user._id)
-                              ? handleUnlike(post._id)
-                              : handleLike(post._id)
-                          }
-                        >
-                          {post.likes.includes(user._id) ? (
-                            <FavoriteIcon sx={{ color: "red" }} />
-                          ) : (
-                            <FavoriteBorderIcon />
-                          )}
-                        </IconButton>
-                        <Typography variant="body2">{post.likes.length} Likes</Typography>
-                      </Box>
-                      <Box>
-                        <IconButton aria-label="comment" onClick={() => handleExpandClick(post._id)}>
-                          <CommentIcon />
-                        </IconButton>
-                        <Typography variant="body2">{post.comments.length} Comments</Typography>
-                      </Box>
-                      <IconButton aria-label="share">
-                        <ShareIcon />
-                      </IconButton>
-                    </CardActions>
-                    <Collapse in={expandedPostId === post._id} timeout="auto" unmountOnExit>
-                      <CardContent>
-                        <form
-                          onSubmit={(e) => {
-                            e.preventDefault();
-                            handleComment(post._id);
-                          }}
-                        >
-                          <TextField
-                            fullWidth
-                            variant="outlined"
-                            value={commentText}
-                            onChange={(e) => setCommentText(e.target.value)}
-                            placeholder="Add a comment..."
-                            InputProps={{
-                              endAdornment: (
-                                <IconButton type="submit" color="primary">
-                                  <SendIcon />
-                                </IconButton>
-                              ),
-                            }}
-                          />
-                        </form>
-                        {post.comments.map((comm) => (
-                          <Box
-                            key={comm._id}
-                            sx={{
-                              mt: 1,
-                              p: 1,
-                              bgcolor: "#f9f9f9",
-                              borderRadius: 1,
-                              boxShadow: 1,
-                            }}
-                          >
-                            <Typography variant="body2" color="text.primary">
-                              <strong>{comm.commentedBy.firstName}</strong>
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                              {comm.text}
-                            </Typography>
-                            <Typography variant="caption" color="text.secondary">
-                              {calculateTime(comm.commentedAt)}
-                            </Typography>
-                            <Button
-                              size="small"
-                              color="secondary"
-                              onClick={() => handleCommentDelete(post._id, comm._id)}
-                              sx={{ mt: 1 }}
-                            >
-                              Delete
-                            </Button>
-                          </Box>
-                        ))}
-                      </CardContent>
-                    </Collapse>
-                  </Card>
-                </Grid>
-              ))
-            )}
-          </Grid>
-          <Popover
-            open={open}
-            anchorEl={anchorEl}
-            onClose={handlePopoverClose}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "left",
-            }}
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "left",
-            }}
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn">
+      <div className="bg-white rounded-xl w-full max-w-2xl mx-4 shadow-xl transform transition-all duration-300">
+        {/* Header */}
+        <div className="flex items-center justify-between p-4 border-b">
+          <div className="flex items-center space-x-2">
+            <FontAwesomeIcon 
+              icon={faUserCircle} 
+              className="w-10 h-10 text-gray-400"
+            />
+            <div>
+              <h3 className="font-semibold">{user?.firstName || 'User'}</h3>
+              <div className="flex space-x-2">
+                {['post', 'poll', 'event'].map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-3 py-1 rounded-full flex items-center space-x-2 transition-colors ${
+                      activeTab === tab ? 'bg-blue-100 text-blue-600' : 'hover:bg-gray-100'
+                    }`}
+                  >
+                    <FontAwesomeIcon icon={
+                      tab === 'post' ? faPencilAlt :
+                      tab === 'poll' ? faChartBar :
+                      faCalendarAlt
+                    } />
+                    <span className="capitalize">{tab}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+          <button 
+            onClick={closeModal}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
-            <Box p={2}>
-              <Button onClick={handleDeletePost} variant="contained" color="error" fullWidth>
-                Delete Post
-              </Button>
-              <Button variant="contained" color="secondary" fullWidth sx={{ mt: 2 }}>
-                Update Post
-              </Button>
-            </Box>
-          </Popover>
+            <FontAwesomeIcon icon={faTimes} className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-4 space-y-6">
+          {/* Post Tab */}
+          {activeTab === 'post' && (
+            <div className="space-y-4">
+              <textarea
+                ref={textareaRef}
+                placeholder="What do you want to talk about?"
+                value={currentPost.title}
+                onChange={(e) => setCurrentPost(prev => ({ ...prev, title: e.target.value }))}
+                className="w-full p-4 text-lg border-none focus:ring-0 resize-none min-h-[120px] placeholder-gray-500"
+              />
+              {currentPost.mediaPreviews.length > 0 && (
+                <div className="grid grid-cols-3 gap-2">
+                  {currentPost.mediaPreviews.map((preview, index) => (
+                    <div key={index} className="relative group">
+                      <img 
+                        src={preview} 
+                        alt="Upload preview" 
+                        className="w-full h-32 object-cover rounded-lg transition-transform duration-300 hover:scale-105" 
+                      />
+                      <button
+                        onClick={() => removeMediaItem(index)}
+                        className="absolute top-1 right-1 bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors"
+                      >
+                        <FontAwesomeIcon icon={faTrashAlt} className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Poll Tab */}
+          {activeTab === 'poll' && (
+            <div className="space-y-4">
+              <input
+                type="text"
+                placeholder="Ask a question..."
+                value={currentPoll.title}
+                onChange={(e) => setCurrentPoll(prev => ({ ...prev, title: e.target.value }))}
+                className="w-full p-4 text-lg border-none focus:ring-0 placeholder-gray-500"
+              />
+              <div className="space-y-3">
+                {currentPoll.options.map((option, index) => (
+                  <div key={index} className="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      placeholder={`Option ${index + 1}`}
+                      value={option}
+                      onChange={(e) => updatePollOption(index, e.target.value)}
+                      className="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                    />
+                    {currentPoll.options.length > 2 && (
+                      <button 
+                        onClick={() => removePollOption(index)}
+                        className="p-2 text-red-500 hover:bg-red-50 rounded-full"
+                      >
+                        <FontAwesomeIcon icon={faTrashAlt} className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button 
+                  onClick={addPollOption}
+                  className="flex items-center space-x-2 text-blue-600 hover:text-blue-700"
+                >
+                  <FontAwesomeIcon icon={faPlus} />
+                  <span>Add option</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Event Tab */}
+          {activeTab === 'event' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <input
+                  type="text"
+                  placeholder="Event title"
+                  value={currentEvent.title}
+                  onChange={(e) => setCurrentEvent(prev => ({ ...prev, title: e.target.value }))}
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+                <div className="flex items-center space-x-2">
+                  <FontAwesomeIcon icon={faUserCircle} className="text-gray-500" />
+                  <input
+                    type="text"
+                    placeholder="Hosted by"
+                    value={currentEvent.hostedBy}
+                    onChange={(e) => setCurrentEvent(prev => ({ ...prev, hostedBy: e.target.value }))}
+                    className="w-full p-2 border rounded-lg"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <FontAwesomeIcon icon={faMapMarkerAlt} className="text-gray-500" />
+                  <input
+                    type="text"
+                    placeholder="Venue"
+                    value={currentEvent.venue}
+                    onChange={(e) => setCurrentEvent(prev => ({ ...prev, venue: e.target.value }))}
+                    className="w-full p-2 border rounded-lg"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <FontAwesomeIcon icon={faCalendarAlt} className="text-gray-500" />
+                  <input
+                    type="datetime-local"
+                    value={currentEvent.startDate}
+                    onChange={(e) => setCurrentEvent(prev => ({ ...prev, startDate: e.target.value }))}
+                    className="w-full p-2 border rounded-lg"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <FontAwesomeIcon icon={faCalendarAlt} className="text-gray-500" />
+                  <input
+                    type="datetime-local"
+                    value={currentEvent.endDate}
+                    onChange={(e) => setCurrentEvent(prev => ({ ...prev, endDate: e.target.value }))}
+                    className="w-full p-2 border rounded-lg"
+                  />
+                </div>
+                <textarea
+                  placeholder="Event description"
+                  value={currentEvent.description}
+                  onChange={(e) => setCurrentEvent(prev => ({ ...prev, description: e.target.value }))}
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 h-32"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Footer Actions */}
+          <div className="flex items-center justify-between border-t pt-4">
+            <div className="flex space-x-4">
+              <label className="cursor-pointer p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <FontAwesomeIcon icon={faPhotoVideo} className="text-green-600 w-5 h-5" />
+                <input 
+                  type="file" 
+                  multiple 
+                  onChange={activeTab === 'event' ? handleEventMediaUpload : handleMediaUpload}
+                  className="hidden" 
+                  accept="image/*,video/*" 
+                />
+              </label>
+              <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <FontAwesomeIcon icon={faFile} className="text-blue-600 w-5 h-5" />
+              </button>
+              <div className="relative">
+                <button 
+                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                >
+                  <FontAwesomeIcon icon={faSmile} className="text-yellow-500 w-5 h-5" />
+                </button>
+                {showEmojiPicker && (
+                  <div className="absolute bottom-full right-0 mb-2 z-10">
+                    <EmojiPicker
+                      onEmojiClick={handleEmojiClick}
+                      previewConfig={{ showPreview: false }}
+                      skinTonesDisabled
+                      searchDisabled
+                      height={350}
+                      width={300}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+            <button 
+              onClick={handleSubmit}
+              className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-colors"
+            >
+              Post
+            </button>
+          </div>
         </div>
       </div>
-    </Container>
+    </div>
   );
 };
 
-export default Posts;
+export default SideBarPost;
+
+
+
+
+
+
+
+
+
+const handleSubmit = async () => {
+  try {
+    const formData = new FormData();
+
+    if (activeTab === 'post') {
+      if (!currentPost.title && currentPost.mediaFiles.length === 0) {
+        alert('Either title or media is required for a post.');
+        return;
+      }
+      formData.append('title', currentPost.title);
+      formData.append('postType', 'post');
+      currentPost.mediaFiles.forEach((file) => {
+        formData.append('media', file);
+      });
+    } else if (activeTab === 'poll') {
+      if (!currentPoll.title.trim()) {
+        alert('Poll title is required.');
+        return;
+      }
+
+      const validOptions = currentPoll.options.filter((option) => option.trim());
+      if (validOptions.length < 2) {
+        alert('At least two poll options are required.');
+        return;
+      }
+
+      formData.append('title', currentPoll.title);
+      formData.append('postType', 'poll');
+      validOptions.forEach((option) => formData.append('pollOptions', option));
+    } else if (activeTab === 'event') {
+      if (!currentEvent.title || !currentEvent.startDate || !currentEvent.endDate || !currentEvent.hostedBy || !currentEvent.venue) {
+        alert('Event title, date, hosted by, and venue are required.');
+        return;
+      }
+
+      formData.append('title', currentEvent.title);
+      formData.append('postType', 'event');
+      formData.append('location', currentEvent.location);
+      formData.append('startDate', currentEvent.startDate);
+      formData.append('endDate', currentEvent.endDate);
+      formData.append('hostedBy', currentEvent.hostedBy);
+      formData.append('venue', currentEvent.venue);
+      formData.append('description', currentEvent.description);
+
+      if (currentEvent.media) {
+        formData.append('media', currentEvent.media);
+      }
+    }
+
+    await createPost(formData, token);
+    closeModal();
+  } catch (error) {
+    console.error('Error creating post:', error);
+  }
+  navigate("/dashboard");
+};

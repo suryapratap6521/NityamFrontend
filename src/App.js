@@ -13,7 +13,7 @@ import UpdatePassword from "./pages/UpdatePassword";
 import Myprofile from "./Components/Core/Dashboard/Myprofile";
 import Error from "./pages/Error";
 import SideBarPost from "./Components/Core/Post/SideBarPost";
-import CreatePost from "./Components/Core/Post/CreatePost";
+// import SideBarPost from "./Components/Core/Post/SideBarPost";
 import ChatPage from "./pages/ChatPage";
 import GoogleAfterDetails from "./Components/Core/Auth/GoogleAfterDetails";
 import Settings from "./Components/Core/Settings";
@@ -32,7 +32,37 @@ import CreatePage from "./Components/Core/Page/CreatePage";
 import ViewPage from "./Components/Core/Page/ViewPage"
 import AdCenter from "./Components/Core/Page/AdCenter"
 import Pages from "./pages/Pages";
+import { useEffect } from 'react';
+import { io } from 'socket.io-client';
+import { useSelector } from 'react-redux';
+import { useDispatch } from "react-redux";
+import { addNotification } from "./slices/notificationSlice";
+import { fetchNotifications } from "./services/operations/notificationApi";
+// import PostView from "./Components/Core/Post/PostView";
 function App() {
+
+  const { user } = useSelector((state) => state.profile);
+  const {token}=useSelector((state)=>state.auth);
+  const dispatch=useDispatch();
+// App.js
+
+
+useEffect(() => {
+  if (token) {
+    dispatch(fetchNotifications(token)); // ✅ Correct way to dispatch async thunk
+  }
+
+  const socket = io('http://localhost:8080');
+
+  socket.on("newNotification", (notification) => {
+    dispatch(addNotification(notification));
+  });
+
+  return () => socket.disconnect();
+}, [token, dispatch]);
+
+
+
   return (
     <div>
       {/* <ChatPage/> */}
@@ -155,6 +185,14 @@ function App() {
           >
             {/* <Footer /> */}
           </Route>
+          {/* <Route
+  path="/dashboard/post/:postId"
+  element={
+    <PrivateRoute>
+      <PostView />
+    </PrivateRoute>
+  }
+/> */}
           <Route
             path="/dashboard/addservice"
             element={
@@ -187,7 +225,7 @@ function App() {
             path="/dashboard/createpost"
             element={
               <PrivateRoute>
-                <SideBarPost />
+                <SideBarPost/>
               </PrivateRoute>
             }
           />

@@ -10,7 +10,7 @@ import { Toaster } from "react-hot-toast";
 import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from "./reducers/index";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
-import thunk from 'redux-thunk'; // Import redux-thunk middleware
+import {thunk} from "redux-thunk";
 // Define your custom theme
 const theme = createTheme({
   breakpoints: {
@@ -27,7 +27,7 @@ const theme = createTheme({
 
 const store = configureStore({
   reducer: rootReducer,
- 
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk), // Add thunk middleware
 });
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

@@ -2,7 +2,8 @@
 import { apiConnector } from '../apiConnector';
 import { postEndpoints } from '../apis';
 import toast from 'react-hot-toast';
-import { setPosts } from '../../slices/postSlice';
+import { setPosts,updatePoll } from '../../slices/postSlice';
+import { handleResponse } from "../../utils/apiUtils";
 
 export const getAllPosts = async (token, dispatch) => {
   try {
@@ -51,6 +52,35 @@ export const createPost = async (formData, token) => {
   }
   finally{
   toast.dismiss(toastId);
+  }
+};
+
+export const voteOnPoll = async (postId, optionIndex, token) => {
+  try {
+    const response = await fetch(`http://localhost:8080/api/v1/post/${postId}/vote`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ optionIndex })
+    });
+    return handleResponse(response);
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const fetchVoters = async (postId, optionIndex, token) => {
+  try {
+    const response = await fetch(`http://localhost:8080/api/v1/post/${postId}/voters/${optionIndex}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    return handleResponse(response);
+  } catch (error) {
+    throw error;
   }
 };
 
