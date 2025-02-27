@@ -31,7 +31,7 @@ const store = configureStore({
 });
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+
     <Provider store={store}>
     <BrowserRouter>
     <ThemeProvider theme={theme}>
@@ -40,7 +40,7 @@ root.render(
     <Toaster />
     </BrowserRouter>
     </Provider>
-  </React.StrictMode>
+
 );
 
 

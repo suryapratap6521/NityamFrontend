@@ -10,11 +10,11 @@ const ChatPage = () => {
   const { user } = useSelector((state) => state.profile);
 
   return (
-    <div style={{ backgroundImage: `url(${chat_bg})`, backgroundSize: 'cover', minHeight: '100vh', width: "100%" ,position:"fixed"}}>
-      <Box display="flex" justifyContent="space-between" width="100%" height="88.2vh" p="10px">
+    <div style={{}}>
+      <div className="flex justify-between w-full p-2">
         {user && <MyChat fetchAgain={fetchAgain} />}
         {user && <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />}
-      </Box>
+      </div>
     </div>
   );
 };

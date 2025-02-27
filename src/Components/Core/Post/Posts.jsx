@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllPosts, likePost, unlikePost, deletePost, comment, commentDelete,reply,replyLike,commentLike } from "../../../services/operations/postApi";
+import { getAllPosts, likePost, unlikePost, deletePost, comment, commentDelete, reply, replyLike, commentLike } from "../../../services/operations/postApi";
 import { setPosts } from "../../../slices/postSlice";
 import SinglePost from "./SinglePost";
 import 'tailwindcss/tailwind.css';
@@ -8,6 +8,7 @@ import CommentSection from "./CommentsSection";
 import PostSkeleton from "../../Common/PostSkeleton";
 import InfiniteScroll from "react-infinite-scroll-component";
 
+import SideBarPost from './SideBarPost'
 
 const Posts = () => {
   const dispatch = useDispatch();
@@ -77,10 +78,10 @@ const Posts = () => {
       console.error("Error deleting post:", error);
     }
   };
- 
-  console.log(token,"--------------token");
+
+  console.log(token, "--------------token");
   console.log(posts);
-  if(posts===null || posts?.length===0){
+  if (posts === null || posts?.length === 0) {
     return <div>No Posts available</div>
   }
 
@@ -101,26 +102,26 @@ const Posts = () => {
     }
   };
 
-  const handleReply=async(postId,commentId)=>{
+  const handleReply = async (postId, commentId) => {
     try {
-      await reply(postId,commentId,replyText,dispatch,token);
+      await reply(postId, commentId, replyText, dispatch, token);
     } catch (error) {
-      console.error("Error in replying the comment",error);
+      console.error("Error in replying the comment", error);
     }
   }
-  const handleCommentLike=async(postId,commentId)=>{
+  const handleCommentLike = async (postId, commentId) => {
     try {
-      await commentLike(postId,commentId,dispatch,token);
+      await commentLike(postId, commentId, dispatch, token);
     } catch (error) {
-      console.error("Error in liking the comment",error);
+      console.error("Error in liking the comment", error);
     }
   }
-  const handleReplyLike=async(postId,commentId,replyId)=>{
+  const handleReplyLike = async (postId, commentId, replyId) => {
     try {
-      await replyLike(postId,commentId,replyId,dispatch,token);
+      await replyLike(postId, commentId, replyId, dispatch, token);
 
     } catch (error) {
-      console.error("Error in liking the reply",error);
+      console.error("Error in liking the reply", error);
     }
   }
 
@@ -133,6 +134,7 @@ const Posts = () => {
 
   return (
     <div className="posts-container">
+      <SideBarPost />
       {posts.map((post) => (
         <SinglePost
           key={post._id}
@@ -149,9 +151,9 @@ const Posts = () => {
           handleCommentLike={handleCommentLike}
           handleReply={handleReply}
           handleReplyLike={handleReplyLike}
-          
+
         >
-          
+
         </SinglePost>
       ))}
     </div>
