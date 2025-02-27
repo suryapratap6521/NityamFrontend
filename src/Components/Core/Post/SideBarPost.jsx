@@ -3,10 +3,10 @@ import { createPost } from '../../../services/operations/postApi';
 import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faTimes, 
-  faPencilAlt, 
-  faChartBar, 
+import {
+  faTimes,
+  faPencilAlt,
+  faChartBar,
   faCalendarAlt,
   faPhotoVideo,
   faFile,
@@ -18,26 +18,26 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import EmojiPicker from 'emoji-picker-react';
 
-const SideBarPost = ({closeModal}) => {
+const SideBarPost = ({ closeModal }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('post');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const textareaRef = useRef(null);
-  
+
   // Post states
-  const [currentPost, setCurrentPost] = useState({ 
-    title: '', 
-    postType: 'post', 
-    mediaFiles: [], 
-    mediaPreviews: [] 
+  const [currentPost, setCurrentPost] = useState({
+    title: '',
+    postType: 'post',
+    mediaFiles: [],
+    mediaPreviews: []
   });
-  
-  const [currentPoll, setCurrentPoll] = useState({ 
-    title: '', 
-    postType: 'poll', 
-    options: ['', ''] 
+
+  const [currentPoll, setCurrentPoll] = useState({
+    title: '',
+    postType: 'poll',
+    options: ['', '']
   });
-  
+
   const [currentEvent, setCurrentEvent] = useState({
     title: '',
     postType: 'event',
@@ -49,10 +49,10 @@ const SideBarPost = ({closeModal}) => {
     description: '',
     media: null,
   });
-  
+
   const navigate = useNavigate();
   const { token } = useSelector((state) => state.auth);
-  const {user}=useSelector((state)=>state.profile);
+  const { user } = useSelector((state) => state.profile);
 
   // Emoji Picker Handler
   const handleEmojiClick = (emojiData) => {
@@ -60,22 +60,22 @@ const SideBarPost = ({closeModal}) => {
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const value = textarea.value;
-    
-    const newValue = 
-      value.substring(0, start) + 
-      emojiData.emoji + 
+
+    const newValue =
+      value.substring(0, start) +
+      emojiData.emoji +
       value.substring(end);
-    
+
     setCurrentPost(prev => ({
       ...prev,
       title: newValue
     }));
-    
+
     // Move cursor position
     setTimeout(() => {
       textarea.selectionStart = textarea.selectionEnd = start + emojiData.emoji.length;
     }, 0);
-    
+
     setShowEmojiPicker(false);
   };
 
@@ -122,10 +122,10 @@ const SideBarPost = ({closeModal}) => {
     const file = e.target.files[0];
     if (file) {
       const preview = URL.createObjectURL(file);
-      setCurrentEvent(prev => ({ 
-        ...prev, 
+      setCurrentEvent(prev => ({
+        ...prev,
         media: file,
-        mediaPreview: preview 
+        mediaPreview: preview
       }));
     }
   };
@@ -139,7 +139,7 @@ const SideBarPost = ({closeModal}) => {
   };
 
   // Submit Handler
- 
+
   const handleSubmit = async () => {
     try {
       const formData = new FormData();
@@ -199,7 +199,7 @@ const SideBarPost = ({closeModal}) => {
 
 
   // Modal Controls
-  
+
 
   const resetForms = () => {
     setCurrentPost({ title: '', postType: 'post', mediaFiles: [], mediaPreviews: [] });
@@ -221,21 +221,21 @@ const SideBarPost = ({closeModal}) => {
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn">
       <div className="bg-white rounded-xl w-full max-w-2xl mx-4 shadow-xl transform transition-all duration-300">
         {/* Header */}
-    
+
         <div className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center space-x-2">
-          {user?.image ? (
-    <img
-      src={user.image}
-      alt="User Avatar"
-      className="w-10 h-10 rounded-full object-cover"
-    />
-  ) : (
-    <FontAwesomeIcon 
-      icon={faUserCircle} 
-      className="w-10 h-10 text-gray-400"
-    />
-  )}
+            {user?.image ? (
+              <img
+                src={user.image}
+                alt="User Avatar"
+                className="w-10 h-10 rounded-full object-cover"
+              />
+            ) : (
+              <FontAwesomeIcon
+                icon={faUserCircle}
+                className="w-10 h-10 text-gray-400"
+              />
+            )}
             <div>
               <h3 className="font-semibold">{user?.firstName || 'User'}</h3>
               <div className="flex space-x-2">
@@ -243,14 +243,13 @@ const SideBarPost = ({closeModal}) => {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`px-3 py-1 rounded-full flex items-center space-x-2 transition-colors ${
-                      activeTab === tab ? 'bg-blue-100 text-blue-600' : 'hover:bg-gray-100'
-                    }`}
+                    className={`px-3 py-1 rounded-full flex items-center space-x-2 transition-colors ${activeTab === tab ? 'bg-blue-100 text-blue-600' : 'hover:bg-gray-100'
+                      }`}
                   >
                     <FontAwesomeIcon icon={
                       tab === 'post' ? faPencilAlt :
-                      tab === 'poll' ? faChartBar :
-                      faCalendarAlt
+                        tab === 'poll' ? faChartBar :
+                          faCalendarAlt
                     } />
                     <span className="capitalize">{tab}</span>
                   </button>
@@ -258,7 +257,7 @@ const SideBarPost = ({closeModal}) => {
               </div>
             </div>
           </div>
-          <button 
+          <button
             onClick={closeModal}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
@@ -282,10 +281,10 @@ const SideBarPost = ({closeModal}) => {
                 <div className="grid grid-cols-3 gap-2">
                   {currentPost.mediaPreviews.map((preview, index) => (
                     <div key={index} className="relative group">
-                      <img 
-                        src={preview} 
-                        alt="Upload preview" 
-                        className="w-full h-32 object-cover rounded-lg transition-transform duration-300 hover:scale-105" 
+                      <img
+                        src={preview}
+                        alt="Upload preview"
+                        className="w-full h-32 object-cover rounded-lg transition-transform duration-300 hover:scale-105"
                       />
                       <button
                         onClick={() => removeMediaItem(index)}
@@ -321,7 +320,7 @@ const SideBarPost = ({closeModal}) => {
                       className="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
                     />
                     {currentPoll.options.length > 2 && (
-                      <button 
+                      <button
                         onClick={() => removePollOption(index)}
                         className="p-2 text-red-500 hover:bg-red-50 rounded-full"
                       >
@@ -330,7 +329,7 @@ const SideBarPost = ({closeModal}) => {
                     )}
                   </div>
                 ))}
-                <button 
+                <button
                   onClick={addPollOption}
                   className="flex items-center space-x-2 text-blue-600 hover:text-blue-700"
                 >
@@ -343,108 +342,108 @@ const SideBarPost = ({closeModal}) => {
 
           {/* Event Tab */}
           {activeTab === 'event' && (
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div className="space-y-4">
-      <input
-        type="text"
-        placeholder="Event title"
-        value={currentEvent.title}
-        onChange={(e) => setCurrentEvent(prev => ({ ...prev, title: e.target.value }))}
-        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
-      />
-      <div className="flex items-center space-x-2">
-        <FontAwesomeIcon icon={faUserCircle} className="text-gray-500" />
-        <input
-          type="text"
-          placeholder="Hosted by"
-          value={currentEvent.hostedBy}
-          onChange={(e) => setCurrentEvent(prev => ({ ...prev, hostedBy: e.target.value }))}
-          className="w-full p-2 border rounded-lg"
-        />
-      </div>
-      <div className="flex items-center space-x-2">
-        <FontAwesomeIcon icon={faMapMarkerAlt} className="text-gray-500" />
-        <input
-          type="text"
-          placeholder="Venue"
-          value={currentEvent.venue}
-          onChange={(e) => setCurrentEvent(prev => ({ ...prev, venue: e.target.value }))}
-          className="w-full p-2 border rounded-lg"
-        />
-      </div>
-      <div className="flex items-center space-x-2">
-        <FontAwesomeIcon icon={faMapMarkerAlt} className="text-gray-500" />
-        <input
-          type="text"
-          placeholder="Location"
-          value={currentEvent.location}
-          onChange={(e) => setCurrentEvent(prev => ({ ...prev, location: e.target.value }))}
-          className="w-full p-2 border rounded-lg"
-        />
-      </div>
-    </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-4">
+                <input
+                  type="text"
+                  placeholder="Event title"
+                  value={currentEvent.title}
+                  onChange={(e) => setCurrentEvent(prev => ({ ...prev, title: e.target.value }))}
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+                <div className="flex items-center space-x-2">
+                  <FontAwesomeIcon icon={faUserCircle} className="text-gray-500" />
+                  <input
+                    type="text"
+                    placeholder="Hosted by"
+                    value={currentEvent.hostedBy}
+                    onChange={(e) => setCurrentEvent(prev => ({ ...prev, hostedBy: e.target.value }))}
+                    className="w-full p-2 border rounded-lg"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <FontAwesomeIcon icon={faMapMarkerAlt} className="text-gray-500" />
+                  <input
+                    type="text"
+                    placeholder="Venue"
+                    value={currentEvent.venue}
+                    onChange={(e) => setCurrentEvent(prev => ({ ...prev, venue: e.target.value }))}
+                    className="w-full p-2 border rounded-lg"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <FontAwesomeIcon icon={faMapMarkerAlt} className="text-gray-500" />
+                  <input
+                    type="text"
+                    placeholder="Location"
+                    value={currentEvent.location}
+                    onChange={(e) => setCurrentEvent(prev => ({ ...prev, location: e.target.value }))}
+                    className="w-full p-2 border rounded-lg"
+                  />
+                </div>
+              </div>
 
-    <div className="space-y-4">
-      <div className="flex items-center space-x-2">
-        <FontAwesomeIcon icon={faCalendarAlt} className="text-gray-500" />
-        <input
-          type="datetime-local"
-          value={currentEvent.startDate}
-          onChange={(e) => setCurrentEvent(prev => ({ ...prev, startDate: e.target.value }))}
-          className="w-full p-2 border rounded-lg"
-        />
-      </div>
-      <div className="flex items-center space-x-2">
-        <FontAwesomeIcon icon={faCalendarAlt} className="text-gray-500" />
-        <input
-          type="datetime-local"
-          value={currentEvent.endDate}
-          onChange={(e) => setCurrentEvent(prev => ({ ...prev, endDate: e.target.value }))}
-          className="w-full p-2 border rounded-lg"
-        />
-      </div>
-      <textarea
-        placeholder="Event description"
-        value={currentEvent.description}
-        onChange={(e) => setCurrentEvent(prev => ({ ...prev, description: e.target.value }))}
-        className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 h-32"
-      />
-    </div>
-    {currentEvent.mediaPreview && (
-            <div className="relative group mt-2">
-              <img 
-                src={currentEvent.mediaPreview} 
-                alt="Event preview" 
-                className="w-full h-32 object-cover rounded-lg transition-transform duration-300 hover:scale-105" 
-              />
-              <button
-                onClick={removeEventMedia}
-                className="absolute top-1 right-1 bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors"
-              >
-                <FontAwesomeIcon icon={faTrashAlt} className="w-4 h-4" />
-              </button>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-2">
+                  <FontAwesomeIcon icon={faCalendarAlt} className="text-gray-500" />
+                  <input
+                    type="datetime-local"
+                    value={currentEvent.startDate}
+                    onChange={(e) => setCurrentEvent(prev => ({ ...prev, startDate: e.target.value }))}
+                    className="w-full p-2 border rounded-lg"
+                  />
+                </div>
+                <div className="flex items-center space-x-2">
+                  <FontAwesomeIcon icon={faCalendarAlt} className="text-gray-500" />
+                  <input
+                    type="datetime-local"
+                    value={currentEvent.endDate}
+                    onChange={(e) => setCurrentEvent(prev => ({ ...prev, endDate: e.target.value }))}
+                    className="w-full p-2 border rounded-lg"
+                  />
+                </div>
+                <textarea
+                  placeholder="Event description"
+                  value={currentEvent.description}
+                  onChange={(e) => setCurrentEvent(prev => ({ ...prev, description: e.target.value }))}
+                  className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 h-32"
+                />
+              </div>
+              {currentEvent.mediaPreview && (
+                <div className="relative group mt-2">
+                  <img
+                    src={currentEvent.mediaPreview}
+                    alt="Event preview"
+                    className="w-full h-32 object-cover rounded-lg transition-transform duration-300 hover:scale-105"
+                  />
+                  <button
+                    onClick={removeEventMedia}
+                    className="absolute top-1 right-1 bg-black/50 text-white p-1 rounded-full hover:bg-black/70 transition-colors"
+                  >
+                    <FontAwesomeIcon icon={faTrashAlt} className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+
             </div>
           )}
-            
-  </div>
-)}
 
           {/* Footer Actions */}
           <div className="flex items-center justify-between border-t pt-4">
             <div className="flex space-x-4">
               <label className="cursor-pointer p-2 hover:bg-gray-100 rounded-full transition-colors">
                 <FontAwesomeIcon icon={faPhotoVideo} className="text-green-600 w-5 h-5" />
-                <input 
-                  type="file" 
-                  multiple 
+                <input
+                  type="file"
+                  multiple
                   onChange={activeTab === 'event' ? handleEventMediaUpload : handleMediaUpload}
-                  className="hidden" 
-                  accept="image/*,video/*" 
+                  className="hidden"
+                  accept="image/*,video/*"
                 />
               </label>
-             
+
               <div className="relative">
-                <button 
+                <button
                   onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                 >
@@ -464,7 +463,7 @@ const SideBarPost = ({closeModal}) => {
                 )}
               </div>
             </div>
-            <button 
+            <button
               onClick={handleSubmit}
               className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-colors"
             >

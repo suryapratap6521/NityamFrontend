@@ -7,6 +7,8 @@ import { MdDelete } from "react-icons/md";
 import CommentSection from "./CommentsSection";
 import Modal from "../../Common/Modal";
 import { calculateTime } from "../../../utils/miliToHours";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faComment, faRegular } from '@fortawesome/free-solid-svg-icons';
 import PostHeader from "./PostHeader";
 import PostActions from "./PostActions";
 import Poll from "./Poll";
@@ -78,7 +80,7 @@ const SinglePost = ({
 
       <div className="mt-4">
         {post.title && <p className="text-gray-800 mb-4">{post.title}</p>}
-        
+
         {renderMedia()}
 
         {isEvent && <EventDetails post={post} />}

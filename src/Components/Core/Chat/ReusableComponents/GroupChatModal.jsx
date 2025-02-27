@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { toast } from "react-hot-toast";
 import { setChats } from "../../../../slices/chatSlice";
-import { useSelector,useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { FormControl, TextField } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import axios from "axios";
@@ -36,8 +36,8 @@ const GroupChatModal = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const { chats } = useSelector((state) => state.chat);
   const { user } = useSelector((state) => state.profile);
-  const {token}=useSelector((state)=>state.auth);
-  const dispatch=useDispatch();
+  const { token } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const handleSearch = async (query) => {
     setSearch(query);
     if (!query) {
@@ -51,7 +51,7 @@ const GroupChatModal = ({ children }) => {
         },
       };
       const { data } = await axios.get(
-        `http://localhost:8080/api/v1/auth/search?search=${search}`,
+        `https://nityambackend.onrender.com/api/v1/auth/search?search=${search}`,
         config
       );
       console.log(data);
@@ -63,18 +63,18 @@ const GroupChatModal = ({ children }) => {
     }
   };
 
- 
+
   const handleDelete = (delUser) => {
     setSelectedUsers(selectedUsers.filter((sel) => sel._id !== delUser._id));
   };
 
-  const handleGroup=(userToAdd)=>{
+  const handleGroup = (userToAdd) => {
     if (selectedUsers.includes(userToAdd)) {
-        toast.error("User already added in the Group")
-        return;
-      }
-  
-      setSelectedUsers([...selectedUsers, userToAdd]);
+      toast.error("User already added in the Group")
+      return;
+    }
+
+    setSelectedUsers([...selectedUsers, userToAdd]);
   }
 
 
@@ -100,7 +100,7 @@ const GroupChatModal = ({ children }) => {
       );
 
       dispatch(setChats([data, ...chats]));
-      handleClose(); 
+      handleClose();
       toast.success("New Group Chat Created!");
     } catch (error) {
       toast.error("Failed to Create the Chat!");
@@ -108,7 +108,7 @@ const GroupChatModal = ({ children }) => {
     }
   };
 
-  
+
   return (
     <>
       <span onClick={handleOpen}>{children}</span>
@@ -139,28 +139,28 @@ const GroupChatModal = ({ children }) => {
               onChange={(e) => handleSearch(e.target.value)}
             />
           </FormControl>
-          <Box w="100%" display="flex"  flexWrap="wrap">
-              {selectedUsers.map((u) => (
-                <UserBadgeItem
-                  key={u._id}
-                  user={u}
-                  handleFunction={() => handleDelete(u)}
-                  
-                />
-              ))}
-            </Box>
+          <Box w="100%" display="flex" flexWrap="wrap">
+            {selectedUsers.map((u) => (
+              <UserBadgeItem
+                key={u._id}
+                user={u}
+                handleFunction={() => handleDelete(u)}
+
+              />
+            ))}
+          </Box>
           {/* selectedusers */}
           {/* renderusers */}
-          {loading ? (<Loader/>):(searchResult
-                ?.slice(0, 4)
-                .map((user) => (
-                  <UserCard
-                    key={user._id}
-                    user={user}
-                    onClick={() => handleGroup(user)}
-                  />
-                )))}
-          <Button variant="contained" color="primary" sx={{marginTop:"20px",display:"flex",alignItem:"right"}} onClick={handleSubmit}>Create Group</Button>
+          {loading ? (<Loader />) : (searchResult
+            ?.slice(0, 4)
+            .map((user) => (
+              <UserCard
+                key={user._id}
+                user={user}
+                onClick={() => handleGroup(user)}
+              />
+            )))}
+          <Button variant="contained" color="primary" sx={{ marginTop: "20px", display: "flex", alignItem: "right" }} onClick={handleSubmit}>Create Group</Button>
         </Box>
       </Modal>
     </>

@@ -27,7 +27,7 @@ import { getSender } from "../../config/chatlogics";
 import Confirmationmodal from './Confirmationmodal';
 import { useLocation } from "react-router-dom";
 
-import { fetchNotifications,markNotificationAsRead} from '../../services/operations/notificationApi';
+import { fetchNotifications, markNotificationAsRead } from '../../services/operations/notificationApi';
 import { setNotifications, markAsRead } from '../../slices/notificationSlice';
 import NotificationDropdown from './NotificationDropdown';
 const settings = [
@@ -89,11 +89,11 @@ function Navbar() {
   const cancelLogout = () => {
     setConfirmationModal(false);
   };
- 
+
 
   return (
     <>
-      <AppBar position="fixed" sx={{ backgroundColor: 'transparent', backdropFilter: 'blur(100px)' }}>
+      <AppBar position="fixed" sx={{ backgroundColor: '#F5F5F5', boxShadow: 'none', borderBottom: '2px solid rgb(229 231 235)' }}>
         <Container>
           <Toolbar disableGutters>
             <Typography
@@ -108,7 +108,7 @@ function Navbar() {
             >
               <img src={logo} style={{ width: "20rem", height: "3rem" }} alt="logo" />
             </Typography>
-            
+
             <Typography
               variant="h5"
               noWrap
@@ -123,16 +123,53 @@ function Navbar() {
               <img src={logo} style={{ width: "11rem", height: "2rem" }} alt="logo" />
             </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
-            {token ? (<span></span>):(<Button component={Link} to="/business" sx={{color:"black"}}> Business</Button>)}
-             {token && (pathname ==='/dashboard/chat') && (<SideDrawer />)}
-             
+              {token ? (<span></span>) : (<Button component={Link} to="/business" sx={{ color: "black" }}> Business</Button>)}
+              {token && (pathname === '/dashboard/chat') && (<SideDrawer />)}
+
             </Box>
 
-            {token && 
-            <NotificationDropdown/>
-  } 
+            {token && (
+              <IconButton
+                style={{ marginRight: "20px" }}
+                aria-controls={open ? 'basic-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? 'true' : undefined}
+                onClick={handleClick}
+              >
+                <Badge badgeContent={notification.length} color="error">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+            )}
 
-            {!token &&
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={open}
+              onClose={handleClose}
+              MenuListProps={{
+                'aria-labelledby': 'basic-button',
+              }}
+            >
+              {notification.length === 0 && <MenuItem>No New Messages</MenuItem>}
+              {console.log(notification, "this is notification")}
+              {notification && notification.map((notif) => (
+                <MenuItem
+                  key={notif._id}
+                  onClick={() => {
+                    dispatch(setSelectedChat(notif.chat));
+                    dispatch(setNotification(notification.filter((n) => n !== notif)));
+                    handleClose();
+                  }}
+                >
+                  {notif.chat.isGroupChat
+                    ? `New Message in ${notif.chat.chatName}`
+                    : `New Message from ${getSender(user, notif.chat.users)}`}
+                </MenuItem>
+              ))}
+            </Menu>
+
+            {!token ? (
               <Button
                 component={Link}
                 to="/login"
@@ -142,12 +179,12 @@ function Navbar() {
               >
                 Login
               </Button>
-            }
-            {token &&
-              <Box sx={{ flexGrow: 0 }}>
+            ) : (
+              <Box sx={{ flexGrow: 0, border: '1.5px solid #00000042', borderRadius: '50px', padding: '4px 20px 4px 4px' }}>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar alt="Remy Sharp" src={user?.image} />
+                    <Avatar alt="User" src={user?.image} sx={{ width: '34px', height: '34px', marginRight: '10px' }} />
+                    <p className='text-sm text-gray-800'>{user.firstName} {user.lastName}</p>
                   </IconButton>
                 </Tooltip>
                 <Menu
