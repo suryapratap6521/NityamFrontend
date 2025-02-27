@@ -7,13 +7,15 @@ import { useLocation } from "react-router-dom";
 import Sidebar from "../Components/Core/Dashboard/Sidebar";
 import { useSelector } from "react-redux";
 
+
 const Layout = () => {
   const location = useLocation();
-  const {token}=useSelector((state)=>state.auth);
+  const { token } = useSelector((state) => state.auth);
   const isHomePage = location.pathname === '/';
   return (
     <>
       <Navbar />
+      <Sidebar />
       {/* <div className="flex h-screen"> {token && <Sidebar />}</div> */}
       <Outlet />
       {isHomePage && <Footer />}

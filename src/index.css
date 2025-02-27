@@ -105,8 +105,15 @@ button {
   /* text-align: center; */
 }
 
-button:hover {
+/* button:hover {
   background-color: #ffe44e;
+} */
+
+.bg-gradient{
+  background: linear-gradient(0deg, rgba(142, 45, 226, 1) 0%, rgba(74, 0, 224, 1) 88%);
+}
+input::placeholder {
+  color: rgba(0, 0, 0, 0.6);
 }
 .thanks{
   margin-top: 1rem;

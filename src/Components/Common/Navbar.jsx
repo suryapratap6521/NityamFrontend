@@ -49,15 +49,15 @@ function Navbar() {
   useEffect(() => {
     if (token && user) {
       console.log(token);
-      console.log(user._id);
+      console.log(user);
       socket.emit("setup", { _id: user._id });
 
       // Listen for new notifications
       socket.on("newNotification", (data) => {
         console.log("New notification received:", data);
         dispatch(setNotification([...notification, data]));
-    });
-    
+      });
+
 
       return () => {
         socket.off("newNotification");
@@ -71,7 +71,7 @@ function Navbar() {
   const handleCloseUserMenu = () => setAnchorElUser(null);
   const handleClick = (event) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
-  
+
   const handleLogout = () => setConfirmationModal(true);
   const confirmLogout = () => {
     dispatch(logout(navigate));
@@ -82,7 +82,7 @@ function Navbar() {
 
   return (
     <>
-      <AppBar position="fixed" sx={{ backgroundColor: 'transparent', backdropFilter: 'blur(100px)' }}>
+      <AppBar position="fixed" sx={{ backgroundColor: '#F5F5F5', boxShadow: 'none', borderBottom: '2px solid rgb(229 231 235)' }}>
         <Container>
           <Toolbar disableGutters>
             <Typography
@@ -133,7 +133,7 @@ function Navbar() {
               }}
             >
               {notification.length === 0 && <MenuItem>No New Messages</MenuItem>}
-              {console.log(notification,"this is notification")}
+              {console.log(notification, "this is notification")}
               {notification && notification.map((notif) => (
                 <MenuItem
                   key={notif._id}
@@ -161,10 +161,11 @@ function Navbar() {
                 Login
               </Button>
             ) : (
-              <Box sx={{ flexGrow: 0 }}>
+              <Box sx={{ flexGrow: 0, border: '1.5px solid #00000042', borderRadius: '50px', padding: '4px 20px 4px 4px' }}>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar alt="User" src={user?.image} />
+                    <Avatar alt="User" src={user?.image} sx={{ width: '34px', height: '34px', marginRight: '10px' }} />
+                    <p className='text-sm text-gray-800'>{user.firstName} {user.lastName}</p>
                   </IconButton>
                 </Tooltip>
                 <Menu
