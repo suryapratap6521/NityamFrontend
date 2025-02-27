@@ -1,7 +1,7 @@
 import axios from "axios";
 import {markAsRead,setNotifications} from "../../slices/notificationSlice";
 
-const API_BASE_URL="http://localhost:8080"
+const API_BASE_URL="https://nityambackend.onrender.com"
 export const fetchNotifications = (token) => async (dispatch) => {
   try {
     const response = await axios.get(`${API_BASE_URL}/api/v1/notifications/notifications`, {

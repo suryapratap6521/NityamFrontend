@@ -5,6 +5,8 @@ import { setPosts } from "../../../slices/postSlice";
 import SinglePost from "./SinglePost";
 import 'tailwindcss/tailwind.css';
 import CommentSection from "./CommentsSection";
+import PostSkeleton from "../../Common/PostSkeleton";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 
 const Posts = () => {

@@ -52,7 +52,7 @@ useEffect(() => {
     dispatch(fetchNotifications(token)); // ✅ Correct way to dispatch async thunk
   }
 
-  const socket = io('http://localhost:8080');
+  const socket = io('https://nityambackend.onrender.com');
 
   socket.on("newNotification", (notification) => {
     dispatch(addNotification(notification));

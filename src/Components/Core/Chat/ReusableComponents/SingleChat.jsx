@@ -16,7 +16,7 @@ import io from "socket.io-client";
 import Lottie from "react-lottie";
 import animationData from "../../../../animations/typing.json";
 import { setNotification } from "../../../../slices/chatSlice";
-const ENDPOINT = "http://localhost:8080";
+const ENDPOINT = "https://nityambackend.onrender.com";
 var socket,selectedChatCompare; 
 
 
@@ -60,7 +60,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         };
         setLoading(true);
 
-        const {data}=await axios.get(`http://localhost:8080/api/v1/message/${selectedChat._id}`,config);
+        const {data}=await axios.get(`https://nityambackend.onrender.com/api/v1/message/${selectedChat._id}`,config);
         setMessages(data.messages);
         setLoading(false);
         socket.emit("join chat",selectedChat._id);

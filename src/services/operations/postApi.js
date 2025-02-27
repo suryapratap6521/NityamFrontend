@@ -57,7 +57,7 @@ export const createPost = async (formData, token) => {
 
 export const voteOnPoll = async (postId, optionIndex, token) => {
   try {
-    const response = await fetch(`http://localhost:8080/api/v1/post/${postId}/vote`, {
+    const response = await fetch(`https://nityambackend.onrender.com/api/v1/post/${postId}/vote`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ export const voteOnPoll = async (postId, optionIndex, token) => {
 
 export const fetchVoters = async (postId, optionIndex, token) => {
   try {
-    const response = await fetch(`http://localhost:8080/api/v1/post/${postId}/voters/${optionIndex}`, {
+    const response = await fetch(`https://nityambackend.onrender.com/api/v1/post/${postId}/voters/${optionIndex}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }

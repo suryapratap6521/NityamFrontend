@@ -2,7 +2,7 @@ import { io } from 'socket.io-client';
 import { useDispatch } from 'react-redux';
 import { addNotification } from '../slices/notificationSlice';
 
-const socket = io('http://localhost:8080');
+const socket = io('https://nityambackend.onrender.com/api/v1');
 
 const useSocket = () => {
   const dispatch = useDispatch();

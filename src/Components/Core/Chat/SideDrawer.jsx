@@ -48,7 +48,7 @@ const SideDrawer = () => {
       };
 
       const { data } = await axios.get(
-        `http://localhost:8080/api/v1/auth/search?search=${search}`,
+        `https://nityambackend.onrender.com/api/v1/auth/search?search=${search}`,
         config
       );
       setSearchResult(data);
