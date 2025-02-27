@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faCompass, faPlusCircle, faPeopleCarryBox, faComments, faUsers } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
 
-
+import SideBarPost from "../../Core/Post/SideBarPost";
 
 
 const Sidebar = () => {
@@ -89,11 +89,16 @@ const Sidebar = () => {
 
 
       </div>
-    </div>
+    
 
       {/* Render the Modal if isModalOpen is true */ }
-  { isModalOpen && <SideBarPost closeModal={() => setIsModalOpen(false)} /> }
-    </>
+      {isModalOpen && (
+        <SideBarPost closeModal={() => setIsModalOpen(false)} />
+      )}
+
+</div>
+      
+    
   );
 }
 

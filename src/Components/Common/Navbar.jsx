@@ -235,7 +235,7 @@ function Navbar() {
                   />
                 )}
               </Box>
-            }
+            )}
           </Toolbar>
         </Container>
       </AppBar>
