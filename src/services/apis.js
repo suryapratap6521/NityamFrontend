@@ -1,5 +1,7 @@
-const BASE_URL = "https://nityambackend.onrender.com/api/v1";
-// const BASE_URL = 'http://localhost:8080/api/v1'
+// const BASE_URL = "https://nityambackend.onrender.com/api/v1";
+// const BASE_URL = 'http://localhost:8080/api/v1';
+ const BASE_URL = "https://nityambackend-production.up.railway.app/api/v1";
+
 
 export const endpoints = {
   SENDOTP_API: `${BASE_URL}/auth/sendotp`,
@@ -46,6 +48,7 @@ export const profileEndpoints = {
   UPDATE_PROFILE: `${BASE_URL}/profile/updateProfile`,
   UPDATE_PROFILE_PIC: `${BASE_URL}/profile/updateDisplayPicture`,
   CHANGE_PASSWORD: `${BASE_URL}/profile/changepassword`,
+  GET_USER_DETAIL:`${BASE_URL}/profile/getuserdetail`
 };
 export const serviceEndpoints = {
   CREATE_SERVICE: `${BASE_URL}/services/createservice`,
