@@ -10,11 +10,11 @@ const ChatPage = () => {
   const { user } = useSelector((state) => state.profile);
 
   return (
-    <div style={{}}>
-      <div className="flex justify-between w-full p-2">
-        {user && <MyChat fetchAgain={fetchAgain} />}
-        {user && <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />}
-      </div>
+    <div className="h-screen md:mb-0 mb-14 bg-white flex justify-around w-full">
+
+      {user && <MyChat fetchAgain={fetchAgain} />}
+      {user && <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />}
+
     </div>
   );
 };
