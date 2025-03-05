@@ -218,8 +218,8 @@ const SideBarPost = ({closeModal}) => {
   };
 
   return (
-    <div className="flex items-center justify-center z-50 mb-4">
-      <div className="bg-[#fafafa] w-full max-w-3xl mx-auto rounded-lg border-2  border-gray-200 ">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn">
+      <div className="bg-white rounded-xl w-full max-w-2xl mx-4 shadow-xl transform transition-all duration-300">
         {/* Header */}
     
         <div className="flex items-center justify-between p-4 border-b">

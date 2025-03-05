@@ -1,13 +1,13 @@
 import React, { useState } from 'react'; // Import useState
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import { setSelectedChat } from "../../../../slices/chatSlice";
 import axios from "axios";
 import UserBadgeItem from "./UserBadgeItem";
 import UserCard from "./UserCard"; // Import UserListItem
-import { toast } from "react-hot-toast";
+import {toast} from "react-hot-toast";
 import { chatEndpoints } from "../../../../services/apis";
-import { Box, Button, Typography, Modal, IconButton, FormControl, TextField, Input } from '@mui/material'; // Add missing imports
+import {Box, Button, Typography, Modal, IconButton, FormControl, TextField, Input} from '@mui/material'; // Add missing imports
 import CloseIcon from '@mui/icons-material/Close';
 import Loader from "../../../Common/Loader";
 
@@ -15,18 +15,18 @@ const style = {
     position: 'absolute',
     top: '50%',
     left: '50%',
-    display: "flex",
-    flexDirection: "column",
+    display:"flex",
+    flexDirection:"column",
     transform: 'translate(-50%, -50%)',
     width: 400,
     bgcolor: 'background.paper',
-    borderRadius: "10px",
+    borderRadius:"10px",
     // border: '2px solid #000',
     boxShadow: 24,
     p: 4,
 };
 
-const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
+const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain,fetchMessages }) => {
     const { token } = useSelector((state) => state.auth);
     const { user } = useSelector((state) => state.profile);
     const { selectedChat } = useSelector((state) => state.chat);
@@ -36,10 +36,10 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
     const [loading, setLoading] = useState(false);
     const [renameloading, setRenameLoading] = useState(false);
     const [open, setOpen] = useState(false);
-    const dispatch = useDispatch();
+    const dispatch=useDispatch();
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
-    console.log(selectedChat, "update");
+    console.log(selectedChat,"update");
     const handleSearch = async (query) => {
         setSearch(query);
         if (!query) {
@@ -163,7 +163,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
 
     return (
         <>
-            <IconButton onClick={handleOpen}><RemoveRedEyeIcon /></IconButton>
+            <IconButton onClick={handleOpen}><RemoveRedEyeIcon/></IconButton>
             <Modal
                 open={open}
                 onClose={handleClose}
