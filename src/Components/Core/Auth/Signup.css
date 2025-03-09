@@ -1,0 +1,247 @@
+/* Signup.css */
+
+.signup-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f7f8fa; /* Light grey background */
+  }
+  
+  .signup-content {
+    display: flex;
+    width: 90%; /* Adjust as needed */
+    max-width: 1200px; /* Maximum width */
+    margin: 20px;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    border-radius: 10px;
+    overflow: hidden; /* Ensure content doesn't overflow rounded corners */
+  }
+  
+  .signup-form-container {
+    flex: 1;
+    padding: 40px;
+  }
+  
+  .signup-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333; /* Dark grey title */
+    margin-bottom: 10px;
+  }
+  
+  .signup-subtitle {
+    color: #666; /* Medium grey subtitle */
+    margin-bottom: 20px;
+  }
+  
+  .google-login-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd; /* Light grey border */
+    border-radius: 8px;
+    background-color: white;
+    color: #333;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  
+  .google-login-btn:hover {
+    background-color: #f9f9f9;
+  }
+  
+  .or-divider {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #999; /* Light grey "or" */
+  }
+  
+  .signup-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+  
+  .form-group label {
+    font-size: 0.9rem;
+    color: #555; /* Slightly darker grey label */
+    margin-bottom: 5px;
+  }
+  
+  .form-group input {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  .form-group input:focus {
+    outline: none;
+    border-color: #4caf50; /* Green focus */
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5); /* Green shadow */
+  }
+  
+  .error-message {
+    color: #f44336; /* Red error */
+    font-size: 0.8rem;
+    margin-top: 5px;
+  }
+  
+  .terms-checkbox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .terms-checkbox input {
+    margin-right: 10px;
+  }
+  
+  .terms-checkbox label {
+    color: #666;
+    font-size: 0.9rem;
+  }
+  
+  .signup-btn {
+    background-color: #4caf50; /* Green button */
+    color: white;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .signup-btn:hover {
+    background-color: #43a047; /* Darker green hover */
+  }
+  
+  .login-link {
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+  }
+  
+  .login-link span {
+    color: #1976d2; /* Blue link */
+    cursor: pointer;
+    font-weight: 500;
+  }
+  
+  .login-link span:hover {
+    text-decoration: underline;
+  }
+  
+  /* Signup Image Section */
+  
+  .signup-image-container {
+    flex: 1;
+    background-color: #f0f8ff; /* Light blue background */
+    padding: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .signup-image-content {
+    text-align: left;
+  }
+  
+  .signup-image-content h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+  }
+  
+  .signup-image-content p {
+    color: #666;
+    margin-bottom: 20px;
+  }
+  
+  .guarantee-delivery {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .guarantee-delivery span {
+    background-color: #e3f2fd; /* Lighter blue */
+    color: #1976d2;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 0.85rem;
+  }
+  
+  /* Modal Styles */
+  
+  .modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    z-index: 1000; /* High z-index to appear on top */
+  }
+  
+  .modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .modal-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 15px;
+  }
+  
+  .otp-input {
+    width: 200px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 1rem;
+    margin-bottom: 15px;
+  }
+  
+  .otp-submit-btn {
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .otp-submit-btn:hover {
+    background-color: #43a047;
+  }
+  
+  .resend-otp {
+    color: #1976d2;
+    cursor: pointer;
+    margin-top: 10px;
+    text-decoration: underline;
+  }
+  
+  .timer-text {
+    color: #666;
+    margin-top: 10px;
+    font-size: 0.9rem;
+  }

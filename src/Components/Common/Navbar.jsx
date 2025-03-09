@@ -123,7 +123,6 @@ function Navbar() {
               <img src={logo} style={{ width: "11rem", height: "2rem" }} alt="logo" />
             </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
-              {token ? (<span></span>) : (<Button component={Link} to="/business" sx={{ color: "black" }}> Business</Button>)}
               {token && (pathname === '/dashboard/chat') && (<SideDrawer />)}
 
             </Box>
