@@ -9,35 +9,43 @@ import Cookies from 'js-cookie'
 
 
 // Send OTP API
-export async function sendotp(phoneNumber, dispatch) {
-    const toastid = toast.loading("Loading");
-    dispatch(setLoading(true));
-    
-    try {
-      const response = await apiConnector("POST", endpoints.SENDOTP_API, {
-        phoneNumber,
-      });
-      if (!response.data.success) {
-        throw new Error(response.data.message);
-      }
-      toast.success("OTP sent successfully to your phone number");
-      dispatch(setLoading(false));
+export async function sendotp(phoneNumber, email, dispatch) {
+  toast.dismiss();
+  const toastid = toast.loading("Loading");
+  dispatch(setLoading(true));
+
+  try {
+    const response = await apiConnector("POST", endpoints.SENDOTP_API, {
+      phoneNumber,
+      email,
+    });
+
+    if (!response.data.success) {
+      // Dismiss toast and show error before throwing
       toast.dismiss(toastid);
-      return response;
-     
-    } catch (error) {
-      console.log("Send OTP error", error);
-      toast.error(error.response.data.message);
+      toast.error(response.data.message);
+      throw new Error(response.data.message);
     }
+
+    toast.success(response.data.message);
+    return response;
+  } catch (error) {
+    console.log("Send OTP error", error);
+    toast.error(error.response?.data?.message || "Failed to send OTP.");
+    throw error;
+  } finally {
     dispatch(setLoading(false));
     toast.dismiss(toastid);
+  }
 }
+
 
 // Sign Up API
 export function signUp(
   firstName, lastName, email, password, confirmPassword, phoneNumber, otp, navigate
 ) {
   return async (dispatch) => {
+    toast.dismiss();
     const toastId = toast.loading("Loading");
     dispatch(setLoading(true));
     try {
@@ -47,7 +55,7 @@ export function signUp(
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
-      toast.success("Signup successful");
+      toast.success(response.data.message);
 
       dispatch(setToken(response.data.token));
       const userImage = response?.data?.user?.image
@@ -66,7 +74,7 @@ export function signUp(
       navigate('/profiledetails');
     } catch (error) {
       console.log(error);
-      toast.error("Could not signup");
+      toast.error(error.response.data.message);
       navigate("/signup");
     }
     dispatch(setLoading(false));
@@ -76,6 +84,7 @@ export function signUp(
 
 // Profile Details API
 export async function profileDetails(formData, token, navigate, dispatch) {
+  toast.dismiss();
     const toastId = toast.loading("Loading");
     try {
       const response = await apiConnector('PUT', endpoints.PROFILE_DETAILS, formData, {
@@ -84,17 +93,17 @@ export async function profileDetails(formData, token, navigate, dispatch) {
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
-      toast.success("Profile details added successfully");
+      toast.success(response.data.message);
 
       // Update signup data after profile details update
       dispatch(SetSignUpData({
-        profileDetails: formData // You can add additional data as per your requirement
+        profileDetails:formData
       }));
-
+     Cookies.set("user", JSON.stringify(response.data.userDetails), { expires: 1 });
       navigate('/communityaddress');
     } catch (error) {
       console.log(error);
-      toast.error("Could not add the profile details");
+      toast.error(error.response.data.message);
       navigate("/profiledetails");
     }
     toast.dismiss(toastId);
@@ -102,6 +111,7 @@ export async function profileDetails(formData, token, navigate, dispatch) {
 
 // Community Address API
 export async function communityAddress(formData, token, navigate, dispatch) {
+  toast.dismiss();
     const toastId = toast.loading("Loading");
     try {
       const response = await apiConnector('PUT', endpoints.COMMUNITY_ADDRESS, formData, {
@@ -110,17 +120,17 @@ export async function communityAddress(formData, token, navigate, dispatch) {
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
-      toast.success("Community address added successfully");
+      toast.success(response.data.message);
 
       // Update signup data after community address update
       dispatch(SetSignUpData({
-        formData
+        communityAddress:formData
       }));
-      
+      Cookies.set("user", JSON.stringify(response.data.userDetails), { expires: 1 });
       navigate('/community');
     } catch (error) {
       console.log(error);
-      toast.error("Could not add the community address");
+      toast.error(error.response.data.message);
       navigate("/communityaddress");
     }
     toast.dismiss(toastId);
@@ -128,6 +138,7 @@ export async function communityAddress(formData, token, navigate, dispatch) {
 
 
 export async function community(formData, token, navigate, dispatch) {
+  toast.dismiss();
   const toastId = toast.loading("Loading");
   try {
     const response = await apiConnector('PUT', endpoints.COMMUNITY, formData, {
@@ -136,31 +147,36 @@ export async function community(formData, token, navigate, dispatch) {
     if (!response.data.success) {
       throw new Error(response.data.message);
     }
-    toast.success("Community added successfully");
+    toast.success(response.data.message);
 
     // Update signup data after community address update
     dispatch(SetSignUpData({
-      formData
+      communityName:formData
     }));
     Cookies.set("user", JSON.stringify(response.data.userDetails), { expires: 1 });
     navigate('/verification');
     
   } catch (error) {
     console.log(error);
-    toast.error("Could not add the community");
+    toast.error(error.response.data.message);
     navigate("/community");
   }
   toast.dismiss(toastId);
 }
 
 export async function verification(formData, token, navigate, dispatch) {
+  toast.dismiss();
   const toastId = toast.loading("Loading");
+  console.log(formData,"212312312")
   try {
     const response = await apiConnector('PUT', endpoints.VERIFICATION, formData, {
       Authorization: `Bearer ${token}`,
     });
     if (response.data.success) {
-      toast.success("Verification completed successfully!");
+      toast.success(response.data.message);
+      dispatch(SetSignUpData({
+        verificationDetails:formData
+      }));
       Cookies.set("user", JSON.stringify(response.data.user), { expires: 1 });
       navigate("/profession");  // or navigate to the next step
     } else {
@@ -180,6 +196,7 @@ export async function verification(formData, token, navigate, dispatch) {
 
 // Submit profession API function
 export async function profession(professionData, token, navigate, dispatch) {
+  toast.dismiss();
   const toastId = toast.loading("Submitting Profession...");
   try {
     const response = await apiConnector('PUT', endpoints.PROFESSION, professionData, {
@@ -188,8 +205,12 @@ export async function profession(professionData, token, navigate, dispatch) {
     
     if (response?.data?.success) {
       toast.success("Profession added successfully!");
+      dispatch(SetSignUpData({
+        professionalDetails:professionData
+      }));
+      toast.success(response.data.message);
       Cookies.set("user", JSON.stringify(response.data.userDetails), { expires: 1 });
-      navigate("/dashboard");  
+      navigate("/welcome");  
     } else {
       throw new Error(response.data.message);
     }
@@ -206,35 +227,47 @@ export async function profession(professionData, token, navigate, dispatch) {
 
 export function login(email, password, navigate) {
   return async (dispatch) => {
-    const toastId = toast.loading("Loading");
     dispatch(setLoading(true));
+    toast.dismiss();
     try {
-      const response = await apiConnector("POST", endpoints.LOGIN_API, {
-        email,
-        password,
-      });
-      console.log(response);
-      if (!response.data.message) {
-        throw new Error(response.data.message);
-      }
-      toast.success("Login successful");
-      dispatch(setToken(response.data.token));
-      const userImage = response?.data?.user?.image
-        ? response.data.user.image
-        : `https://api.dicebear.com/5.x/initials/svg?seed=${response.data.user.firstName} ${response.data.user.lastName}`;
-      dispatch(setUser({ ...(await response).data.user, image: userImage }));
-      // localStorage.setItem("token", JSON.stringify(response.data.token));
-      Cookies.set("token", JSON.stringify(response.data.token), { expires: 1});
-      console.log(response.data,"----------user from login")
-      // localStorage.setItem("user", JSON.stringify(response.data.user));
-      Cookies.set("user", JSON.stringify(response.data.user), { expires: 1 });
-      navigate("/dashboard");
+      await toast.promise(
+        (async () => {
+          const response = await apiConnector("POST", endpoints.LOGIN_API, {
+            email,
+            password,
+          });
+          if (!response.data.message) {
+            throw new Error(response.data.message);
+          }
+          // Success message from the API
+          const successMessage = response.data.message;
+
+          // Set token and user in Redux store and cookies
+          dispatch(setToken(response.data.token));
+          const userImage = response?.data?.user?.image
+            ? response.data.user.image
+            : `https://api.dicebear.com/5.x/initials/svg?seed=${response.data.user.firstName} ${response.data.user.lastName}`;
+          dispatch(setUser({ ...response.data.user, image: userImage }));
+          Cookies.set("token", JSON.stringify(response.data.token), { expires: 1 });
+          Cookies.set("user", JSON.stringify(response.data.user), { expires: 1 });
+          
+          // Navigate to dashboard
+          navigate("/dashboard");
+
+          return successMessage;
+        })(),
+        {
+          loading: "Signing in...",
+          success: (data) => data, // This will be the success message
+          error: (err) =>
+            err.response?.data?.message || "Login failed. Please try again.",
+        }
+      );
     } catch (error) {
-      console.log("LOGIN API Error", error);
-      toast.error("Login failed");
+      console.error("LOGIN API Error", error);
+      // No need to call toast.error here because toast.promise handles it
     }
     dispatch(setLoading(false));
-    toast.dismiss(toastId);
   };
 }
 
@@ -251,6 +284,7 @@ export function logout(navigate) {
 
 export function getPasswordResetToken(email, setEmailSent, navigate) {
   return async (dispatch) => {
+    toast.dismiss();
     const toastId = setLoading("Loading");
     dispatch(setLoading(true));
     try {
@@ -264,11 +298,11 @@ export function getPasswordResetToken(email, setEmailSent, navigate) {
       if (!response.data.success) {
         throw new Error(response.data.message);
       }
-      toast.success("Reset Email sent");
+      toast.success(response.data.message);
       setEmailSent(true);
     } catch (error) {
       console.log("RESET PASSWORD TOKEN Error", error);
-      toast.error("Failed to send email for resetting password");
+      toast.error(error.response.data.message);
       toast.error("email is not registered with us");
       navigate('/login');
     }
@@ -277,8 +311,10 @@ export function getPasswordResetToken(email, setEmailSent, navigate) {
 }
 
 export function resetPassword(password, confirmPassword, token) {
+
   return async (dispatch) => {
     dispatch(setLoading(true));
+    toast.dismiss();
     try {
       const response = await apiConnector("POST", endpoints.RESETPASSWORD_API, {
         password,
@@ -312,38 +348,5 @@ export const search = async (token, search) => {
   }
 }
 
-export function googleDetails(city,state,postalCost,phoneNumber,community,navigate) {
-  return async (dispatch) => {
-    const toastId = toast.loading("Loading");
-    dispatch(setLoading(true));
-    try {
 
-      const token=Cookies.get("token");
-      const response = await apiConnector("POST", endpoints.GOOGLE_DETAILS, {
-        city,state,postalCost,phoneNumber,community
-      },{Authorization: `Bearer ${token}`});
-      
-      if (!response.data.message) {
-        throw new Error(response.data.message);
-      }
-     
-      toast.success("Login successful");
-      dispatch(setToken(response.data.user.token));
-      dispatch(setUser(response.data.user))
-     
-      const userImage = response?.data?.user?.image
-        ? response.data.user.image
-        : `https://api.dicebear.com/5.x/initials/svg?seed=${response.data.user.firstName} ${response.data.user.lastName}`;
-      dispatch(setUser({ ...(await response).data.user, image: userImage }));
-      localStorage.setItem("token", JSON.stringify(response.data.user.token));
-      localStorage.setItem("user", JSON.stringify(response.data.user));
-      navigate("/dashboard");
-    } catch (error) {
-      console.log("Google details API Error", error);
-      toast.error("Login failed");
-    }
-    dispatch(setLoading(false));
-    toast.dismiss(toastId);
-  };
-}
 

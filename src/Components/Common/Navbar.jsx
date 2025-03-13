@@ -38,13 +38,15 @@ const settings = [
 function Navbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { token } = useSelector((state) => state.auth);
+  const { token,signUpData } = useSelector((state) => state.auth);
   const { user } = useSelector((state) => state.profile);
+  console.log(user,"user in navbar h")
   const { notification } = useSelector((state) => state.chat);
   const location = useLocation();
   // access query parameters
   const pathname = location.pathname;
-
+  console.log(user,"user in navbar");
+  console.log(signUpData);
 
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
@@ -183,7 +185,7 @@ function Navbar() {
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                     <Avatar alt="User" src={user?.image} sx={{ width: '34px', height: '34px', marginRight: '10px' }} />
-                    <p className='text-sm text-gray-800'>{user.firstName} {user.lastName}</p>
+                    <p className='text-sm text-gray-800'>{user?.firstName} {user?.lastName}</p>
                   </IconButton>
                 </Tooltip>
                 <Menu

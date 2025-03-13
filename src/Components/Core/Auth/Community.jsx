@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { community } from "../../../services/operations/authApi"; // Assuming the API call is in services/api.js
+import { community } from "../../../services/operations/authApi";
 import { toast } from "react-hot-toast";
 import axios from "axios";
-
+import communityImage from "../../../assests/signup_image.jpg"; // Replace with your actual image path
+import nityamNeedsLogo from "../../../assests/nityam_mlogo.png";
 const Community = () => {
   const [areas, setAreas] = useState([]);
   const [selectedArea, setSelectedArea] = useState("");
   const { token, signUpData } = useSelector((state) => state.auth);
-  const pincode = signUpData?.formData?.pincode;
-  const city = signUpData?.formData?.city;
+  const pincode = signUpData?.communityAddress?.pincode;
+  const city = signUpData?.communityAddress?.city;
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -19,24 +20,17 @@ const Community = () => {
       if (pincode) {
         try {
           const response = await axios.get(`https://api.postalpincode.in/pincode/${pincode}`);
+          console.log(response, "postoffice response");
           const data = response.data[0];
 
           if (data?.Status === "Success") {
-            const filteredAreas = data.PostOffice.filter(
-              (area) => area.District.toLowerCase() === city.toLowerCase()
-            );
-
-            if (filteredAreas.length > 0) {
-              setAreas(filteredAreas);
-            } else {
-              toast.error("No areas found for the provided city and pincode.");
-            }
+            setAreas(data.PostOffice);
           } else {
-            toast.error("Invalid pincode or no areas found.");
+            toast.error(response.data.message);
           }
         } catch (error) {
           console.error("Error fetching areas:", error);
-          toast.error("Could not fetch areas. Please try again.");
+          toast.error(error.response.data.message);
         }
       }
     };
@@ -56,45 +50,77 @@ const Community = () => {
 
     try {
       await community(formData, token, navigate, dispatch);
-      toast.success("Community submitted successfully!");
+      
     } catch (error) {
       console.error("Error submitting community:", error);
-      toast.error("Could not submit community. Please try again.");
+
     }
   };
 
   return (
-    <div className="community-page max-w-lg mx-auto mt-8 p-6 bg-white shadow-md rounded-lg">
-      <h2 className="text-2xl font-semibold text-center mb-6">Select Your Area</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label
-            htmlFor="area"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Area
-          </label>
-          <select
-            id="area"
-            value={selectedArea}
-            onChange={(e) => setSelectedArea(e.target.value)}
-            className="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          >
-            <option value="">Select an area</option>
-            {areas.map((area, index) => (
-              <option key={index} value={area.Name}>
-                {area.Name}
-              </option>
-            ))}
-          </select>
+    <div className="flex flex-col md:flex-row w-full min-h-screen">
+      {/* Left Column - Image and Overlay */}
+      <div className="hidden md:flex md:w-1/2 relative">
+        <img
+          src={communityImage}
+          alt="Community"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-center items-center p-4">
+          <h2 className="text-2xl font-bold mb-2 text-white">Discover Your Community</h2>
+          <p className="text-center max-w-xs text-white">
+            Select your area to connect with your local community and enjoy personalized services.
+          </p>
         </div>
-        <button
-          type="submit"
-          className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-        >
-          Submit
-        </button>
-      </form>
+      </div>
+
+      {/* Right Column - Form */}
+      <div className="flex w-full md:w-1/2 justify-center items-center p-6">
+        <div className="max-w-md w-full space-y-6">
+        <div className="text-center">
+            <img
+              src={nityamNeedsLogo}
+              alt="Nityam needs"
+              className="mx-auto h-20"
+            />
+          </div>
+          <div className="text-center">
+            <h1 className="text-3xl font-bold text-purple-600">Select Your Area</h1>
+            <p className="text-sm text-gray-500 mt-2">
+              Please select the area corresponding to your pincode.
+            </p>
+          </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="area" className="block text-sm font-medium text-gray-700 mb-1">
+                Area
+              </label>
+              <select
+                id="area"
+                value={selectedArea}
+                onChange={(e) => setSelectedArea(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm 
+                           focus:outline-none focus:ring-2 focus:ring-purple-500"
+              >
+                <option value="">Select an area</option>
+                {areas.map((area, index) => (
+                  <option key={index} value={area.Name}>
+                    {area.Name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button
+              type="submit"
+              className="w-full py-3 bg-purple-600 text-white rounded-md shadow 
+                         hover:bg-purple-700 transition font-semibold 
+                         focus:outline-none focus:ring-2 focus:ring-purple-500"
+            >
+              Submit
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

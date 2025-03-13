@@ -11,6 +11,10 @@ import Advertisements from '../Components/Core/Dashboard/Advertisement'
 const Dashboard = () => {
   const { loading: profileLoading } = useSelector((state) => state.auth);
   const { loading: authLoading } = useSelector((state) => state.profile);
+  const {user}=useSelector((state)=>state.profile);
+  console.log(user,"asdasdasdasuser ha bahiya");
+  const {signUpData}=useSelector((state)=>state.auth);
+  console.log(signUpData,"signupdata is very useful");
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const ad = [{ head: 'Book Your House Today!', subtitle: 'Lorem ipsum dolor sit' }, { head: 'Book Your House Today!', subtitle: 'Lorem ipsum dolor sit ' }]

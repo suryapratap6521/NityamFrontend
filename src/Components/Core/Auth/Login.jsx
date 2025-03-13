@@ -13,7 +13,7 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { login, setToken } from "../../../services/operations/authApi";
 import { setUser } from '../../../slices/profileSlice';
 import { useNavigate, useLocation } from "react-router-dom";
@@ -42,7 +42,8 @@ export default function Login() {
   const location = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
+  // Get loading state from auth slice
+  const { loading } = useSelector((state) => state.auth);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -56,22 +57,20 @@ export default function Login() {
   };
 
   const handleGoogleLogin = () => {
+    // Redirect to your backend Google OAuth endpoint.
     window.location.href = 'http://localhost:8080/api/v1/auth/google';
-
-
   };
 
   return (
     <div className='h-screen flex justify-around px-8 py-8'>
-
-
       <div className="relative md:w-5/12 h-full rounded-md">
         <div className="absolute md:w-full h-full rounded-md top-0 left-0 z-10 flex flex-col justify-end p-10" style={{ background: 'linear-gradient(180deg, rgba(255, 255, 255, 0) 44%, rgb(0 0 0 / 52%) 80%)' }}>
-          <h1 className="text-white text-2xl font-medium mb-2 ">Connect With Community</h1>
-          <p className="text-gray-400 leading-4 text-base ">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore  elit, sed do eius tempor incididunt ut labore et dolore </p>
+          <h1 className="text-white text-2xl font-medium mb-2">Connect With Community</h1>
+          <p className="text-gray-400 leading-4 text-base">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore elit, sed do eius tempor incididunt ut labore et dolore
+          </p>
         </div>
         <img className="md:w-full h-full bg-cover bg-center rounded-md" src={login_image} />
-
       </div>
       <div className="md:w-5/12 h-full">
         <Box
@@ -87,7 +86,9 @@ export default function Login() {
             <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#8E2DE2]">
               Login
             </h1>
-            <p className="text-gray-400 leading-4 text-sm ">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod</p>
+            <p className="text-gray-400 leading-4 text-sm">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+            </p>
           </div>
           <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
             <TextField
@@ -119,37 +120,36 @@ export default function Login() {
               label="Remember me"
             />
             <button
-              className=" w-full text-base bg-gradient text-white py-4 rounded-full m-0"
+              type="submit"
+              disabled={loading}  // Disable while loading
+              className="w-full text-base bg-gradient text-white py-4 rounded-full m-0"
             >
-              Sign In
+              {loading ? "Signing In..." : "Sign In"}
             </button>
             <div className='flex w-full justify-between items-center mt-1'>
-              <div >
+              <div>
                 <a href="/forgotpassword" className='text-gray-700 text-sm'>
                   Forgot password?
                 </a>
               </div>
-              <div >
+              <div>
                 <a href="/signup" className='text-gray-700 text-sm'>
                   Don't have an account? <b className='text-[#8E2DE2] text-sm'>Sign Up</b>
                 </a>
               </div>
             </div>
-            <hr className='my-8' style={{ borderTop: "0.5px solid #00000070" }} />
-            <button
-              className=" w-9/12 flex items-center justify-center m-auto text-base bg-white border-gray-400 border-solid py-3 rounded-full m-0"
+            <hr className='my-4' style={{ borderTop: "0.5px solid #00000070" }} />
+          </Box>
+          <button
+              disabled={loading}  // Also disable the Google login button when loading
+              className="w-9/12 flex items-center justify-center m-auto text-base bg-lime-400 border-gray-400 border-solid py-3 rounded-full m-0"
               onClick={handleGoogleLogin}
             >
               <FcGoogle style={{ fontSize: '30px', marginRight: '10px' }} />
               CONTINUE WITH GOOGLE
             </button>
-
-
-            <Copyright sx={{ mt: 5 }} />
-          </Box>
         </Box>
       </div>
     </div>
-
   );
 }

@@ -91,19 +91,7 @@ label input{
   text-align: center;
 }
 
-button {
-  background-color: #ffD700;
-  color: #000;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.875rem;
-  font-weight: 500;
-  margin-top: 20px;
-  margin-right: 1rem;
-  /* text-align: center; */
-}
+
 
 /* button:hover {
   background-color: #ffe44e;

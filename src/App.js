@@ -30,6 +30,7 @@ import Verification from "./Components/Core/Auth/Verification";
 import Profession from "./Components/Core/Auth/Profession";
 import CreatePage from "./Components/Core/Page/CreatePage";
 import ViewPage from "./Components/Core/Page/ViewPage"
+import GoogleAuthHandler from "./Components/Core/Auth/GoogleAuthHandler";
 import AdCenter from "./Components/Core/Page/AdCenter"
 import Pages from "./pages/Pages";
 import { useEffect } from 'react';
@@ -38,13 +39,18 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from "react-redux";
 import { addNotification } from "./slices/notificationSlice";
 import { fetchNotifications } from "./services/operations/notificationApi";
+import { useNavigate } from "react-router-dom";
+import WelcomeSplash from "./Components/Common/WelcomeSplash";
 // import PostView from "./Components/Core/Post/PostView";
 function App() {
 
   const { user } = useSelector((state) => state.profile);
   const {token}=useSelector((state)=>state.auth);
   const dispatch=useDispatch();
+  const navigate=useNavigate();
+  
 // App.js
+
 
 
 useEffect(() => {
@@ -86,6 +92,10 @@ useEffect(() => {
               <Signup />
             </OpenRoute>
           }
+        />
+         <Route
+          path="/auth/google/callback"
+          element={<GoogleAuthHandler />}
         />
         <Route
           path="/profiledetails"
@@ -277,6 +287,7 @@ useEffect(() => {
           
             }
           />
+          <Route path="/welcome" element={<WelcomeSplash />} />
           <Route
             path="/dashboard"
             element={
