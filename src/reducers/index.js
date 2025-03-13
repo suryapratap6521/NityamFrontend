@@ -16,8 +16,6 @@ const rootReducer = combineReducers({
   page:pageSlice,
   ad: adSlice,
   notification: notificationSlice,
-
-,
   event: eventSlice
 });
 

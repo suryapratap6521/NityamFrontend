@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { sendotp, signUp } from "../../../services/operations/authApi";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Modal from "react-modal";
 import signup_image from "../../../assests/signup_image.jpg";
 import nityamNeedsLogo from "../../../assests/nityam_mlogo.png";
 // ^ Replace with your actual path & file name
 
-import { sendotp, signUp } from "../../../services/operations/authApi"; // Import your APIs
-import { useDispatch, useSelector } from 'react-redux';
-import Loader from "../../../Components/Common/Loader"; // Optional loading component
-import Modal from "react-modal"; // For modal
-import { useNavigate } from 'react-router-dom'
 const Signup = () => {
 
   const { loading } = useSelector((state) => state.auth);

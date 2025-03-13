@@ -39,10 +39,7 @@ import ViewPage from "./Components/Core/Page/ViewPage"
 import GoogleAuthHandler from "./Components/Core/Auth/GoogleAuthHandler";
 import AdCenter from "./Components/Core/Page/AdCenter"
 import Pages from "./pages/Pages";
-import { useEffect } from 'react';
-import { io } from 'socket.io-client';
-import { useSelector } from 'react-redux';
-import { useDispatch } from "react-redux";
+
 import { addNotification } from "./slices/notificationSlice";
 import { fetchNotifications } from "./services/operations/notificationApi";
 import { useNavigate } from "react-router-dom";

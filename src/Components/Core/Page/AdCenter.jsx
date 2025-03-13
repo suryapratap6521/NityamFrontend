@@ -383,7 +383,7 @@ const AdCenter = () => {
                   className="bg-[#FAFAFA] rounded w-full focus:outline-none"
                 />
               </div>
-            </div> */}
+            </div>
 
             {/* Age Group */}
             <label className="text-lg font-normal text-gray-600">Target Audience Age Group</label>
