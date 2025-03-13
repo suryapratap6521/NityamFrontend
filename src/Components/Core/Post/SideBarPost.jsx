@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { createPost } from '../../../services/operations/postApi'; // Ensure correct API path
 import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";

@@ -87,7 +87,7 @@ const Sidebar = () => {
       </div>
 
 
-      {isModalOpen && <SideBarPost closeModal={() => setIsModalOpen(false)} />}
+
     </>
   );
 }
