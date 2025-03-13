@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { sendotp, signUp } from "../../../services/operations/authApi"; // Import your APIs
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from 'react-redux';
 import Loader from "../../../Components/Common/Loader"; // Optional loading component
 import Modal from "react-modal"; // For modal
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 const Signup = () => {
+
+  const { loading } = useSelector((state) => state.auth);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -14,7 +16,7 @@ const Signup = () => {
     confirmPassword: "",
     otp: "",
   });
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [errors, setErrors] = useState({});
   const [showOtpModal, setShowOtpModal] = useState(false); // Show OTP modal
   const [otpInput, setOtpInput] = useState(""); // For OTP input in the modal
@@ -28,7 +30,7 @@ const Signup = () => {
       countdown = setInterval(() => {
         setTimer((prevTimer) => prevTimer - 1);
       }, 1000);
-    } 
+    }
     return () => clearInterval(countdown); // Cleanup interval on unmount
   }, [showOtpModal, timer]);
 
@@ -176,7 +178,13 @@ const Signup = () => {
           )}
         </div>
 
-        <button type="submit">Signup</button>
+        <button
+          type="submit"
+          className={`w-full py-3 ${loading ? 'bg-gray-300' : 'bg-green-500'} text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring focus:ring-green-300`}
+          disabled={loading}
+        >
+          {loading ? 'Sending Otp' : 'Sign Up'}
+        </button>
       </form>
 
       {/* OTP Modal */}

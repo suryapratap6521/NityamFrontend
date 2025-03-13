@@ -13,7 +13,7 @@ import "slick-carousel/slick/slick-theme.css";
 const AdPreview = () => {
   const pageData = useSelector((state) => state.page.pageData || {});
   const adData = useSelector((state) => state.ad.adData || {});
-
+  console.log(adData)
   const settings = {
     infinite: true,
     speed: 500,
@@ -25,8 +25,8 @@ const AdPreview = () => {
   };
 
   return (
-    <div className="container bg-white items-start border-t-0 flex flex-column mx-auto p-6">
-      <div className="flex w-full">
+    <div className="container bg-[#fafafa] border border-gray-300 items-start  rounded-md flex flex-column mx-auto p-6">
+      {/* <div className="flex w-full">
         <div className="border-white rounded-full bg-white">
           {pageData.profilePic ? (
             <img
@@ -54,11 +54,8 @@ const AdPreview = () => {
             </p>
           </div>
         </div>
-      </div>
-      <p className={`text-2xl mt-4 text-[${adData.title == '' ? '#5a5a5a' : '#000000'}] w-fit`}>
-        {adData.title || "Your Ad title..."}
-      </p>
-      <div className="mt-5 w-full">
+      </div> */}
+      <div className="mt-5 w-full max-w-64">
         {adData.images && adData.images.length > 1 && (
           <div className="mt-2">
             <Slider {...settings} className="w-[100%] mx-auto">
@@ -82,7 +79,7 @@ const AdPreview = () => {
                 <img
                   src={img}
                   alt={`Preview ${index + 1}`}
-                  className="w-full h-[250px] object-cover rounded" // Adjust the image styling
+                  className="w-full h-56 rounded-md object-cover " // Adjust the image styling
                 />
               </div>
             ))}
@@ -90,7 +87,7 @@ const AdPreview = () => {
         )}
 
         {!adData.images && (
-          <div className="mt-2 w-full h-[250px] bg-gray-300 flex justify-center items-center">
+          <div className="mt-2 w-full h-56 rounded-md bg-gray-300 flex justify-center items-center">
             <p className="text-2xl mt-2 text-[#5a5a5a] w-fit">
               Ad Banner
             </p>
@@ -98,10 +95,11 @@ const AdPreview = () => {
         )}
 
       </div>
-      <button
+      <p className={`text-xl font-normal text-[${adData.title == '' ? '#5a5a5a' : '#000000'}] w-fit mt-3`}>
+        {adData.title || "Your Ad title..."}
+      </p>
 
-        className="px-4 w-full py-2 bg-[#007AFF] text-white text-base rounded"
-      >
+      <button className="w-fit mt-2 p-2 text-[#4A00E0] text-sm px-8 rounded-md bg-[#4A00E020]">
         {adData.type || "Button Label"}
       </button>
     </div>

@@ -1,4 +1,10 @@
 import React, { lazy, Suspense } from "react";
+import { useEffect } from 'react';
+import { io } from 'socket.io-client';
+import { useSelector } from 'react-redux';
+import { useDispatch } from "react-redux";
+import { addNotification } from "./slices/notificationSlice";
+import { fetchNotifications } from "./services/operations/notificationApi";
 import { Routes, Route } from "react-router-dom";
 import OpenRoute from "./Components/Core/Auth/OpenRoute";
 import PrivateRoute from "./Components/Core/Auth/PrivateRoute";
@@ -32,6 +38,8 @@ import CreatePage from "./Components/Core/Page/CreatePage";
 import ViewPage from "./Components/Core/Page/ViewPage"
 import AdCenter from "./Components/Core/Page/AdCenter"
 import Pages from "./pages/Pages";
+import Events from "./pages/Events";
+// import PostView from "./Components/Core/Post/PostView";
 function App() {
   return (
     <div>
@@ -212,6 +220,14 @@ function App() {
             element={
               <PrivateRoute>
                 <Pages />
+              </PrivateRoute>
+            }
+          />
+             <Route
+            path="/dashboard/events"
+            element={
+              <PrivateRoute>
+                <Events />
               </PrivateRoute>
             }
           />

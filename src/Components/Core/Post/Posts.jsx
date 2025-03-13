@@ -77,6 +77,8 @@ const Posts = () => {
   };
 
   console.log(token, "--------------token");
+
+  console.log(token, "--------------token");
   console.log(posts);
   if (posts === null) {
     return <div>No Posts available</div>

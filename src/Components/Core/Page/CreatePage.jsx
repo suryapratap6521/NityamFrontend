@@ -119,32 +119,33 @@ const CreatePage = () => {
 
   return (
     <div className="container items-start border-t-0 flex flex-row mx-auto p-6">
-      <div className="w-3/5">
-        <PagePreview />
-      </div>
-      <div className="w-2/5 p-4">
-        <h1 className="text-xl text-left font-bold mb-4">
-          Create Business Page
-        </h1>
+      <div className="lg:w-2/5 w-full p-4">
+        <div>
+          <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#8E2DE2]">
+            Create New Page
+          </h1>
+          <p className="text-gray-400 leading-4 text-sm mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod</p>
+        </div>
         {step === 1 && (
           <div>
-            <h2 className="text-lg font-semibold">Business Details</h2>
+            {/* <h2 className="text-lg font-medium text-gray-900">Business Details</h2> */}
             <form>
               <div className="mb-4">
-                <label htmlFor="businessName" className="block font-medium">
+                <label htmlFor="businessName" className="text-base font-semibold text-gray-600">
                   Business Name
                 </label>
                 <input
                   type="text"
                   id="businessName"
                   name="businessName"
+                  placeholder="Please Enter Bussiness Name"
                   value={pageData.businessName || ""}
                   onChange={handleChange}
                   className="border rounded w-full p-2"
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="profilePic" className="block font-medium">
+                <label htmlFor="profilePic" className="text-base font-semibold text-gray-600">
                   Profile Picture
                 </label>
                 <input
@@ -156,7 +157,7 @@ const CreatePage = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="businessCategory" className="block font-medium">
+                <label htmlFor="businessCategory" className="text-base font-semibold text-gray-600">
                   Business Type
                 </label>
                 <select
@@ -175,12 +176,13 @@ const CreatePage = () => {
                 </select>
               </div>
               <div className="mb-4">
-                <label htmlFor="businessDescription" className="block font-medium">
+                <label htmlFor="businessDescription" className="text-base font-semibold text-gray-600">
                   Business Bio
                 </label>
                 <textarea
                   id="businessDescription"
                   name="businessDescription"
+                  placeholder="Please Enter Bussiness Description"
                   value={pageData.businessDescription || ""}
                   onChange={handleChange}
                   className="border rounded w-full p-2"
@@ -192,10 +194,10 @@ const CreatePage = () => {
 
         {step === 2 && (
           <div>
-            <h2 className="text-lg font-semibold">Contact Information</h2>
+            {/* <h2 className="text-lg font-medium text-gray-900">Contact Information</h2> */}
             <form>
               <div className="mb-4">
-                <label htmlFor="businessUrl" className="block font-medium">
+                <label htmlFor="businessUrl" className="text-base font-semibold text-gray-600">
                   businessUrl
                 </label>
                 <input
@@ -208,26 +210,28 @@ const CreatePage = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="businessPhoneNumber" className="block font-medium">
+                <label htmlFor="businessPhoneNumber" className="text-base font-semibold text-gray-600">
                   Phone Number
                 </label>
                 <input
                   type="text"
                   id="businessPhoneNumber"
                   name="businessPhoneNumber"
+                  placeholder="Please Enter Phone Number"
                   value={pageData.businessPhoneNumber || ""}
                   onChange={handleChange}
                   className="border rounded w-full p-2"
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="businessEmail" className="block font-medium">
+                <label htmlFor="businessEmail" className="text-base font-semibold text-gray-600">
                   Email Address
                 </label>
                 <input
                   type="email"
                   id="businessEmail"
                   name="businessEmail"
+                  placeholder="Please Enter Email"
                   value={pageData.businessEmail || ""}
                   onChange={handleChange}
                   className="border rounded w-full p-2"
@@ -238,42 +242,45 @@ const CreatePage = () => {
         )}
         {step === 3 && (
           <div>
-            <h2 className="text-lg font-semibold">Address Information</h2>
+            {/* <h2 className="text-lg font-medium text-gray-900">Address Information</h2> */}
             <form>
               <div className="mb-4">
-                <label htmlFor="businessAddress" className="block font-medium">
+                <label htmlFor="businessAddress" className="text-base font-semibold text-gray-600">
                   Address
                 </label>
                 <input
                   type="text"
                   id="businessAddress"
                   name="businessAddress"
+                  placeholder="Please Enter Bussiness Address"
                   value={pageData.businessAddress || ""}
                   onChange={handleChange}
                   className="border rounded w-full p-2"
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="businessCity" className="block font-medium">
+                <label htmlFor="businessCity" className="text-base font-semibold text-gray-600">
                   City
                 </label>
                 <input
                   type="text"
                   id="businessCity"
                   name="businessCity"
+                  placeholder="Please Enter Bussiness City"
                   value={pageData.businessCity || ""}
                   onChange={handleChange}
                   className="border rounded w-full p-2"
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="businessPostCode" className="block font-medium">
+                <label htmlFor="businessPostCode" className="text-base font-semibold text-gray-600">
                   Postal Code
                 </label>
                 <input
                   type="email"
                   id="businessPostCode"
                   name="businessPostCode"
+                  placeholder="Please Enter Bussiness Postal Code"
                   value={pageData.businessPostCode || ""}
                   onChange={handleChange}
                   className="border rounded w-full p-2"
@@ -287,27 +294,31 @@ const CreatePage = () => {
           <button
             onClick={handleBack}
             disabled={step === 1}
-            className="px-4 py-2 bg-gray-300 rounded"
+            className="px-8 py-3 bg-gray-400 text-base font-semibold text-white rounded-full hover:bg-gray-300"
           >
             Back
           </button>
           {step < 3 ? (
             <button
               onClick={handleNext}
-              className="px-4 py-2 bg-blue-500 text-white rounded"
+              className="px-8 py-3 bg-[#4A00E0] text-base font-semibold text-white rounded-full hover:bg-gray-400"
             >
               Next
             </button>
           ) : (
             <button
               onClick={handleSubmit}
-              className="px-4 py-2 bg-green-500 text-white rounded"
+              className="px-8 py-3 bg-gradient text-base font-semibold text-white rounded-full hover:bg-gray-400"
             >
               Submit
             </button>
           )}
         </div>
       </div>
+      <div className="w-3/5 hidden lg:block">
+        <PagePreview />
+      </div>
+
     </div>
   );
 };

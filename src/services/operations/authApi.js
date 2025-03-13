@@ -35,7 +35,7 @@ export async function sendotp(phoneNumber, dispatch) {
 
 // Sign Up API
 export function signUp(
-  firstName, lastName, email, password, confirmPassword, phoneNumber, otp, navigate
+  firstName, lastName, email, password, confirmPassword, phoneNumber, otp, navigate, setIsLoading
 ) {
   return async (dispatch) => {
     const toastId = toast.loading("Loading");
