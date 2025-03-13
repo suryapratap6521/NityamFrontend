@@ -4,10 +4,17 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Modal from "react-modal";
 import signup_image from "../../../assests/signup_image.jpg";
-import nityamNeedsLogo from "../../../assests/nityam_mlogo.png"; 
+import nityamNeedsLogo from "../../../assests/nityam_mlogo.png";
 // ^ Replace with your actual path & file name
 
+import { sendotp, signUp } from "../../../services/operations/authApi"; // Import your APIs
+import { useDispatch, useSelector } from 'react-redux';
+import Loader from "../../../Components/Common/Loader"; // Optional loading component
+import Modal from "react-modal"; // For modal
+import { useNavigate } from 'react-router-dom'
 const Signup = () => {
+
+  const { loading } = useSelector((state) => state.auth);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -73,7 +80,7 @@ const Signup = () => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        const res = await sendotp(formData.phoneNumber,formData.email,dispatch);
+        const res = await sendotp(formData.phoneNumber, formData.email, dispatch);
         if (res?.data?.success) {
           setShowOtpModal(true);
           setTimer(300); // reset to 5 minutes
@@ -460,7 +467,7 @@ const Signup = () => {
           {timer === 0 ? (
             <button
               onClick={async () => {
-                await sendotp(formData.phoneNumber,formData.email,dispatch);
+                await sendotp(formData.phoneNumber, formData.email, dispatch);
                 setTimer(300);
               }}
               className="mt-4 text-blue-600 underline block text-center 

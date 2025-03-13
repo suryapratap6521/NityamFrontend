@@ -31,45 +31,50 @@ const ViewPage = () => {
   return (
     <div className="container items-start border-t-0 flex flex-row mx-auto p-6">
 
-      <div className="w-4/12 p-4">
-        <h1 className="text-2xl text-left font-bold mb-4">
-          Manage
-        </h1>
+      <div className="lg:w-4/12 w-full p-4">
+        <div>
+          <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#8E2DE2]">
+            Manage
+          </h1>
+          <p className="text-gray-400 leading-4 text-sm mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod</p>
+        </div>
         {step === 1 && (
           <div>
-            <div className="font-medium flex border border-gray-300 py-4 bg-white rounded-md px-3 cursor-pointer">
-              <DashboardIcon style={{ fontSize: "24px", fill: "#1a8e44" }} />
-              <h2 className="text-lg font-semibold ml-3">Professional Dashboard</h2>
+            <div className="font-medium flex pl-0 py-2 bg-white rounded-md px-3 cursor-pointer hover:bg-[#8E2DE230] hover:pl-3 transition-all">
+              <DashboardIcon style={{ fontSize: "24px", fill: "#8E2DE2" }} />
+              <h2 className="text-lg font-normal ml-3"> Dashboard</h2>
             </div>
 
-            <div className="font-medium flex border border-gray-300 py-4 bg-white rounded-md px-3 mt-3 cursor-pointer">
-              <InsightsIcon style={{ fontSize: "24px", fill: "#1a8e44" }} />
-              <h2 className="text-lg font-semibold ml-3">View Insights</h2>
+            <div className="font-medium flex pl-0 py-2 bg-white rounded-md px-3 mt-3 cursor-pointer hover:bg-[#8E2DE230] hover:pl-3 transition-all">
+              <InsightsIcon style={{ fontSize: "24px", fill: "#8E2DE2" }} />
+              <h2 className="text-lg font-normal ml-3">View Insights</h2>
             </div>
-            <Link to="/dashboard/page/adCenter" className=" hover:bg-gray-200 cursor-pointer transition-all duration-300 w-full">
-              <div className="font-medium flex border border-gray-300 py-4 bg-white rounded-md px-3 mt-3 cursor-pointer">
-                <AdsClickIcon style={{ fontSize: "24px", fill: "#1a8e44" }} />
-                <h2 className="text-lg font-semibold ml-3">Ad Center</h2>
+            <Link to="/dashboard/page/adCenter" className="  cursor-pointer transition-all w-full">
+              <div className="font-medium flex pl-0 py-2 bg-white rounded-md px-3 mt-3 cursor-pointer hover:bg-[#8E2DE230] hover:pl-3 ">
+                <AdsClickIcon style={{ fontSize: "24px", fill: "#8E2DE2" }} />
+                <h2 className="text-lg font-normal ml-3">Ad Center</h2>
               </div>
             </Link>
-            <div className="font-medium flex border border-gray-300 py-4 bg-white rounded-md px-3 mt-3 cursor-pointer">
-              <PostAddIcon style={{ fontSize: "24px", fill: "#1a8e44" }} />
-              <h2 className="text-lg font-semibold ml-3">Create New Post</h2>
+            <Link to="/dashboard/page/create" className="  cursor-pointer transition-all w-full">
+              <div className="font-medium flex pl-0 py-2 bg-white rounded-md px-3 mt-3 cursor-pointer hover:bg-[#8E2DE230] hover:pl-3 transition-all">
+                <PostAddIcon style={{ fontSize: "24px", fill: "#8E2DE2" }} />
+                <h2 className="text-lg font-normal ml-3">Create New Post</h2>
+              </div>
+            </Link>
+            <div className="font-medium flex pl-0 py-2 bg-white rounded-md px-3 mt-3 cursor-pointer hover:bg-[#8E2DE230] hover:pl-3 transition-all">
+              <RocketIcon style={{ fontSize: "24px", fill: "#8E2DE2" }} />
+              <h2 className="text-lg font-normal ml-3">Boost Page</h2>
             </div>
-            <div className="font-medium flex border border-gray-300 py-4 bg-white rounded-md px-3 mt-3 cursor-pointer">
-              <RocketIcon style={{ fontSize: "24px", fill: "#1a8e44" }} />
-              <h2 className="text-lg font-semibold ml-3">Boost Page</h2>
-            </div>
-            <div className="font-medium flex border border-gray-300 py-4 bg-white rounded-md px-3 mt-3 cursor-pointer">
-              <SettingsIcon style={{ fontSize: "24px", fill: "#1a8e44" }} />
-              <h2 className="text-lg font-semibold ml-3">Settings</h2>
+            <div className="font-medium flex pl-0 py-2 bg-white rounded-md px-3 mt-3 cursor-pointer hover:bg-[#8E2DE230] hover:pl-3 transition-all">
+              <SettingsIcon style={{ fontSize: "24px", fill: "#8E2DE2" }} />
+              <h2 className="text-lg font-normal ml-3">Settings</h2>
             </div>
           </div>
         )}
 
 
       </div>
-      <div className="w-8/12">
+      <div className="w-8/12 hidden lg:block">
         <PagePreview />
       </div>
     </div>

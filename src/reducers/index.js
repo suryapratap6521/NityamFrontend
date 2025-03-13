@@ -6,6 +6,7 @@ import postSlice from '../slices/postSlice';
 import chatSlice from '../slices/chatSlice';
 import pageSlice from "../slices/pageSlice";
 import adSlice from "../slices/adSlice";
+import eventSlice from "../slices/eventSlice";
 import notificationSlice from "../slices/notificationSlice";
 const rootReducer = combineReducers({
   auth: authSlice,
@@ -16,7 +17,8 @@ const rootReducer = combineReducers({
   ad: adSlice,
   notification: notificationSlice,
 
-
+,
+  event: eventSlice
 });
 
 export default rootReducer;

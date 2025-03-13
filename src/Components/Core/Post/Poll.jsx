@@ -15,7 +15,7 @@ export default function Poll({ post, user }) {
   const [loadingVoters, setLoadingVoters] = useState(false);
 
   const totalVotes = post.pollOptions?.reduce((sum, option) => sum + (option.votes?.length || 0), 0) || 0;
-  const userVoteIndex = post.pollOptions?.findIndex(option => 
+  const userVoteIndex = post.pollOptions?.findIndex(option =>
     option.votes?.some(v => v._id === user?._id)
   ) ?? -1;
 
@@ -26,13 +26,13 @@ export default function Poll({ post, user }) {
 
   const handleVote = async (optionIndex) => {
     if (!user?._id) return;
-    
+
     try {
       setError(null);
       setSelectedOption(optionIndex);
-      
+
       const response = await voteOnPoll(post._id, optionIndex, token);
-      
+
       if (response?.success) {
         dispatch(updatePoll({
           postId: post._id,
@@ -63,20 +63,19 @@ export default function Poll({ post, user }) {
   return (
     <div className="mt-4 space-y-3">
       {error && <div className="text-red-500 text-sm">{error}</div>}
-      
+
       {post.pollOptions?.map((option, index) => {
         const votesCount = option.votes?.length || 0;
         const percentage = calculatePercentage(votesCount);
         const isUserVote = userVoteIndex === index;
 
         return (
-          <div 
-            key={index} 
-            className={`relative p-3 rounded-lg transition-all ${
-              isUserVote 
-                ? 'bg-blue-50 border-2 border-blue-200' 
+          <div
+            key={index}
+            className={`relative p-3 rounded-lg transition-all ${isUserVote
+                ? 'bg-blue-50 border-2 border-blue-200'
                 : 'hover:bg-gray-50 cursor-pointer border-2 border-transparent'
-            }`}
+              }`}
             onClick={() => handleVote(index)}
           >
             <div className="flex justify-between items-center mb-1">
@@ -86,21 +85,20 @@ export default function Poll({ post, user }) {
                   <span className="text-blue-500 text-sm">✓ Your vote</span>
                 )}
               </div>
-              
+
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-gray-600">
                   {percentage}%
                 </span>
-                <button 
+                <button
                   onClick={(e) => {
                     e.stopPropagation();
                     showVoters(index);
                   }}
-                  className={`text-xs ${
-                    votesCount > 0 
-                      ? 'text-blue-600 hover:text-blue-800 cursor-pointer' 
+                  className={`text-xs ${votesCount > 0
+                      ? 'text-blue-600 hover:text-blue-800 cursor-pointer'
                       : 'text-gray-400 cursor-default'
-                  }`}
+                    }`}
                   disabled={votesCount === 0}
                 >
                   {votesCount === 1 ? `${votesCount} vote` : `${votesCount} votes`}
@@ -135,9 +133,9 @@ export default function Poll({ post, user }) {
           ) : (
             voters.map((voter, index) => (
               <div key={index} className="flex items-center space-x-3 p-2 hover:bg-gray-50">
-                <UserAvatar 
-                  user={voter} 
-                  className="h-8 w-8" 
+                <UserAvatar
+                  user={voter}
+                  className="h-8 w-8"
                 />
                 <span>
                   {voter.firstName} {voter.lastName}

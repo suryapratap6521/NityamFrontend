@@ -6,6 +6,7 @@ import Posts from '../Components/Core/Post/Posts';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Advertisements from '../Components/Core/Dashboard/Advertisement'
+import SideBarPost from '../Components/Core/Post/SideBarPost';
 
 
 const Dashboard = () => {
@@ -24,12 +25,13 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="h-screen md:mb-0 mb-14 bg-white">
+    <div className="h-screen  bg-white">
 
       <div className="w-full flex justify-between">
+
         {!isSmallScreen && (
 
-          <div className="w-3/12 bg-white p-4  hidden md:flex  flex-col items-center">
+          <div className="w-3/12 bg-white p-4  hidden lg:flex  flex-col items-center">
             <div className="bg-[#fafafa] w-full px-4 py-4 rounded-lg border-2  border-gray-200 max-w-[350px] ">
               <h1 className='text-lg font-semibold text-gray-600'>My Pages</h1>
               {ad.map((ad, index) => (<>
@@ -75,11 +77,12 @@ const Dashboard = () => {
             {/* Ads*/}
           </div>
         )}
-        <div className="w-6/12 overflow-y-auto p-4">
+        <div className="lg:w-6/12 w-full overflow-y-auto p-4 lg:mb-0 mb-14">
+          <SideBarPost />
           <Posts />
         </div>
         {!isSmallScreen && (
-          <div className="w-3/12 bg-white p-4 hidden md:block">
+          <div className="w-3/12 bg-white p-4 hidden lg:block">
             <Advertisements />
           </div>
         )}

@@ -7,19 +7,11 @@ const ChatBox = ({ fetchAgain, setFetchAgain }) => {
     const { selectedChat } = useSelector((state) => state.chat);
 
     return (
-        <Box
-            display={{ xs: selectedChat ? "flex" : "none", md: "flex" }}
-            flexDirection="column"
-            padding={3}
-            backgroundColor="white"
-            width={{ xs: '100%', md: '68%' }}
-            borderRadius="10px"
-            border="1px solid #ccc"
-            boxShadow="0px 2px 4px rgba(0, 0, 0, 0.1)"
-            marginTop={{ xs: '20px', md: 0 }}
+        <div className={`flex flex-col  rounded-lg overflow-hidden bg-[#FAFAFA] border border-[#00000020] p-4 lg:w-7/12 w-full  ${selectedChat == '' ? 'lg:block hidden' : 'block'}`}
+
         >
             <SingleChat fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
-        </Box>
+        </div>
     );
 };
 

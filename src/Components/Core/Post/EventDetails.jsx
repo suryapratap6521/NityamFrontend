@@ -1,7 +1,7 @@
 import { FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
 
 export default function EventDetails({ post }) {
-  const formatDate = (dateString) => 
+  const formatDate = (dateString) =>
     new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',

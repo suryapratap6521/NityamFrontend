@@ -169,8 +169,9 @@ const TotalPrice = () => {
     };
 
     return (
-        <div className="container bg-white items-start border-t-0 flex flex-column mx-auto p-6 mt-10">
-            <p className={`text-2xl text-[#000000] w-fit`}>Amount</p>
+
+        <div className="container bg-[#fafafa] border border-gray-300 rounded-md items-start  flex flex-column mx-auto p-6 mt-10">
+            <p className={`text-2xl text-[#000000] w-fit`}>Total Amount</p>
             <div className="mt-5 w-full">
                 <div className="w-full flex justify-between">
                     <p className={`text-base text-[#00000080] w-fit`}>
@@ -189,14 +190,14 @@ const TotalPrice = () => {
                 </div>
 
                 <div className="w-full flex justify-between mt-2 border-t pt-2 border-[#00000020]">
-                    <p className={`text-base text-[#000000] w-fit`}>Total</p>
-                    <p className={`text-base text-[#000000] w-fit`}>{price.toFixed(2)}</p>
+                    <p className={`text-base text-[#00000080] w-fit`}>Total</p>
+                    <p className={`text-lg font-medium text-[#000000] w-fit`}>{price.toFixed(2)}</p>
                 </div>
             </div>
-            {isLoading && <p>Loading Razorpay...</p>}
-            {error && <p>Error loading Razorpay: {error}</p>}
-            <button className="px-4 w-full py-2 bg-[#007AFF] text-white text-base rounded" onClick={handleSubmit} >
-                Pay Now
+            {/* {isLoading && <p>Loading Razorpay...</p>}
+            {error && <p>Error loading Razorpay: {error}</p>} */}
+            <button className="px-4 w-full py-2 bg-gradient rounded-full text-white text-lg font-medium " onClick={handleSubmit} >
+                Proceed to Pay
             </button>
         </div>
     );
