@@ -187,7 +187,7 @@ export async function verification(formData, token, navigate, dispatch) {
     navigate('/profession');
   } catch (error) {
     console.error("Verification error:", error);
-    toast.error(error.response?.data?.message || "Verification failed. Please try again.");
+    toast.error(error.response?.data?.message );
     navigate("/verification");
   }
   toast.dismiss(toastId);
@@ -217,7 +217,7 @@ export async function profession(professionData, token, navigate, dispatch) {
 
   } catch (error) {
     console.error("profession error:", error);
-    toast.error(error.response?.data?.message || "Failed to add profession. Please try again.");
+    toast.error(error.response?.data?.message);
   } finally {
     toast.dismiss(toastId);
   }
@@ -260,7 +260,7 @@ export function login(email, password, navigate) {
           loading: "Signing in...",
           success: (data) => data, // This will be the success message
           error: (err) =>
-            err.response?.data?.message || "Login failed. Please try again.",
+            err.response?.data?.message,
         }
       );
     } catch (error) {
