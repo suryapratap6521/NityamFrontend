@@ -71,7 +71,7 @@ const SinglePost = ({
   };
 
   return (
-    <article className="max-w-2xl mx-auto bg-white rounded-xl shadow-sm p-6 mb-6">
+    <article className="max-w-2xl mx-auto bg-white rounded-xl shadow-sm px-6 py-3 mb-6 border border-gray-300">
       <PostHeader
         post={post}
         onMenuOpen={() => setIsModalOpen(true)}

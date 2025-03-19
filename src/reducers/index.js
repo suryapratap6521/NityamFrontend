@@ -8,6 +8,7 @@ import pageSlice from "../slices/pageSlice";
 import adSlice from "../slices/adSlice";
 import eventSlice from "../slices/eventSlice";
 import notificationSlice from "../slices/notificationSlice";
+import serviceSlice from "../slices/serviceSlice";
 const rootReducer = combineReducers({
   auth: authSlice,
   profile: profileSlice,
@@ -16,7 +17,8 @@ const rootReducer = combineReducers({
   page:pageSlice,
   ad: adSlice,
   notification: notificationSlice,
-  event: eventSlice
+  event: eventSlice,
+  service: serviceSlice
 });
 
 export default rootReducer;

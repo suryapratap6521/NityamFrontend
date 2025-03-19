@@ -1,6 +1,7 @@
 import { apiConnector } from '../apiConnector';
 import { serviceEndpoints } from '../apis';
 import toast from 'react-hot-toast';
+import { setLoading, setServiceData, setUserServices,setCommunities} from '../../slices/serviceSlice';
 
 export const getServices = async (token, dispatch) => {
   try {
@@ -8,6 +9,8 @@ export const getServices = async (token, dispatch) => {
     const response = await apiConnector("GET", serviceEndpoints.GET_SERVICES, null, {
       Authorization: `Bearer ${token}`,
     });
+    console.log('service',response.data)
+    dispatch(setServiceData(response.data));
     if (!response?.data?.success) {
       throw new Error("Could not fetch services");
     }

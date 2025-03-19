@@ -3,22 +3,25 @@ import { apiConnector } from '../apiConnector';
 import { postEndpoints } from '../apis';
 import toast from 'react-hot-toast';
 import { setPosts,updatePoll } from '../../slices/postSlice';
+import { setAllAds } from '../../slices/adSlice';
 import { handleResponse } from "../../utils/apiUtils";
 
 export const getAllPosts = async (token, dispatch) => {
   try {
-    console.log(token,"token of post------------>");
+    // console.log(token,"token of post------------>");
     const response = await apiConnector("GET", postEndpoints.GET_ALL_POST, null, {
       Authorization: `Bearer ${token}`,
     });
-    console.log(response, "response");
+    // console.log(response, "response");
 
     if (!response?.data?.success) {
       throw new Error("Could not fetch posts");
     }
 
     dispatch(setPosts(response.data.communityPost));
+    dispatch(setAllAds(response.data.communityAdvertisedPosts));
     localStorage.setItem("posts", JSON.stringify(response.data.communityPost));
+    localStorage.setItem("ad", JSON.stringify(response.data.communityAdvertisedPosts));
 
     return response.data.communityPost;
 

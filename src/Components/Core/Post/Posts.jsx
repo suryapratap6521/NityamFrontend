@@ -25,13 +25,9 @@ const Posts = () => {
   useEffect(() => {
     const getPosts = async () => {
       try {
-        console.log("Hello1");
         const response = await getAllPosts(token, dispatch);
-        console.log("Hello2");
-        dispatch(setPosts(response));
-        console.log("Hello3");
+        // dispatch(setPosts(response));
         setLoading(false);
-        console.log("Hello4");
       } catch (error) {
         console.error("Error fetching posts:", error);
         setLoading(false);
@@ -78,8 +74,7 @@ const Posts = () => {
     }
   };
 
-  console.log(token, "--------------token");
-  console.log(posts);
+
   if (posts === null || posts?.length === 0) {
     return <div>No Posts available</div>
   }

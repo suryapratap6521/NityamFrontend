@@ -30,17 +30,15 @@ export const createEvent = async (formData,dispatch, token) => {
   
 };
 
-export const fetchEventsByUser = async (userId, token, dispatch, isLoading) => {
+export const fetchEventsByUser = async (token, dispatch, isLoading) => {
   if (isLoading) return;
 
   const toastId = toast.loading("Loading...");
   dispatch(setLoading(true));
-  let body = {
-    userId: userId
-  };
+
 
   try {
-    const response = await apiConnector("GET", eventEndpoints.GET_PAGES, body, {
+    const response = await apiConnector("GET", eventEndpoints.GET_PAGES, {}, {
       Authorization: `Bearer ${token}`,
     });
     console.log(response.data);

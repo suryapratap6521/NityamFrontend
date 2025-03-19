@@ -1,7 +1,7 @@
 import { apiConnector } from "../apiConnector";
 import { adEndpoints } from "../apis";
 import toast from "react-hot-toast";
-import { setCommunities, setLoading, setAdData} from '../../slices/adSlice';
+import { setCommunities, setLoading, setAdData,setAllAds} from '../../slices/adSlice';
 
 export const fetchAllCommunities = async (token,dispatch) => {
 
@@ -45,3 +45,4 @@ export const fetchAllCommunities = async (token,dispatch) => {
       }
     
   };
+ 

@@ -265,25 +265,25 @@ const SideBarPost = ({ closeModal }) => {
           </button>
         </div> */}
         <div className="flex">
-          <button onClick={() => setActiveTab('post')} className={`flex items-center gap-1 m-0 px-10 py-4 text-base text-gray-600 rounded-tl-md rounded-none ${activeTab === 'post' ? 'bg-[#4A00E020]' : 'bg-transparent'}`} style={{ borderWidth: activeTab === 'post' ? '2px' : '0px 2px 0px 0px', borderStyle: 'solid', borderColor: activeTab === 'post' ? '#4A00E0' : 'rgb(187, 187, 187)', }}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <button onClick={() => setActiveTab('post')} className={`flex items-center gap-1 m-0 md:px-10 px-0 w-1/3 md:w-fit justify-center py-4 text-base text-gray-600 rounded-tl-md rounded-none ${activeTab === 'post' ? 'bg-[#4A00E020]' : 'bg-transparent'}`} style={{ borderWidth: activeTab === 'post' ? '2px' : '0px 2px 0px 0px', borderStyle: 'solid', borderColor: activeTab === 'post' ? '#4A00E0' : 'rgb(187, 187, 187)', }}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M5.116 20C4.65533 20 4.271 19.846 3.963 19.538C3.655 19.23 3.50067 18.8453 3.5 18.384V5.616C3.5 5.15533 3.65433 4.771 3.963 4.463C4.27167 4.155 4.65567 4.00067 5.115 4H14.423V5H5.116C4.962 5 4.82067 5.064 4.692 5.192C4.56333 5.32 4.49933 5.46133 4.5 5.616V18.385C4.5 18.5383 4.564 18.6793 4.692 18.808C4.82 18.9367 4.961 19.0007 5.115 19H17.885C18.0383 19 18.1793 18.936 18.308 18.808C18.4367 18.68 18.5007 18.539 18.5 18.385V9.077H19.5V18.385C19.5 18.845 19.346 19.2293 19.038 19.538C18.73 19.8467 18.3453 20.0007 17.884 20H5.116ZM8 16.5V15.5H15V16.5H8ZM8 13.5V12.5H15V13.5H8ZM8 10.5V9.5H15V10.5H8ZM17.5 8V6H15.5V5H17.5V3H18.5V5H20.5V6H18.5V8H17.5Z" fill="black" />
           </svg>
             Post</button>
-          <button onClick={() => setActiveTab('poll')} className={`flex items-center gap-1 m-0 px-10 py-4 text-base text-gray-600 rounded-none ${activeTab === 'poll' ? 'bg-[#4A00E020]' : 'bg-transparent'}`} style={{ borderWidth: activeTab === 'poll' ? '2px' : '0px 2px 0px 0px', borderStyle: 'solid', borderColor: activeTab === 'poll' ? '#4A00E0' : 'rgb(187, 187, 187)', }}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <button onClick={() => setActiveTab('poll')} className={`flex items-center gap-1 m-0 md:px-10 px-0 w-1/3 md:w-fit justify-center py-4 text-base text-gray-600 rounded-none ${activeTab === 'poll' ? 'bg-[#4A00E020]' : 'bg-transparent'}`} style={{ borderWidth: activeTab === 'poll' ? '2px' : '0px 2px 0px 0px', borderStyle: 'solid', borderColor: activeTab === 'poll' ? '#4A00E0' : 'rgb(187, 187, 187)', }}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M11.5673 4C12.1564 4 12.7214 4.23401 13.1379 4.65056C13.5544 5.06711 13.7885 5.63207 13.7885 6.22115V18.2788C13.7885 18.5705 13.731 18.8594 13.6194 19.1288C13.5078 19.3983 13.3442 19.6432 13.1379 19.8494C12.9316 20.0557 12.6868 20.2193 12.4173 20.3309C12.1478 20.4425 11.859 20.5 11.5673 20.5C11.2756 20.5 10.9868 20.4425 10.7173 20.3309C10.4478 20.2193 10.203 20.0557 9.99671 19.8494C9.79046 19.6432 9.62685 19.3983 9.51523 19.1288C9.40361 18.8594 9.34615 18.5705 9.34615 18.2788V6.22115C9.34615 5.63207 9.58017 5.06711 9.99671 4.65056C10.4133 4.23401 10.9782 4 11.5673 4ZM11.5673 4.63462C11.1465 4.63462 10.743 4.80177 10.4455 5.0993C10.1479 5.39684 9.98077 5.80038 9.98077 6.22115V18.2788C9.98077 18.6996 10.1479 19.1032 10.4455 19.4007C10.743 19.6982 11.1465 19.8654 11.5673 19.8654C11.9881 19.8654 12.3916 19.6982 12.6892 19.4007C12.9867 19.1032 13.1538 18.6996 13.1538 18.2788V6.22115C13.1538 5.80038 12.9867 5.39684 12.6892 5.0993C12.3916 4.80177 11.9881 4.63462 11.5673 4.63462ZM20.1346 10.0288V18.2788C20.1346 18.5705 20.0772 18.8594 19.9655 19.1288C19.8539 19.3983 19.6903 19.6432 19.4841 19.8494C19.2778 20.0557 19.0329 20.2193 18.7635 20.3309C18.494 20.4425 18.2051 20.5 17.9135 20.5C17.6218 20.5 17.3329 20.4425 17.0635 20.3309C16.794 20.2193 16.5491 20.0557 16.3429 19.8494C16.1366 19.6432 15.973 19.3983 15.8614 19.1288C15.7498 18.8594 15.6923 18.5705 15.6923 18.2788V10.0288C15.6923 9.73716 15.7498 9.44833 15.8614 9.17885C15.973 8.90936 16.1366 8.66451 16.3429 8.45825C16.5491 8.252 16.794 8.08839 17.0635 7.97677C17.3329 7.86514 17.6218 7.80769 17.9135 7.80769C18.2051 7.80769 18.494 7.86514 18.7635 7.97677C19.0329 8.08839 19.2778 8.252 19.4841 8.45825C19.6903 8.66451 19.8539 8.90936 19.9655 9.17885C20.0772 9.44833 20.1346 9.73716 20.1346 10.0288ZM17.9135 8.44231C17.4927 8.44231 17.0891 8.60946 16.7916 8.90699C16.4941 9.20453 16.3269 9.60807 16.3269 10.0288V18.2788C16.3269 18.6996 16.4941 19.1032 16.7916 19.4007C17.0891 19.6982 17.4927 19.8654 17.9135 19.8654C18.3342 19.8654 18.7378 19.6982 19.0353 19.4007C19.3328 19.1032 19.5 18.6996 19.5 18.2788V10.0288C19.5 9.60807 19.3328 9.20453 19.0353 8.90699C18.7378 8.60946 18.3342 8.44231 17.9135 8.44231ZM7.44231 18.2788V13.8365C7.44231 13.5449 7.38486 13.256 7.27323 12.9865C7.16161 12.7171 6.998 12.4722 6.79175 12.2659C6.58549 12.0597 6.34064 11.8961 6.07115 11.7845C5.80167 11.6728 5.51284 11.6154 5.22115 11.6154C4.92947 11.6154 4.64064 11.6728 4.37115 11.7845C4.10167 11.8961 3.85681 12.0597 3.65056 12.2659C3.44431 12.4722 3.2807 12.7171 3.16908 12.9865C3.05745 13.256 3 13.5449 3 13.8365V18.2788C3 18.5705 3.05745 18.8594 3.16908 19.1288C3.2807 19.3983 3.44431 19.6432 3.65056 19.8494C3.85681 20.0557 4.10167 20.2193 4.37115 20.3309C4.64064 20.4425 4.92947 20.5 5.22115 20.5C5.51284 20.5 5.80167 20.4425 6.07115 20.3309C6.34064 20.2193 6.58549 20.0557 6.79175 19.8494C6.998 19.6432 7.16161 19.3983 7.27323 19.1288C7.38486 18.8594 7.44231 18.5705 7.44231 18.2788ZM3.63462 13.8365C3.63462 13.4158 3.80177 13.0122 4.0993 12.7147C4.39684 12.4172 4.80038 12.25 5.22115 12.25C5.64193 12.25 6.04547 12.4172 6.34301 12.7147C6.64054 13.0122 6.80769 13.4158 6.80769 13.8365V18.2788C6.80769 18.6996 6.64054 19.1032 6.34301 19.4007C6.04547 19.6982 5.64193 19.8654 5.22115 19.8654C4.80038 19.8654 4.39684 19.6982 4.0993 19.4007C3.80177 19.1032 3.63462 18.6996 3.63462 18.2788V13.8365Z" fill="black" fill-opacity="0.66" stroke="black" stroke-opacity="0.66" stroke-width="0.4" />
           </svg>
             Poll</button>
-          <button onClick={() => setActiveTab('event')} className={`flex items-center gap-1 m-0 px-10 py-4 text-base text-gray-600 rounded-none ${activeTab === 'event' ? 'bg-[#4A00E020]' : 'bg-transparent'}`} style={{ borderWidth: activeTab === 'event' ? '2px' : '0px 2px 0px 0px', borderStyle: 'solid', borderColor: activeTab === 'event' ? '#4A00E0' : 'rgb(187, 187, 187)', }}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <button onClick={() => setActiveTab('event')} className={`flex items-center gap-1 m-0 md:px-10 px-0 w-1/3 md:w-fit justify-center py-4 text-base text-gray-600 ${window.innerWidth < 768 ? 'rounded-tr-md' : 'rounded-none'} ${activeTab === 'event' ? 'bg-[#4A00E020]' : 'bg-transparent'}`} style={{ borderWidth: activeTab === 'event' ? '2px' : window.innerWidth < 768 ? '0px' : '0px 2px 0px 0px', borderStyle: 'solid', borderColor: activeTab === 'event' ? '#4A00E0' : 'rgb(187, 187, 187)', }}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M14.885 18C14.3003 18 13.8017 17.7933 13.389 17.38C12.9763 16.9667 12.7697 16.4683 12.769 15.885C12.7683 15.3017 12.975 14.8027 13.389 14.388C13.803 13.9733 14.3017 13.767 14.885 13.769C15.4683 13.771 15.967 13.9777 16.381 14.389C16.795 14.8003 17.0013 15.299 17 15.885C16.9987 16.471 16.792 16.9697 16.38 17.381C15.968 17.7923 15.4697 17.9987 14.885 18ZM4 21V5H7.385V2.77H8.462V5H15.616V2.77H16.616V5H20V21H4ZM5 20H19V10.616H5V20ZM5 9.615H19V6H5V9.615Z" fill="black" fill-opacity="0.66" />
           </svg>
             Event</button>
-          <div className='w-full bg-[#EBEBEB] h-[60px]'></div>
+          <div className='md:w-full w-0 bg-[#EBEBEB] h-[60px]'></div>
         </div>
         {/* Content */}
-        <div className="p-4 space-y-6">
+        <div className="space-y-6">
           {/* Post Tab */}
           {activeTab === 'post' && (
-            <div className="space-y-4">
+            <div className="space-y-4 p-4 ">
               <div className="w-full bg-white flex items-center gap-2 p-2 pl-4 border border-gray-300 rounded-full">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M15.75 10.5V14.25C15.75 14.6478 15.592 15.0294 15.3107 15.3107C15.0294 15.592 14.6478 15.75 14.25 15.75H3.75C3.35218 15.75 2.97064 15.592 2.68934 15.3107C2.40804 15.0294 2.25 14.6478 2.25 14.25V3.75C2.25 3.35218 2.40804 2.97064 2.68934 2.68934C2.97064 2.40804 3.35218 2.25 3.75 2.25H7.5V3.75H3.75V14.25H14.25V10.5H15.75Z" fill="black" />
@@ -323,7 +323,7 @@ const SideBarPost = ({ closeModal }) => {
 
         {/* Poll Tab */}
         {activeTab === 'poll' && (
-          <div className="space-y-4">
+          <div className="space-y-4 p-4">
             <input
               type="text"
               placeholder="Ask a question..."
@@ -364,7 +364,7 @@ const SideBarPost = ({ closeModal }) => {
 
         {/* Event Tab */}
         {activeTab === 'event' && (
-          <div className="flex gap-4 flex-col">
+          <div className="flex gap-4 flex-col p-4">
 
             <input
               type="text"
@@ -449,7 +449,7 @@ const SideBarPost = ({ closeModal }) => {
         )}
 
         {/* Footer Actions */}
-        <div className="flex items-center justify-between border-t pt-4">
+        <div className="flex items-center justify-between border-t p-4">
           <div className="flex space-x-4">
             <label for="files" className="flex bg-white items-center gap-2 p-2 pr-3 border border-gray-300 rounded-full mb-0">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -463,7 +463,7 @@ const SideBarPost = ({ closeModal }) => {
             <div className="relative">
               <button
                 onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                className="p-2 hover:bg-gray-100 bg-[#4A00E020] rounded-full transition-colors m-0 "
+                className="p-2 hover:bg-gray-100 bg-[#4A00E020] rounded-full transition-colors m-0 flex "
               >
                 <FontAwesomeIcon icon={faSmile} className="text-[#4A00E0] w-5 h-5" />
               </button>

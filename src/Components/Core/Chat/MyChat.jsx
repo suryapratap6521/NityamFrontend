@@ -33,7 +33,7 @@ const MyChat = ({ fetchAgain }) => {
 
   return (
     <div
-      className={`rounded-lg overflow-hidden bg-[#FAFAFA] border border-[#00000020] p-4 lg:w-3/12 w-full max-h-[72vh] ${selectedChat == '' ? 'block' : 'lg:block hidden'}`}
+      className={`rounded-lg overflow-hidden bg-[#FAFAFA] border border-[#00000020] p-4 lg:w-3/12 w-full max-h-[72vh] ${selectedChat == '' || selectedChat == null ? 'block' : 'lg:block hidden'}`}
 
     >
       <div
@@ -59,7 +59,7 @@ const MyChat = ({ fetchAgain }) => {
 
       >
         {chats ? (
-          <div class="overflow-y-scroll overflow-x-hidden space-y-2">
+          <div class="overflow-y-scroll overflow-x-hidden space-y-2 mt-2">
             {chats.map((chat) => (
               <button
                 key={chat._id}

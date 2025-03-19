@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faCompass, faPlusCircle, faTags, faPersonCirclePlus, faPeopleCarryBox, faComments, faUsers } from '@fortawesome/free-solid-svg-icons';
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { getAd } from '../../../services/operations/adApi';
 
 const ad = [{ head: 'Book Your House Today!', subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore ', buttonLabel: 'Learn More' }, { head: 'Book Your House Today!', subtitle: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore ', buttonLabel: 'Learn More' }]
 const Advertisements = () => {
-    const [activeTab, setActiveTab] = useState(0);
-    const setTab = (tab) => {
-        setActiveTab(tab)
-    }
+
+    const dispatch = useDispatch();
+    const adData = useSelector((state) => state.ad.allAds || []);
+    console.log("adData", Array.isArray(adData), adData.length, adData)
+
     return (
-        <div className="w-full flex flex-col items-center">
+        <div className="w-full flex flex-col items-center sticky top-[130px]">
 
             <div className="flex items-center gap-1 w-full  max-w-64">
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -28,12 +29,14 @@ const Advertisements = () => {
 
 
             </div>
-            {ad.map((ad, index) => (<>
+            {adData.slice(0, 2).map((ad, index) => (<>
                 <div className="w-full max-w-64 mt-4">
                     <img className='bg-gray-400 w-full h-56 rounded-md' />
-                    <h2 className="text-xl font-normal text-black mt-3">{ad.head} </h2>
-                    <p className="text-gray-400 leading-4 text-sm ">{ad.subtitle}</p>
-                    <button className="w-fit mt-2 p-2 text-[#4A00E0] text-sm px-8 rounded-md bg-[#4A00E020]">{ad.buttonLabel}</button>
+                    <h2 className="text-xl font-normal text-black mt-3">{ad.title}</h2>
+                    <p className="text-gray-400 leading-4 text-sm">p</p>
+                    <a href={ad.buttonLabel.value} target="_blank">
+                        <button className="w-fit mt-2 p-2 text-[#4A00E0] text-sm px-8 rounded-md bg-[#4A00E020]">{ad.buttonLabel.type}</button>
+                    </a>
                 </div>
             </>))}
         </div>

@@ -6,8 +6,9 @@ import SingleChat from "./ReusableComponents/SingleChat";
 const ChatBox = ({ fetchAgain, setFetchAgain }) => {
     const { selectedChat } = useSelector((state) => state.chat);
 
+
     return (
-        <div className={`flex flex-col  rounded-lg overflow-hidden bg-[#FAFAFA] border border-[#00000020] p-4 lg:w-7/12 w-full  ${selectedChat == '' ? 'lg:block hidden' : 'block'}`}
+        <div className={`flex flex-col  rounded-lg overflow-hidden bg-[#FAFAFA] border border-[#00000020] p-4 lg:w-7/12 w-full  ${selectedChat == '' || selectedChat == null ? 'lg:block hidden' : 'block'}`}
 
         >
             <SingleChat fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />

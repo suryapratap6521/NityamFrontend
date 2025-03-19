@@ -72,4 +72,5 @@ export const eventEndpoints = {
 export const adEndpoints = {
   GET_COMMUNITIES: `${BASE_URL}/advpost/getcommunities`,
   CREATE_AD: `${BASE_URL}/advpost/createadvpost`,
+  GET_AD: `${BASE_URL}/advpost/advpost`,
 };
