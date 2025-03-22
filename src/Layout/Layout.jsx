@@ -12,10 +12,11 @@ const Layout = () => {
   const location = useLocation();
   const { token } = useSelector((state) => state.auth);
   const isHomePage = location.pathname === '/';
+  const isCreatePost=location.pathname !=='/dashboard/createpost'
   return (
     <>
       <Navbar />
-      <Sidebar />
+      { isCreatePost && <Sidebar /> }
       {/* <div className="flex h-screen"> {token && <Sidebar />}</div> */}
       <Outlet />
       {isHomePage && <Footer />}

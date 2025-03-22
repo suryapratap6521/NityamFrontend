@@ -133,3 +133,11 @@ input::placeholder {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+@keyframes blink {
+  0% { background-color: transparent; }
+  50% { background-color: #00FF00; } /* bright green highlight */
+  100% { background-color: transparent; }
+}
+.blink {
+  animation: blink 1s ease-in-out;
+}

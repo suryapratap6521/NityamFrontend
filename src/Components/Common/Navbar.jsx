@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from 'react'; 
 import { useState } from "react";
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -26,10 +26,14 @@ import { setSelectedChat, setNotification } from '../../slices/chatSlice';
 import { getSender } from "../../config/chatlogics";
 import Confirmationmodal from './Confirmationmodal';
 import { useLocation } from "react-router-dom";
-
 import { fetchNotifications, markNotificationAsRead } from '../../services/operations/notificationApi';
 import { setNotifications, markAsRead } from '../../slices/notificationSlice';
 import NotificationDropdown from './NotificationDropdown';
+import nityam_mlogo from "../../assests/nityam_mlogo.png";
+// Import plus icon from FontAwesome
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 const settings = [
   { title: 'Profile', path: '/dashboard/myprofile', icon: <CgProfile /> },
   { title: 'Logout', icon: <FiLogOut /> }
@@ -38,15 +42,11 @@ const settings = [
 function Navbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { token,signUpData } = useSelector((state) => state.auth);
+  const { token, signUpData } = useSelector((state) => state.auth);
   const { user } = useSelector((state) => state.profile);
-  console.log(user,"user in navbar h")
   const { notification } = useSelector((state) => state.chat);
   const location = useLocation();
-  // access query parameters
   const pathname = location.pathname;
-  console.log(user,"user in navbar");
-  console.log(signUpData);
 
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
@@ -68,7 +68,7 @@ function Navbar() {
     setAnchorElUser(null);
   };
 
-  // Handling notification menu
+  // Notification menu state
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -91,7 +91,6 @@ function Navbar() {
   const cancelLogout = () => {
     setConfirmationModal(false);
   };
-
 
   return (
     <>
@@ -124,10 +123,28 @@ function Navbar() {
             >
               <img src={logo} style={{ width: "11rem", height: "2rem" }} alt="logo" />
             </Typography>
+
             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}>
               {token && (pathname === '/dashboard/chat') && (<SideDrawer />)}
-
             </Box>
+
+            {/* Plus Icon for Create Post (visible only if token is present) */}
+            {token && (
+              <IconButton
+                onClick={() => navigate("/dashboard/createpost")}
+                sx={{
+                  backgroundColor: 'green',
+                  color: 'white',
+                  marginRight: 2,
+                  '&:hover': { backgroundColor: 'darkgreen' },
+                  borderRadius: '50%',
+                  width: 40,
+                  height: 40,
+                }}
+              >
+                <FontAwesomeIcon icon={faPlus} />
+              </IconButton>
+            )}
 
             {token && (
               <IconButton
@@ -153,7 +170,6 @@ function Navbar() {
               }}
             >
               {notification.length === 0 && <MenuItem>No New Messages</MenuItem>}
-              {console.log(notification, "this is notification")}
               {notification && notification.map((notif) => (
                 <MenuItem
                   key={notif._id}
