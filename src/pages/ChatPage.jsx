@@ -8,12 +8,13 @@ import { useSelector } from "react-redux";
 const ChatPage = () => {
   const [fetchAgain, setFetchAgain] = useState(false);
   const { user } = useSelector((state) => state.profile);
+  console.log(user)
 
   return (
     <div className=" md:mb-0 mb-14 bg-white flex justify-around w-full lg:flex-row flex-col p-4">
 
-      {user && <MyChat fetchAgain={fetchAgain} />}
-      {user && <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />}
+      <MyChat fetchAgain={fetchAgain} />
+      <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />
 
     </div>
   );

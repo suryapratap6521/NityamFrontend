@@ -6,7 +6,11 @@ import SinglePost from "./SinglePost";
 import 'tailwindcss/tailwind.css';
 import CommentSection from "./CommentsSection";
 import PostSkeleton from "../../Common/PostSkeleton";
-
+import { IconButton } from "@mui/material";
+import { FaRegComment, FaRegHeart, FaHeart } from "react-icons/fa";
+import { FiShare } from "react-icons/fi";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import AdPosts from "./AdPost";
 
 
 const Posts = () => {
@@ -14,6 +18,7 @@ const Posts = () => {
   const { token } = useSelector((state) => state.auth);
   const { user } = useSelector((state) => state.profile);
   const { posts } = useSelector((state) => state.post);
+  const adData = useSelector((state) => state.ad.allAds || []);
 
   const [loading, setLoading] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -128,29 +133,32 @@ const Posts = () => {
 
   return (
     <div className="posts-container">
-      {posts.map((post) => (
-        <SinglePost
-          key={post._id}
-          post={post}
-          user={user}
-          handleLike={handleLike}
-          handleUnlike={handleUnlike}
-          handleComment={handleComment}
-          setCommentText={setCommentText}
-          commentText={commentText}
-          handleDeletePost={handleDeletePost}
-          setReplyText={setReplyText}
-          replyText={replyText}
-          handleCommentLike={handleCommentLike}
-          handleReply={handleReply}
-          handleReplyLike={handleReplyLike}
+      {posts.map((post, index) => (
+        <React.Fragment key={post._id}>
+          <SinglePost
+            post={post}
+            user={user}
+            handleLike={handleLike}
+            handleUnlike={handleUnlike}
+            handleComment={handleComment}
+            setCommentText={setCommentText}
+            commentText={commentText}
+            handleDeletePost={handleDeletePost}
+            setReplyText={setReplyText}
+            replyText={replyText}
+            handleCommentLike={handleCommentLike}
+            handleReply={handleReply}
+            handleReplyLike={handleReplyLike}
+          />
+          {((index + 1) % 5 === 0) && adData.length > 0 && (
 
-        >
-
-        </SinglePost>
+            <AdPosts ad={adData[(Math.floor(index / 5)) % adData.length]} />
+          )}
+        </React.Fragment>
       ))}
     </div>
   );
+
 };
 
 export default Posts;

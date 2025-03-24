@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRazorpay, RazorpayOrderOptions } from "react-razorpay";
 import { createAd } from "../../../../services/operations/adApi"
 
-const TotalPrice = () => {
+const TotalPrice = React.forwardRef((props, ref) => {
     const pageData = useSelector((state) => state.page.pageData || {});
     const dispatch = useDispatch();
     const adData = useSelector((state) => state.ad.adData || {});
@@ -43,8 +43,9 @@ const TotalPrice = () => {
         const today = new Date().toISOString().split("T")[0]; // Get today's date (YYYY-MM-DD)
         const startIsoString = new Date(`${today}T${adData.start}:00.000Z`).toISOString();
         const endIsoString = new Date(`${today}T${adData.end}:00.000Z`).toISOString();
-        const startDateTime = new Date(adData.startDate);
-        const endDateTime = new Date(adData.endDate);
+        const startDateTime = adData.startDate;
+        const endDateTime = adData.endDate;
+        console.log(adData.images)
 
         let state, city, communities;
 
@@ -168,6 +169,10 @@ const TotalPrice = () => {
         }
     };
 
+    React.useImperativeHandle(ref, () => ({
+        handleSubmit,
+    }));
+
     return (
 
         <div className="container bg-[#fafafa] border border-gray-300 rounded-md items-start  flex flex-column mx-auto p-6 mt-10">
@@ -201,6 +206,6 @@ const TotalPrice = () => {
             </button>
         </div>
     );
-};
+});
 
 export default TotalPrice;

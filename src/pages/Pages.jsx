@@ -20,14 +20,13 @@ const Pages = () => {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
     useEffect(() => {
-        console.log("hit")
         const fetchData = async () => {
 
             try {
-                if (!loading) {
 
-                    await fetchPagesByUser(user._id, token, dispatch);
-                }
+
+                await fetchPagesByUser(token, dispatch);
+
             } catch (error) {
                 console.error(error);
             }
@@ -71,7 +70,7 @@ const Pages = () => {
                             <Link to="/dashboard/page/view"
                                 onClick={() => handlePageClick(page)}
                                 className="flex justify-center items-center md:items-start hover:bg-gray-200 p-2 rounded-md cursor-pointer transition-all duration-300 w-full bg-[#FAFAFA] border border-[#00000020]">
-                                <div className="flex flex-col justify-center">
+                                <div className="flex flex-col justify-center items-center">
                                     <div className="w-36 h-36">
                                         <img src={page.businessProfilePicture} alt="Post Media" class="w-full h-full rounded-full m-auto object-cover cursor-pointer" />
                                     </div>

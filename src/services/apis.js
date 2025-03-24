@@ -63,6 +63,8 @@ export const pageEndpoints = {
   CREATE_PAGE: `${BASE_URL}/page/createpage`,
   VIEW_PAGE: `${BASE_URL}/page/page`,
   GET_PAGES: `${BASE_URL}/page/allpages`,
+  UPDATE_PAGE: `${BASE_URL}/page/updatepage`,
+  DELETE_PAGE: `${BASE_URL}/page/deletepage`,
 };
 export const eventEndpoints = {
   CREATE_PAGE: `${BASE_URL}/page/createpage`,

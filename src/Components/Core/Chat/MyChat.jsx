@@ -21,7 +21,9 @@ const MyChat = ({ fetchAgain }) => {
 
   console.log(chats, "------->mychat chatss");
   useEffect(() => {
+    console.log("------->mychat chatss")
     const fetchData = async () => {
+
       try {
         await fetchChats(token, dispatch);
       } catch (error) {
