@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { setLoading, setServiceData, setUserServices,setCommunities} from '../../slices/serviceSlice';
 
 export const getServices = async (token, dispatch) => {
+  toast.dismiss();
   try {
     const toastId = toast.loading("Loading...");
     const response = await apiConnector("GET", serviceEndpoints.GET_SERVICES, null, {
@@ -24,6 +25,7 @@ export const getServices = async (token, dispatch) => {
 };
 
 export const createService = async (formData, token) => {
+  toast.dismiss();
   try {
     const toastId = toast.loading("Creating service...");
     const response = await apiConnector("POST", serviceEndpoints.CREATE_SERVICE, formData, {
