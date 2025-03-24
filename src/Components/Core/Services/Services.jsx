@@ -37,7 +37,7 @@ const Services = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             <AddServiceCard />
           {allUsers.map(users => (
-            users?.communityDetails?._id === user?.communityDetails?._id && (
+            users?.communityDetails?._id === user?.communityDetails?._id &&  (user?.profession) && (user?._id!==users?.id) && (
               <div key={users._id} className="bg-white shadow-lg rounded-lg overflow-hidden">
                 <img className="w-full h-32 sm:h-48 object-cover" src={users.image} alt="Profile" />
                 <div className="p-4">

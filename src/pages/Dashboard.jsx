@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect,useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import Loader from '../Components/Common/Loader';
 import CreatePostSection from '../Components/Common/CreatePostSection';
@@ -21,19 +21,29 @@ const Dashboard = () => {
   const eventData = useSelector(state => state.event.userEvent || []);
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
+  const [services,setServices]=useState([]);
   useEffect(() => {
-    if (!profileLoading && !authLoading) {
-      // Fetch services and events only when user/profile data is ready
-      getServices(token, dispatch);
-      fetchEventsByUser(token, dispatch);
-    }
+    const fetchData = async () => {
+      if (!profileLoading && !authLoading) {
+        try {
+          const response = await getServices(token, dispatch);
+          setServices(response.data); // Ensure response is properly awaited
+          await fetchEventsByUser(token, dispatch); // Ensure this is awaited too
+        } catch (error) {
+          console.error("Error fetching services or events:", error);
+        }
+      }
+    };
+  
+    fetchData();
   }, [token, dispatch, profileLoading, authLoading]);
+  
 
   if (profileLoading || authLoading) {
     return <Loader />;
   }
-
+  
+console.log(services);
   return (
     <div className="bg-white">
       <div className="w-full flex justify-between">
@@ -51,7 +61,7 @@ const Dashboard = () => {
               {serviceData &&
                 serviceData.allUsers &&
                 serviceData.allUsers.slice(0, 5).map(users => (
-                  users?.communityDetails?._id === user?.communityDetails?._id && (
+                  users?.communityDetails?._id === user?.communityDetails?._id && (users?.id===user?.id) && (user?.profession)&& (
                     <Link 
                       key={users._id} 
                       to={{
@@ -66,7 +76,7 @@ const Dashboard = () => {
                         <div className="w-10/12 flex justify-between items-center">
                           <div className="w-10/12">
                             <h2 className="text-base font-normal text-black">{users.firstName} {users.lastName}</h2>
-                            <p className="text-gray-400 leading-4 text-sm">{users?.accountType?.toUpperCase()}</p>
+                            <p className="text-gray-400 leading-4 text-sm">{users?.profession?.toUpperCase()}</p>
                           </div>
                           {/* You can add an icon SVG here if desired */}
                         </div>
@@ -75,6 +85,34 @@ const Dashboard = () => {
                   )
                 ))
               }
+                            {services &&
+                services.allUsers &&
+                services?.allUsers?.map(users => (
+                  (
+                    <Link 
+                      key={users._id} 
+                      to={{
+                        pathname: "/dashboard/service/view",
+                        state: { highlightServiceId: users._id }
+                      }}
+                    >
+                      <div className="w-full mt-4 flex items-center justify-between gap-2">
+                        <div className="w-9 h-9">
+                          <img className='bg-gray-400 w-full h-full rounded-full' src={users.image} alt="Service" />
+                        </div>
+                        <div className="w-10/12 flex justify-between items-center">
+                          <div className="w-10/12">
+                            <h2 className="text-base font-normal text-black">{users.firstName} {users.lastName}</h2>
+                            <p className="text-gray-400 leading-4 text-sm">{users?.profession?.toUpperCase()}</p>
+                          </div>
+                          {/* You can add an icon SVG here if desired */}
+                        </div>
+                      </div>
+                    </Link>
+                  )
+                ))
+              }
+              
             </div>
 
             {/* EVENTS PREVIEW */}
