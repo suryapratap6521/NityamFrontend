@@ -4,7 +4,6 @@ import toast from "react-hot-toast";
 import { setLoading, setEventData, setUserEvents,setCommunities} from '../../slices/eventSlice';
 
 export const createEvent = async (formData,dispatch, token) => {
-  toast.dismiss();
   dispatch(setLoading(true));
     try {
       const toastId = toast.loading("Creating event...");
@@ -32,7 +31,6 @@ export const createEvent = async (formData,dispatch, token) => {
 };
 
 export const fetchEventsByUser = async (token, dispatch, isLoading) => {
-  toast.dismiss();
   if (isLoading) return;
 
   const toastId = toast.loading("Loading...");
@@ -59,7 +57,6 @@ export const fetchEventsByUser = async (token, dispatch, isLoading) => {
 
 
 export const fetchEventDetails = async (eventId,token, dispatch) => {
-  toast.dismiss();
   const toastId = toast.loading("Loading...");
   dispatch(setLoading(true));
   let body ={

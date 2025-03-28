@@ -28,11 +28,9 @@ const Posts = () => {
   const [replyText, setReplyText] = useState("");
 
   useEffect(() => {
-   
     const getPosts = async () => {
       try {
         const response = await getAllPosts(token, dispatch);
-        console.log(response,"dashboard posts");
         // dispatch(setPosts(response));
         setLoading(false);
       } catch (error) {
