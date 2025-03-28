@@ -48,8 +48,9 @@ const Pages = () => {
                         <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#8E2DE2]">
                             Pages
                         </h1>
-                        <p className="text-gray-400 leading-4 text-sm ">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod</p>
-                    </div>
+                        <p className="text-gray-400 leading-4 text-sm">
+                            Discover a variety of pages tailored to your interests.
+                        </p></div>
                     <Link to="/dashboard/page/create"
                         onClick={() => handlePageClick({})}
                         className="flex justify-center items-center hover:bg-gray-200 p-2 px-6 rounded-lg cursor-pointer transition-all duration-300 bg-[#8E2DE220] w-fit mt-1 md:mt-0">

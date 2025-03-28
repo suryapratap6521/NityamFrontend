@@ -121,8 +121,7 @@ const Signup = () => {
         <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-center items-center text-white p-4">
           <h2 className="text-2xl font-bold mb-2">Connect With Your Community</h2>
           <p className="text-center max-w-xs">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
-            eiusmod tempor incididunt ut labore et dolore.
+            Join a vibrant community where you can share ideas, collaborate, and build meaningful connections. Whether you're looking for support, inspiration, or networking opportunities, our platform brings people together to engage, learn, and grow in a space designed for meaningful interactions.
           </p>
         </div>
       </div>
@@ -135,7 +134,7 @@ const Signup = () => {
             <img
               src={nityamNeedsLogo}
               alt="Nityam needs"
-              className="mx-auto h-20"
+              className="mr-auto h-20"
             />
           </div>
 

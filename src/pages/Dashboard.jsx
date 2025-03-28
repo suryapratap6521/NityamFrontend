@@ -75,7 +75,7 @@ const Dashboard = () => {
                     >
                       <div className="w-full mt-4 flex items-center justify-between gap-2">
                         <div className="w-9 h-9">
-                          <img className='bg-gray-400 w-full h-full rounded-full' src={users.image} alt="Service" />
+                          <img referrerPolicy="no-referrer" className='bg-gray-400 w-full h-full rounded-full' src={users.image} alt="Service" />
                         </div>
                         <div className="w-10/12 flex justify-between items-center">
                           <div className="w-10/12">
@@ -91,7 +91,7 @@ const Dashboard = () => {
               }
               {services &&
                 services.allUsers &&
-                services?.allUsers?.map(users => (
+                services?.allUsers?.slice(0, 5).map(users => (
                   (
                     <Link
                       key={users._id}
@@ -102,7 +102,7 @@ const Dashboard = () => {
                     >
                       <div className="w-full mt-4 flex items-center justify-between gap-2">
                         <div className="w-9 h-9">
-                          <img className='bg-gray-400 w-full h-full rounded-full' src={users.image} alt="Service" />
+                          <img referrerPolicy="no-referrer" className='bg-gray-400 w-full h-full rounded-full' src={users.image} alt="Service" />
                         </div>
                         <div className="w-10/12 flex justify-between items-center">
                           <div className="w-10/12">
@@ -129,12 +129,12 @@ const Dashboard = () => {
               {eventData.map((ad, index) => (<>
                 <div className="w-full mt-4 flex items-center justify-between gap-2">
                   <div className="w-9 h-9">
-                    <img className='bg-gray-400 w-full h-full rounded-full object-cover' src={ad.imgPath[0]} />
+                    <img referrerPolicy="no-referrer" className='bg-gray-400 w-full h-full rounded-full object-cover' src={ad.imgPath[0]} />
                   </div>
                   <div className="w-10/12 flex justify-between items-center">
                     <div className="w-10/12">
                       <h2 className="text-base font-normal text-black">{ad.title} </h2>
-                      <p className="text-gray-400 leading-4 text-sm ">{ad.location}</p>
+                      <p className="text-gray-400 leading-4 text-sm truncate">{ad.location}</p>
                     </div>
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M6 4C5.46957 4 4.96086 4.21071 4.58579 4.58579C4.21071 4.96086 4 5.46957 4 6V14C4 14.5304 4.21071 15.0391 4.58579 15.4142C4.96086 15.7893 5.46957 16 6 16H14C14.5304 16 15.0391 15.7893 15.4142 15.4142C15.7893 15.0391 16 14.5304 16 14V11.5C16 11.3674 16.0527 11.2402 16.1464 11.1464C16.2402 11.0527 16.3674 11 16.5 11C16.6326 11 16.7598 11.0527 16.8536 11.1464C16.9473 11.2402 17 11.3674 17 11.5V14C17 14.7956 16.6839 15.5587 16.1213 16.1213C15.5587 16.6839 14.7956 17 14 17H6C5.20435 17 4.44129 16.6839 3.87868 16.1213C3.31607 15.5587 3 14.7956 3 14V6C3 5.20435 3.31607 4.44129 3.87868 3.87868C4.44129 3.31607 5.20435 3 6 3H8.5C8.63261 3 8.75979 3.05268 8.85355 3.14645C8.94732 3.24021 9 3.36739 9 3.5C9 3.63261 8.94732 3.75979 8.85355 3.85355C8.75979 3.94732 8.63261 4 8.5 4H6ZM11 3.5C11 3.36739 11.0527 3.24021 11.1464 3.14645C11.2402 3.05268 11.3674 3 11.5 3H16.5C16.6326 3 16.7598 3.05268 16.8536 3.14645C16.9473 3.24021 17 3.36739 17 3.5V8.5C17 8.63261 16.9473 8.75979 16.8536 8.85355C16.7598 8.94732 16.6326 9 16.5 9C16.3674 9 16.2402 8.94732 16.1464 8.85355C16.0527 8.75979 16 8.63261 16 8.5V4.707L11.854 8.854C11.7601 8.94789 11.6328 9.00063 11.5 9.00063C11.3672 9.00063 11.2399 8.94789 11.146 8.854C11.0521 8.76011 10.9994 8.63278 10.9994 8.5C10.9994 8.36722 11.0521 8.23989 11.146 8.146L15.293 4H11.5C11.3674 4 11.2402 3.94732 11.1464 3.85355C11.0527 3.75979 11 3.63261 11 3.5Z" fill="black" />

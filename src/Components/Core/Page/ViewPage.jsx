@@ -70,8 +70,9 @@ const ViewPage = () => {
           <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#8E2DE2]">
             Manage
           </h1>
-          <p className="text-gray-400 leading-4 text-sm mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod</p>
-        </div>
+          <p className="text-gray-400 leading-4 text-sm mb-4">
+            Effortlessly oversee and update your pages with ease.
+          </p></div>
         {step === 1 && (
           <div>
             <div className="font-medium flex pl-0 py-2 bg-white rounded-md px-3 cursor-pointer hover:bg-[#8E2DE230] hover:pl-3 transition-all">

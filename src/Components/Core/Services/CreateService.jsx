@@ -58,95 +58,80 @@ const CreateService = () => {
   };
 
   return (
-    <Container maxWidth="lg">
-      <Paper elevation={3} sx={{ p: 4, mt: 4, borderRadius: 2 }}>
-        <Typography variant="h4" component="h1" gutterBottom align="center">
-          Create a New Service
-        </Typography>
-        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
-          <Uploader onImageUpload={handleImageUpload} />
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="First Name"
-                name="firstName"
-                value={form.firstName}
-                onChange={handleChange}
-                required
-                sx={{ mb: 2 }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Last Name"
-                name="lastName"
-                value={form.lastName}
-                onChange={handleChange}
-                required
-                sx={{ mb: 2 }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Price (₹)"
-                name="price"
-                type="number"
-                value={form.price}
-                onChange={handleChange}
-                required
-                sx={{ mb: 2 }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Phone Number"
-                name="phoneNumber"
-                type="tel"
-                value={form.phoneNumber}
-                onChange={handleChange}
-                required
-                sx={{ mb: 2 }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Profession"
-                name="profession"
-                value={form.profession}
-                onChange={handleChange}
-                required
-                sx={{ mb: 2 }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                fullWidth
-                label="Address"
-                name="address"
-                value={form.address}
-                onChange={handleChange}
-                required
-                sx={{ mb: 2 }}
-              />
-            </Grid>
-          </Grid>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            sx={{ mt: 3, py: 1.5, fontSize: '1rem' }}
-          >
-            Create Service
-          </Button>
-        </Box>
-      </Paper>
-    </Container>
+    <div className="max-w-4xl mx-auto bg-white rounded-lg p-6 mt-6">
+      <div className='mb-6 text-center'>
+        <h1 className="md:text-3xl text-xl text-center font-semibold mb-1 text-[#8E2DE2]">
+          Create New Service
+        </h1>
+        <p className="text-gray-400 leading-4 text-sm">
+          Start offering your expertise by creating a new service.
+        </p></div>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <Uploader onImageUpload={handleImageUpload} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <input
+            type="text"
+            name="firstName"
+            placeholder="First Name"
+            value={form.firstName}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-md focus:ring focus:ring-indigo-200"
+            required
+          />
+          <input
+            type="text"
+            name="lastName"
+            placeholder="Last Name"
+            value={form.lastName}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-md focus:ring focus:ring-indigo-200"
+            required
+          />
+          <input
+            type="number"
+            name="price"
+            placeholder="Price (₹)"
+            value={form.price}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-md focus:ring focus:ring-indigo-200"
+            required
+          />
+          <input
+            type="tel"
+            name="phoneNumber"
+            placeholder="Phone Number"
+            value={form.phoneNumber}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-md focus:ring focus:ring-indigo-200"
+            required
+          />
+          <input
+            type="text"
+            name="profession"
+            placeholder="Profession"
+            value={form.profession}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-md focus:ring focus:ring-indigo-200"
+            required
+          />
+          <input
+            type="text"
+            name="address"
+            placeholder="Address"
+            value={form.address}
+            onChange={handleChange}
+            className="w-full p-2 border rounded-md focus:ring focus:ring-indigo-200"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full bg-[#8E2DE2] text-white p-3 rounded-md hover:bg-[#8E2DE2] transition"
+        >
+          Create Service
+        </button>
+      </form>
+    </div>
   );
 };
 

@@ -35,7 +35,7 @@ const Services = () => {
   return (
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        <AddServiceCard />
+        {/* <AddServiceCard /> */}
         {allUsers.map(users => (
           users?.communityDetails?._id === user?.communityDetails?._id && (user?.profession) && (user?._id !== users?.id) && (
             <div key={users._id} className="bg-white shadow-lg rounded-lg overflow-hidden">

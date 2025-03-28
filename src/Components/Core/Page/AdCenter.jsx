@@ -262,8 +262,9 @@ const AdCenter = () => {
           <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#8E2DE2]">
             Create New Ad
           </h1>
-          <p className="text-gray-400 leading-4 text-sm mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod</p>
-        </div>
+          <p className="text-gray-400 leading-4 text-sm mb-4">
+            Design and launch impactful ads effortlessly.
+          </p></div>
         <div className="lg:w-10/12 w-full">
           <form onSubmit={(e) => e.preventDefault()}>
             {step === 1 && (<>
