@@ -1,3 +1,4 @@
+
 import React from 'react'
 import CreateService from "../Components/Core/Services/CreateService";
 import { useTheme } from '@mui/material/styles';
@@ -8,7 +9,7 @@ const ServicePage = () => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   return (
     <div className="flex h-screen">
-     <Sidebar />
+     {/* <Sidebar /> */}
       <div className="flex-1 overflow-y-auto p-4">
         <CreateService/>
       </div>
