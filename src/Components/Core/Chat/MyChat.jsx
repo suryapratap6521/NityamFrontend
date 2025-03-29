@@ -21,7 +21,9 @@ const MyChat = ({ fetchAgain }) => {
 
   console.log(chats, "------->mychat chatss");
   useEffect(() => {
+    console.log("------->mychat chatss")
     const fetchData = async () => {
+
       try {
         await fetchChats(token, dispatch);
       } catch (error) {
@@ -33,11 +35,11 @@ const MyChat = ({ fetchAgain }) => {
 
   return (
     <div
-      className={`rounded-lg overflow-hidden bg-[#FAFAFA] border border-[#00000020] p-4 lg:w-3/12 w-full max-h-[72vh] ${selectedChat == '' || selectedChat == null ? 'block' : 'lg:block hidden'}`}
+      className={`rounded-lg overflow-hidden bg-[#FAFAFA] border border-[#00000020] p-4 lg:w-4/12 w-full lg:max-h-[72vh] lg:h-[72vh] max-h-[82vh] h-[82vh] ${selectedChat == '' || selectedChat == null ? 'block' : 'lg:block hidden'}`}
 
     >
       <div
-        className="flex justify-between items-center mt-3 w-full"
+        className="flex justify-between items-center mt-3 mb-5 w-full"
 
       >
         <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#8E2DE2]">

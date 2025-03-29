@@ -83,13 +83,14 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="bg-white">
+    <div className=" bg-white">
+
       <div className="w-full flex justify-between">
         {/* ========== LEFT SIDEBAR: Services & Events Previews ========== */}
         {!isSmallScreen && (
-          <div className="w-3/12 bg-white p-4 hidden lg:flex flex-col items-center">
-            {/* SERVICES PREVIEW */}
-            <div className="bg-[#fafafa] w-full px-4 py-4 rounded-lg border-2 border-gray-200 max-w-[350px]">
+
+          <div className="w-3/12 bg-white p-4  hidden lg:flex  flex-col items-center">
+            <div className="bg-[#fafafa] w-full px-4 py-4 rounded-lg border-2  border-gray-200 max-w-[350px] ">
               <div className="flex w-full items-center justify-between">
                 <h1 className="text-lg font-semibold text-gray-600">Services</h1>
                 <Link to="/dashboard/services">
@@ -236,6 +237,7 @@ const Dashboard = () => {
                 );
               })}
             </div>
+            {/* Ads*/}
           </div>
         )}
 
@@ -257,6 +259,6 @@ const Dashboard = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Dashboard;

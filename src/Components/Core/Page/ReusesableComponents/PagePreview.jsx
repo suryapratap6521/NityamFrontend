@@ -37,25 +37,25 @@ const PagePreview = () => {
       </div>
       <div className="mt-[54px] w-full p-6 pt-0">
         <div className="flex items-center gap-3">
-          <h3 className="text-3xl">{pageData.businessName || "Business Name"}</h3>
-          <h6 className="text-xs mt-1 bg-[#4A00E0] text-[#fff] w-fit px-4 py-1 rounded-lg text-center">
-            {pageData.businessCategory || "Business Type"}
+          <h3 className="text-3xl w-[80%] truncate overflow-hidden">{pageData.businessName || "Business Name"}</h3>
+          <h6 className="text-xs mt-1 bg-[#4A00E0] text-[#fff]  w-fit max-w-[20%] truncate overflow-hidden px-4 py-1 rounded-lg text-center">
+            {pageData.businessCategory ? (pageData.businessCategory == 'Others' ? pageData.otherBusinessCategory : pageData.businessCategory) : "Business Type"}
           </h6>
         </div>
-        <p className="text-sm mt-2 text-[#5a5a5a] w-fit pb-3 border-b border-[#dedede] ">
+        <p className="text-sm mt-2 text-[#5a5a5a]  w-full truncate overflow-hidden pb-3 border-b border-[#dedede] ">
           {pageData.businessDescription || "Your Business Bio..."}
         </p>
         <div className="flex gap-2">
           <div className="w-5/12">
             <div className="flex items-center gap-2 mt-4 w-full">
               <LanguageIcon style={{ fontSize: "24px", fill: "#4A00E0" }} />
-              <p className="text-xl font-medium text-black w-fit">
+              <p className="text-xl font-medium text-black  w-full truncate overflow-hidden">
                 {pageData.businessUrl || "Website URL"}
               </p>
             </div>
             <div className="flex items-center gap-2 mt-4 w-full">
               <LocalPhoneIcon style={{ fontSize: "24px", fill: "#4A00E0" }} />
-              <p className="text-xl font-medium text-black w-fit">
+              <p className="text-xl font-medium text-black  w-full truncate overflow-hidden">
                 {pageData.businessPhoneNumber || "Phone Number"}
               </p>
             </div>
@@ -63,13 +63,13 @@ const PagePreview = () => {
           <div className="w-6/12">
             <div className="flex items-center gap-2 mt-4 w-full">
               <AlternateEmailIcon style={{ fontSize: "24px", fill: "#4A00E0" }} />
-              <p className="text-xl font-medium text-black w-fit">
+              <p className="text-xl font-medium text-black  w-full truncate overflow-hidden">
                 {pageData.businessEmail || "Email Address"}
               </p>
             </div>
             <div className="flex items-center gap-2 mt-4 w-full">
               <MyLocationIcon style={{ fontSize: "24px", fill: "#4A00E0" }} />
-              <p className="text-xl font-medium text-black w-fit">
+              <p className="text-xl font-medium text-black  w-full truncate overflow-hidden">
                 {pageData.businessAddress || "Your Business Address..."} {pageData.businessCity
                   ? `${pageData.businessCity}, ${pageData.businessPostCode || ""}`
                   : ""}

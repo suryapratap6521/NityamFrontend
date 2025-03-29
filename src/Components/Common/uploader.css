@@ -10,7 +10,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 2px dashed #1475cf;
+    border: 2px dashed #8E2DE2;
     height: 300px;
     width: 500px;
     cursor: pointer;
@@ -19,7 +19,7 @@
   }
   
   .upload-form:hover {
-    background-color: #f0f8ff;
+    background-color: #8E2DE210;
   }
   
   .upload-placeholder {
@@ -40,7 +40,7 @@
     align-items: center;
     padding: 15px 20px;
     border-radius: 5px;
-    background-color: #e9f0ff;
+    background-color: #8E2DE220;
     width: 500px;
   }
   

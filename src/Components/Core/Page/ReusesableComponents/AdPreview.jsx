@@ -62,7 +62,7 @@ const AdPreview = () => {
               {adData.images.map((img, index) => (
                 <div key={index} className="flex justify-center">
                   <img
-                    src={img}
+                    src={img.url}
                     alt={`Preview ${index + 1}`}
                     className="w-full h-[250px] object-cover rounded" // Adjust the image styling
                   />
@@ -77,7 +77,7 @@ const AdPreview = () => {
             {adData.images.map((img, index) => (
               <div key={index} className="flex justify-center">
                 <img
-                  src={img}
+                  src={img.url}
                   alt={`Preview ${index + 1}`}
                   className="w-full h-56 rounded-md object-cover " // Adjust the image styling
                 />
@@ -97,6 +97,9 @@ const AdPreview = () => {
       </div>
       <p className={`text-xl font-normal text-[${adData.title == '' ? '#5a5a5a' : '#000000'}] w-fit mt-3`}>
         {adData.title || "Your Ad title..."}
+      </p>
+      <p className={`text-sm font-normal text-gray-400 w-fit my-2`}>
+        {adData.description || "Description..."}
       </p>
 
       <button className="w-fit mt-2 p-2 text-[#4A00E0] text-sm px-8 rounded-md bg-[#4A00E020]">

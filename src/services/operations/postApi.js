@@ -7,7 +7,6 @@ import { setAllAds } from '../../slices/adSlice';
 import { handleResponse } from "../../utils/apiUtils";
 
 export const getAllPosts = async (token, dispatch) => {
-  toast.dismiss();
   try {
     // console.log(token,"token of post------------>");
     const response = await apiConnector("GET", postEndpoints.GET_ALL_POST, null, {
@@ -33,7 +32,6 @@ export const getAllPosts = async (token, dispatch) => {
   }
 };
 export const createPost = async (formData, token) => {
-  toast.dismiss();
   const toastId = toast.loading("Creating post...");
   try {
     
@@ -61,7 +59,6 @@ export const createPost = async (formData, token) => {
 };
 
 export const voteOnPoll = async (postId, optionIndex, token) => {
-  // toast.dismiss();
   try {
     const response = await fetch(`https://nityambackend.onrender.com/api/v1/post/${postId}/vote`, {
       method: 'POST',
@@ -78,7 +75,6 @@ export const voteOnPoll = async (postId, optionIndex, token) => {
 };
 
 export const fetchVoters = async (postId, optionIndex, token) => {
-  // toast.dismiss();
   try {
     const response = await fetch(`https://nityambackend.onrender.com/api/v1/post/${postId}/voters/${optionIndex}`, {
       headers: {
@@ -93,7 +89,6 @@ export const fetchVoters = async (postId, optionIndex, token) => {
 
 
 export const deletePost = async (token, postId) => {
-  // toast.dismiss();
   try {
     const response = await apiConnector("POST", postEndpoints.DELETE_POST, { postId }, {
       Authorization: `Bearer ${token}`
@@ -110,7 +105,6 @@ export const deletePost = async (token, postId) => {
 }
 
 export const likePost = async (postId, token, dispatch) => {
-  // toast.dimiss();
   try {
     const response = await apiConnector("POST", postEndpoints.SET_LIKE, { postId }, {
       Authorization: `Bearer ${token}`,
@@ -127,7 +121,6 @@ export const likePost = async (postId, token, dispatch) => {
 };
 
 export const unlikePost = async (postId, token, dispatch) => {
-  // toast.dismiss();
   try {
     const response = await apiConnector("POST", postEndpoints.UNLIKE, { postId }, {
       Authorization: `Bearer ${token}`,
@@ -144,7 +137,6 @@ export const unlikePost = async (postId, token, dispatch) => {
 };
 
 export const comment = async (postId, text, userId, token, dispatch) => {
-  toast.dismiss();
   try {
     const response = await apiConnector("POST", postEndpoints.COMMENT, { postId, text, userId }, {
       Authorization: `Bearer ${token}`,
@@ -159,7 +151,6 @@ export const comment = async (postId, text, userId, token, dispatch) => {
   }
 }
 export const commentDelete = async (postId, commentId, dispatch, token) => {
-  // toast.dismiss();
   try {
     const response = await apiConnector("POST", postEndpoints.UNCOMMENT, { postId, commentId }, {
       Authorization: `Bearer ${token}`,

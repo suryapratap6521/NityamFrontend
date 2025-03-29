@@ -14,10 +14,11 @@ const Sidebar = () => {
 
   const isActive = (path) => location.pathname === path;
 
-  return (
-    <>
-      <div className="w-full md:border-b-2 border-t-2 md:border-t-0 border-t-gray-200 md:border-b-gray-200 fixed md:sticky top-auto md:top-[56px] bottom-0 md:bottom-auto z-[100] bg-white">
-        <div className="m-auto max-w-7xl bg-white md:text-gray-900 flex flex-row items-end md:pt-2 pt-0 pb-0  justify-center z-50">
+  if (location.pathname == '/dashboard' || location.pathname == '/dashboard/events' || location.pathname == '/dashboard/services' || location.pathname == '/dashboard/chat' || location.pathname == '/dashboard/page') {
+    return (
+      <>
+        <div className="w-full md:border-b-2 border-t-2 md:border-t-0 border-t-gray-200 md:border-b-gray-200 fixed md:sticky top-auto md:top-[56px] bottom-0 md:bottom-auto z-[100] bg-white">
+          <div className="m-auto max-w-7xl bg-white md:text-gray-900 flex flex-row items-end md:pt-2 pt-0 pb-0  justify-center z-50">
 
           <Link to="/dashboard" onClick={() => setTab(0)} className={`group w-[12%] flex items-center flex-col md:items-center ${isActive('/dashboard') ? 'border-b-4' : ''} hover:border-b-4 border-black p-2 cursor-pointer transition-all duration-300 w-full`}>
             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover: transition-opacity duration-300 p-1"><g><g fill="#000"><path d="M9.5 17.5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1z" fill="#000000" opacity="1" data-original="#000000"></path><path fill-rule="evenodd" d="M14.169 2.575a3.5 3.5 0 0 0-4.338 0l-6.5 5.132A3.5 3.5 0 0 0 2 10.454V18.5A3.5 3.5 0 0 0 5.5 22h13a3.5 3.5 0 0 0 3.5-3.5v-8.046a3.5 3.5 0 0 0-1.331-2.747zm-3.718.785a2.5 2.5 0 0 1 3.098 0l6.5 5.132A2.5 2.5 0 0 1 21 10.454V18.5a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 18.5v-8.046a2.5 2.5 0 0 1 .95-1.962z" clip-rule="evenodd" fill="#000000" opacity="1" data-original="#000000"></path></g></g></svg>
@@ -34,7 +35,7 @@ const Sidebar = () => {
             <span className="text-md min-h-9 font-semibold    transition-opacity duration-300">Events</span>
           </Link>
 
-          {/* <Link to="/dashboard/createpost" className={`group w-[12%] flex items-center flex-col md:items-center ${isActive('/dashboard')  ? 'border-b-4' : ''} hover:border-b-4 border-black p-2 cursor-pointer transition-all duration-300 w-full`}>
+            {/* <Link to="/dashboard/createpost" className={`group w-[12%] flex items-center flex-col md:items-center ${isActive('/dashboard')  ? 'border-b-4' : ''} hover:border-b-4 border-black p-2 cursor-pointer transition-all duration-300 w-full`}>
         <FontAwesomeIcon icon={faPlusCircle} className="text-3xl md:text-gray-900 text-gray-500" />
         <span className="text-md min-h-9 font-semibold    transition-opacity duration-300">Post</span>
       </Link> */}
@@ -86,13 +87,14 @@ const Sidebar = () => {
           </Link>
 
 
+          </div>
         </div>
-      </div>
 
 
 
-    </>
-  );
+      </>
+    );
+  }
 }
 
 export default Sidebar;
