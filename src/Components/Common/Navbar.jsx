@@ -29,10 +29,12 @@ import { useLocation } from "react-router-dom";
 import { fetchNotifications, markNotificationAsRead } from '../../services/operations/notificationApi';
 import { setNotifications, markAsRead } from '../../slices/notificationSlice';
 import NotificationDropdown from './NotificationDropdown';
+import SideBarPost from "../Core/Post/SideBarPost";
 import nityam_mlogo from "../../assests/nityam_mlogo.png";
 // Import plus icon from FontAwesome
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import PadosiLogo from "../../assests/TrPadosi.jpg";
 
 const settings = [
   { title: 'Profile', path: '/dashboard/myprofile', icon: <CgProfile /> },
@@ -52,6 +54,17 @@ function Navbar() {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [confirmationModal, setConfirmationModal] = useState(false);
 
+    const [openModal, setOpenModal] = useState(false);
+  
+    const handleOpenModal = () => {
+      setOpenModal(true);
+    };
+  
+    const handleCloseModal = () => {
+      setOpenModal(false);
+    };
+  
+  
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
   };
@@ -94,7 +107,7 @@ function Navbar() {
 
   return (
     <>
-      <AppBar position="fixed" sx={{ backgroundColor: '#F5F5F5', boxShadow: 'none', borderBottom: '2px solid rgb(229 231 235)' }}>
+      <AppBar position="fixed" sx={{ backgroundColor: '#F5F5F5',boxShadow: 'none', borderBottom: '2px solid rgb(229 231 235)' }}>
         <Container>
           <Toolbar disableGutters>
             <Typography
@@ -108,6 +121,7 @@ function Navbar() {
               }}
             >
               <img src={logo} style={{ width: "20rem", height: "3rem" }} alt="logo" />
+              {/* <img src={PadosiLogo} style={{ width:"12rem", height: "4rem" }} alt="logo" /> */}
             </Typography>
 
             <Typography
@@ -131,7 +145,7 @@ function Navbar() {
             {/* Plus Icon for Create Post (visible only if token is present) */}
             {token && (
               <IconButton
-                onClick={() => navigate("/dashboard/createpost")}
+                onClick={handleOpenModal}
                 sx={{
                   backgroundColor: 'green',
                   color: 'white',
@@ -144,7 +158,9 @@ function Navbar() {
               >
                 <FontAwesomeIcon icon={faPlus} />
               </IconButton>
+               
             )}
+            {openModal && <SideBarPost closeModal={handleCloseModal} />}
 
             {token && (
               <IconButton

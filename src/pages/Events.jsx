@@ -7,17 +7,17 @@ import { Link, useLocation } from 'react-router-dom';
 import Advertisements from '../Components/Core/Dashboard/Advertisement';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
+import ExpandableText from "../Components/Common/ExpandableText"; // adjust the path as needed
 
 // Child component for each event item
-const EventItem = ({ event }) => {
+const EventItem = ({ event, onClick }) => {
   const itemRef = useRef(null);
   const location = useLocation();
 
   useEffect(() => {
     if (location.state?.highlightEventId === event._id && itemRef.current) {
-      // Scroll item into view
+      // Scroll item into view and apply blink effect
       itemRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-      // Apply blink effect
       itemRef.current.classList.add("blink");
       setTimeout(() => {
         itemRef.current.classList.remove("blink");
@@ -47,7 +47,8 @@ const EventItem = ({ event }) => {
         pathname: "/dashboard/event/view",
         state: { highlightEventId: event._id }
       }}
-      className="flex justify-center items-center md:items-start hover:bg-gray-200 p- rounded-md cursor-pointer transition-all duration-300 w-full bg-[#FAFAFA] border border-[#00000020]"
+      onClick={() => onClick && onClick(event)}
+      className="flex justify-center items-center md:items-start hover:bg-gray-200 p-3 rounded-md cursor-pointer transition-all duration-300 w-full bg-[#FAFAFA] border border-[#00000020]"
     >
       <div ref={itemRef} className="flex flex-col justify-center w-full">
         <div className="w-full h-[250px]">
@@ -58,15 +59,18 @@ const EventItem = ({ event }) => {
           />
         </div>
         <div className="p-4">
-          <h3 className="text-xl font-semibold mt-2 mb-1">{event?.title}</h3>
+          <h3 className="text-xl font-semibold mt-2 mb-1">
+            <ExpandableText text={event?.title} threshold={40} />
+          </h3>
           <div className="flex items-center gap-1">
-            {/* Example Icon SVG */}
             <p className="text-base mb-1 text-[#8E2DE2] font-normal">
               {event?.location} | {formatDateTime(event?.startDate)}
             </p>
           </div>
           <div className="flex items-center gap-1">
-            <p className="text-xs mb-1 text-gray-600 w-10/12">{event?.description}</p>
+            <p className="text-xs mb-1 text-gray-600 w-10/12">
+              <ExpandableText text={event?.description} threshold={100} />
+            </p>
             <button className="m-0 p-3 rounded-full bg-gradient">
               {/* Button Icon SVG */}
             </button>
@@ -81,26 +85,23 @@ const Events = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useDispatch();
   const eventData = useSelector((state) => state.event.userEvent || []);
-  const loading = useSelector((state) => state.event.loading || false);
   const token = useSelector((state) => state.auth.token);
-  const { user } = useSelector((state) => state.profile);
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
+  // Call API only when token or dispatch changes
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (!loading) {
-          await fetchEventsByUser(token, dispatch);
-        }
+        await fetchEventsByUser(token, dispatch);
       } catch (error) {
         console.error(error);
       }
     };
     fetchData();
-  }, [token, dispatch, loading]);
+  }, [token, dispatch]);
 
-  // When an event is clicked, you could also set event data into Redux (if needed)
+  // When an event is clicked, set event data into Redux
   const handleEventClick = (event) => {
     dispatch(setEventData(event));
   };
@@ -122,7 +123,7 @@ const Events = () => {
         <div className="grid md:grid-cols-2 grid-cols-1 mt-10 items-center gap-3">
           {eventData && eventData.length !== 0 &&
             eventData.map((event) => (
-              <EventItem key={event._id} event={event} onClick={() => handleEventClick(event)} />
+              <EventItem key={event._id} event={event} onClick={handleEventClick} />
             ))
           }
         </div>

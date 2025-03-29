@@ -49,7 +49,7 @@ const Pages = () => {
                         <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#8E2DE2]">
                             Pages
                         </h1>
-                        <p className="text-gray-400 leading-4 text-sm ">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod</p>
+                        <p className="text-gray-400 leading-4 text-sm "></p>
                     </div>
                     <Link to="/dashboard/page/create"
                         onClick={() => handlePageClick({})}
