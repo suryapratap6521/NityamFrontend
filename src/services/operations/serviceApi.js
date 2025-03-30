@@ -40,3 +40,28 @@ export const createService = async (formData, token) => {
     throw error; 
   }
 };
+
+
+export const getServiceById = async (serviceId, token, dispatch) => {
+  toast.dismiss();
+  const toastId = toast.loading("Loading service details...");
+  dispatch(setLoading(true)); // assuming your serviceSlice uses setLoading
+  try {
+    // The endpoint is like: BASE_URL/services/service/:id, so we append the serviceId to the URL
+    const url = serviceEndpoints.GET_SERVICE_BY_ID.replace(':id', serviceId);
+    const response = await apiConnector("GET", url, null, {
+      Authorization: `Bearer ${token}`,
+    });
+    console.log(response.data);
+    dispatch(setServiceData(response.data));
+    toast.dismiss(toastId);
+    return response;
+  } catch (error) {
+    console.error(error);
+    toast.error("Problem in fetching the service details");
+    throw error;
+  } finally {
+    dispatch(setLoading(false));
+    toast.dismiss(toastId);
+  }
+};

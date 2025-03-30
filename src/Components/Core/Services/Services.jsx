@@ -19,6 +19,7 @@ const Services = () => {
     const handleGetAllServices = async () => {
       try {
         const response = await getServices(token, dispatch);
+        console.log(response,"-->");
         setAllUsers(response.data.allUsers);
         setServices(response.data.userMadeServices);
       } catch (error) {

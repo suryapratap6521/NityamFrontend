@@ -1,5 +1,5 @@
-const BASE_URL = "https://nityambackend.onrender.com/api/v1";
-// const BASE_URL = 'http://localhost:8080/api/v1';
+// const BASE_URL = "https://nityambackend.onrender.com/api/v1";
+const BASE_URL = 'http://localhost:8080/api/v1';
 //  const BASE_URL = "https://nityambackend-production.up.railway.app/api/v1";
 
 
@@ -53,6 +53,7 @@ export const profileEndpoints = {
 export const serviceEndpoints = {
   CREATE_SERVICE: `${BASE_URL}/services/createservice`,
   GET_SERVICES: `${BASE_URL}/services/getservices`,
+  GET_SERVICE_BY_ID: `${BASE_URL}/services/service/:id`,
 };
 
 export const locationEndpoints = {
@@ -70,6 +71,7 @@ export const eventEndpoints = {
   CREATE_PAGE: `${BASE_URL}/page/createpage`,
   VIEW_PAGE: `${BASE_URL}/page/page`,
   GET_PAGES: `${BASE_URL}/post/events`,
+  VIEW_PAGE: `${BASE_URL}/post/event/:id`,
 };
 export const adEndpoints = {
   GET_COMMUNITIES: `${BASE_URL}/advpost/getcommunities`,

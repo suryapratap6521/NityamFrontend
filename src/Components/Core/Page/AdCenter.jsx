@@ -8,52 +8,52 @@ import Select from "react-select";
 import { CitySelect, StateSelect } from "react-country-state-city";
 import { createAd } from "../../../services/operations/adApi";
 import axios from "axios";
-const cityOptions = [
-  { value: "new-york", label: "New York" },
-  { value: "los-angeles", label: "Los Angeles" },
-  { value: "chicago", label: "Chicago" },
-  { value: "houston", label: "Houston" },
-  { value: "phoenix", label: "Phoenix" },
-];
+import { toast } from "react-toastify";
+
+// Initial ad data structure; ensure your Redux slice is initialized similarly.
+const initialAdData = {
+  title: "",
+  description: "",
+  "ageGroup[minAge]": "",
+  "ageGroup[maxAge]": "",
+  "dateSlot[startDate]": "",
+  "dateSlot[endDate]": "",
+  audianceType: "allUsers", // "allUsers", "byState", "byCity", "byCommunity"
+  "buttonLabel[type]": "",
+  "buttonLabel[value]": "",
+  state: [],
+  city: [],
+  communities: [],
+  premium: false,
+  images: [],
+};
+
 const AdCenter = () => {
-  const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useDispatch();
   const [step, setStep] = useState(1);
   const adData = useSelector((state) => state.ad.adData || {});
   const pageData = useSelector((state) => state.page.pageData || {});
   const communitiesData = useSelector((state) => state.ad.communities || []);
   const token = useSelector((state) => state.auth.token);
+
+  // Local state for location selections
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [selectedStates, setSelectedStates] = useState([]);
   const [selectedCities, setSelectedCities] = useState([]);
-  console.log(selectedCities);
-  console.log(selectedStates);
+  const totalPriceRef = useRef(null);
+
   const API_KEY = "emRDWFZrcTRpMWxUNHdhTEluQktQbFFoZUhoRFhLS2Znc2RNSHJnRQ==";
   const BASE_URL = "https://api.countrystatecity.in/v1/countries/IN";
-  console.log(selectedStates);
-  console.log(selectedCities)
-  const handleStateChange = (selectedState) => {
-    setSelectedStates(selectedState);
-    dispatch(setAdData({ state: selectedState.name }));
-    setSelectedCities([]); // Reset city selection when state changes
-    dispatch(setAdData({ city: "" }));
-  };
 
-  const handleCityChange = (selectedCity) => {
-    setSelectedCities(selectedCity);
-    dispatch(setAdData({ city: selectedCity.name }));
-  };
-  const businessTypes = [
-    "Contact Us",
-    "Send Enquiry",
-    "Apply Now",
-    "Visit Our Website",
-    "Message Us",
-    "Download App",
-    "Subscribe Us",
-    "Fill Form"
-  ];
+  // Wait for pageData to load.
+  if (!pageData._id) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p>Loading page data, please wait...</p>
+      </div>
+    );
+  }
 
   useEffect(() => {
     const fetchStates = async () => {
@@ -69,10 +69,11 @@ const AdCenter = () => {
         );
       } catch (error) {
         console.error("Error fetching states:", error);
+        toast.error("Error fetching states.");
       }
     };
     fetchStates();
-  }, []);
+  }, [API_KEY, BASE_URL]);
 
   useEffect(() => {
     if (selectedStates.length > 0) {
@@ -80,264 +81,268 @@ const AdCenter = () => {
         try {
           let allCities = [];
           for (let state of selectedStates) {
-            const response = await axios.get(`${BASE_URL}/states/${state.value}/cities`, {
-              headers: { "X-CSCAPI-KEY": API_KEY },
-            });
-            allCities = [
-              ...allCities,
-              ...response.data.map((city) => ({
+            const response = await axios.get(
+              `${BASE_URL}/states/${state.value}/cities`,
+              { headers: { "X-CSCAPI-KEY": API_KEY } }
+            );
+            allCities = allCities.concat(
+              response.data.map((city) => ({
                 value: city.name,
                 label: city.name,
-              })),
-            ];
+              }))
+            );
           }
           setCities(allCities);
         } catch (error) {
           console.error("Error fetching cities:", error);
+          toast.error("Error fetching cities.");
         }
       };
       fetchCities();
     } else {
       setCities([]);
     }
-  }, [selectedStates]);
+  }, [selectedStates, API_KEY, BASE_URL]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-
         await fetchAllCommunities(token, dispatch);
-        //console.log(communitiesData)
-
       } catch (error) {
         console.error(error);
+        toast.error("Error fetching communities.");
       }
     };
     fetchData();
-  }, []);
+  }, [dispatch, token]);
 
-
-
-  const filteredBusinessTypes = businessTypes.filter((type) =>
-    type.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files);
-
-    if (files.length > 5) {
-      alert("You can only upload up to 5 images.");
-      return;
-    }
-
-    // Convert files to an array of objects for preview purposes
-    const imagePreviews = files.map((file) => ({
-      url: URL.createObjectURL(file), // Preview URL for the image
-      name: file.name, // You can store additional data if needed
-      size: file.size,
-      type: file.type,
-    }));
-
-    // Dispatch only the serializable data
-    dispatch(setAdData({ images: imagePreviews }));
+  // Handle state selection. Expecting multiple selection.
+  const handleStateChange = (selected) => {
+    setSelectedStates(selected);
+    dispatch(setAdData({ state: selected.map((s) => s.label) }));
+    // Clear city selection
+    setSelectedCities([]);
+    dispatch(setAdData({ city: [] }));
   };
 
+  // Handle city selection.
+  const handleCityChange = (selected) => {
+    setSelectedCities(selected);
+    dispatch(setAdData({ city: selected.map((c) => c.label) }));
+  };
 
+  // Premium toggle handler.
+  const handlePremiumChange = (e) => {
+    dispatch(setAdData({ premium: e.target.checked }));
+  };
+
+  const businessTypes = [
+    "Contact Us",
+    "Send Enquiry",
+    "Apply Now",
+    "Visit Our Website",
+    "Message Us",
+    "Download App",
+    "Subscribe Us",
+    "Fill Form",
+  ];
+
+  // Append new images to existing images.
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length + (adData.images?.length || 0) > 5) {
+      toast.warn("You can only upload up to 5 images.");
+      return;
+    }
+    const imagePreviews = files.map((file) => ({
+      url: URL.createObjectURL(file),
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      file,
+    }));
+    dispatch(setAdData({ images: [...(adData.images || []), ...imagePreviews] }));
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    dispatch(setAdData({ [name]: value }));  // Dispatch updated data to Redux store
+    dispatch(setAdData({ [name]: value }));
+  };
+
+  // Helper: get current datetime formatted for datetime-local input.
+  const getMinDateTime = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const today = new Date().toISOString().split("T")[0];
-    const startDateTime = new Date(adData.startDate);
-    const endDateTime = new Date(adData.endDate);
-
-    if (startDateTime < new Date(today)) {
-      alert("Start date cannot be in the past.");
+    if (!adData["dateSlot[startDate]"] || !adData["dateSlot[endDate]"]) {
+      toast.warn("Please fill in both start and end date/time.");
       return;
     }
 
-    if (endDateTime <= startDateTime) {
-      alert("End date must be after the start date.");
-      return;
-    }
-
-    if (adData.minAge < 5 || adData.maxAge > 90 || adData.minAge > adData.maxAge) {
-      alert("Invalid age range. Min age must be at least 5, and max age cannot exceed 90.");
-      return;
-    }
-
-    let selectedCommunities;
-
-    // if (adData.audianceType === "byState") {
-    //   selectedStates = adData.states;
-    // } else if (adData.audianceType === "byCity") {
-    //   selectedCities = adData.cities;
-    if (adData.audianceType === "byCommunity") {
-      selectedCommunities = adData.communities;
-    }
-
-    // Create FormData
     const formData = new FormData();
     formData.append("title", adData.title);
     formData.append("description", adData.description);
     formData.append("pageId", pageData._id);
-    formData.append("price", 1000); // Assuming price is static
+    formData.append("price", 1000); // Static price; adjust as needed
 
-    // Append age group
-    formData.append("ageGroup[minAge]", adData.minAge);
-    formData.append("ageGroup[maxAge]", adData.maxAge);
+    const startDateTime = new Date(adData["dateSlot[startDate]"]).toISOString();
+    const endDateTime = new Date(adData["dateSlot[endDate]"]).toISOString();
+    formData.append("dateSlot[startDate]", startDateTime);
+    formData.append("dateSlot[endDate]", endDateTime);
 
-    // Append date slot
-    formData.append("dateSlot[startDate]", startDateTime.toISOString());
-    formData.append("dateSlot[endDate]", endDateTime.toISOString());
+    formData.append("ageGroup[minAge]", adData["ageGroup[minAge]"]);
+    formData.append("ageGroup[maxAge]", adData["ageGroup[maxAge]"]);
 
-    // Append audience type (optionType)
-    formData.append("optionType", adData.audianceType);  // ✅ Fixed this
-    // console.log(adaudianceType)
-    // Append location filters based on selected option
-    if (selectedStates) {
-      console.log(selectedStates);
-      let statesLabels = selectedStates.map(item => item.label);
-      console.log(statesLabels);
-      formData.append("states", JSON.stringify(statesLabels)); // Use JSON.stringify to ensure proper array formatting in the form data
-    }
-    if (selectedCities) {
-      let cityLabels = selectedCities.map(item => item.label);
-      formData.append("cities", JSON.stringify(cityLabels));
-    }
-    if (selectedCommunities) {
-      selectedCommunities.forEach((community) => formData.append("communities", community));
+    formData.append("optionType", adData.audianceType);
+    formData.append("premium", adData.premium ? "true" : "false");
+
+    if (adData.audianceType === "byState") {
+      formData.append("states", JSON.stringify(adData.state));
+    } else if (adData.audianceType === "byCity") {
+      formData.append("cities", JSON.stringify(adData.city));
+    } else if (adData.audianceType === "byCommunity") {
+      formData.append("communities", JSON.stringify(adData.communities));
     }
 
-    // Append button data
-    formData.append("buttonLabel[type]", adData.type);
-    formData.append("buttonLabel[value]", adData.value);
+    formData.append("buttonLabel[type]", adData["buttonLabel[type]"]);
+    formData.append("buttonLabel[value]", adData["buttonLabel[value]"]);
 
-    // Append image files (for uploads)
     if (adData.images && Array.isArray(adData.images)) {
-      adData.images.forEach((imageObj) => {
-        formData.append("imagesArray", imageObj.file);
+      adData.images.forEach((imgObj) => {
+        formData.append("imagesArray", imgObj.file);
       });
     }
 
     try {
       const response = await createAd(formData, dispatch, token);
-      alert("Ad created successfully!");
-      console.log("Response:", response);
+      toast.success("Ad created successfully!");
+      // Clear form fields
+      dispatch(setAdData(initialAdData));
+      setSelectedStates([]);
+      setSelectedCities([]);
     } catch (error) {
       console.error("Error:", error);
-      alert("Failed to create ad. Please try again.");
+      toast.error("Failed to create ad. Please try again.");
     }
   };
 
-
-  const handleNext = (event) => {
-    event.stopPropagation();
-    event.preventDefault();
+  const handleNext = (e) => {
+    e.preventDefault();
     if (step < 2) setStep(step + 1);
   };
 
-  const handleBack = (event) => {
-    event.stopPropagation();
-    event.preventDefault();
+  const handleBack = (e) => {
+    e.preventDefault();
     if (step > 1) setStep(step - 1);
   };
 
-  const totalPriceRef = useRef(null);
-
-  const handleSubmit2 = (e) => {
-    if (totalPriceRef.current) {
-      totalPriceRef.current.handleSubmit(e);
-    }
+  // In your code, you used handleSubmit2 to trigger payment via TotalPrice component.
+  // Here, we assume the "Proceed to Pay" button on step 2 calls handleSubmit.
+  const handleProceedToPay = (e) => {
+    e.preventDefault();
+    handleSubmit(e);
   };
 
   return (
-    <div className="max-w-[1320px] items-start border-t-0 flex flex-col lg:flex-row mx-auto p-6 lg:mb-0 mb-14">
+    <div className="max-w-[1320px] flex flex-col lg:flex-row mx-auto p-6 lg:mb-0 mb-14">
       <div className="lg:w-3/5 w-full p-4">
-        <div>
-          <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#8E2DE2]">
-            Create New Ad
-          </h1>
-          <p className="text-gray-400 leading-4 text-sm mb-4">
-            Design and launch impactful ads effortlessly.
-          </p></div>
-        <div className="lg:w-10/12 w-full">
-          <form onSubmit={(e) => e.preventDefault()}>
-            {step === 1 && (<>
+        <h1 className="md:text-3xl text-xl font-semibold mb-1 text-[#8E2DE2]">
+          Create New Ad
+        </h1>
+        <p className="text-gray-400 text-sm mb-4">
+          Design and launch impactful ads effortlessly.
+        </p>
+        <form onSubmit={(e) => e.preventDefault()}>
+          {step === 1 && (
+            <>
               {/* Title */}
               <div className="mb-4">
-                <label htmlFor="title" className="text-lg font-normal text-gray-600">Title</label>
+                <label htmlFor="title" className="text-lg text-gray-600">
+                  Title
+                </label>
                 <input
                   type="text"
                   id="title"
                   name="title"
                   placeholder="Enter the title for your ad"
                   value={adData.title || ""}
-                  onChange={handleChange} // Handle change for title
+                  onChange={handleChange}
                   className="border rounded w-full py-3 px-4 border-gray-300 bg-[#FAFAFA]"
                 />
               </div>
-
               {/* Description */}
-              <div className="mb-1">
-                <label htmlFor="description" className="text-lg font-normal text-gray-600">Description</label>
-                <input
-                  type="text"
+              <div className="mb-4">
+                <label htmlFor="description" className="text-lg text-gray-600">
+                  Description
+                </label>
+                <textarea
                   id="description"
                   name="description"
                   placeholder="Enter the description for your ad"
                   value={adData.description || ""}
-                  onChange={handleChange} // Handle change for description
+                  onChange={handleChange}
                   className="border rounded w-full py-3 px-4 border-gray-300 bg-[#FAFAFA]"
                 />
               </div>
-
               {/* Button Label */}
-              <label className="text-lg font-normal text-gray-600">Button</label>
+              <label className="text-lg text-gray-600">Button</label>
               <div className="flex items-center mb-4 justify-between">
-                <div className=" flex gap-6 items-center flex-1 border rounded w-[48%] py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] ">
-                  {/* <label htmlFor="type" className="block text-base text-gray-600 text-nowrap mb-0">Type</label> */}
+                <div className="flex items-center gap-6 flex-1 border rounded w-[48%] py-3 px-4 border-gray-300 bg-[#FAFAFA]">
                   <select
                     id="type"
                     name="type"
                     value={adData.type || ""}
                     onChange={handleChange}
-                    className="bg-[#FAFAFA] rounded w-full focus:outline-none text-base text-gray-600 text-nowrap mb-0"
+                    className="bg-[#FAFAFA] rounded w-full focus:outline-none text-base text-gray-600"
                   >
                     <option value="">Select Button Type</option>
-                    {filteredBusinessTypes.map((type, index) => (
-                      <option key={index} value={type}>{type}</option>
+                    {businessTypes.map((type, index) => (
+                      <option key={index} value={type}>
+                        {type}
+                      </option>
                     ))}
                   </select>
                 </div>
-                <div className="w-[4%] "></div>
-                <div className=" flex gap-6 items-center flex-1 border rounded w-[48%] py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] ">
-                  {/* <label htmlFor="value" className="block text-base text-gray-600 text-nowrap mb-0">Redirect Path</label> */}
+                <div className="w-[4%]"></div>
+                <div className="flex items-center gap-6 flex-1 border rounded w-[48%] py-3 px-4 border-gray-300 bg-[#FAFAFA]">
                   <input
                     type="text"
                     id="value"
                     name="value"
                     value={adData.value || ""}
                     onChange={handleChange}
-                    className="bg-[#FAFAFA] rounded w-full focus:outline-none"
                     placeholder="Redirect Path"
+                    className="bg-[#FAFAFA] rounded w-full focus:outline-none"
                   />
                 </div>
               </div>
-
-              {/* Multi-Select for Images */}
-              <label htmlFor="images" className="text-lg font-normal text-gray-600">Upload Images (Select up to 5)</label>
-              <div className="mb-4 flex items-center gap-4">
-                <label htmlFor="images" className=" flex gap-6 items-center text-gray-600 justify-between flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] "> {adData.images && adData.images.length != 0 ? `${adData.images.length} Image Selected` : "Choose Your Ad Photos"}
-                  <div className="m-0 p-3 rounded-full bg-gradient"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M18 20H4V6H13V4H4C2.9 4 2 4.9 2 6V20C2 21.1 2.9 22 4 22H18C19.1 22 20 21.1 20 20V11H18V20ZM10.21 16.83L8.25 14.47L5.5 18H16.5L12.96 13.29L10.21 16.83ZM20 4V1H18V4H15C15.01 4.01 15 6 15 6H18V8.99C18.01 9 20 8.99 20 8.99V6H23V4H20Z" fill="white" />
-                  </svg>
-
-                  </div>
+              {/* Image Upload with Preview */}
+              <label htmlFor="images" className="text-lg text-gray-600">
+                Upload Images (up to 5)
+              </label>
+              <div className="mb-4 flex flex-wrap gap-4">
+                {adData.images &&
+                  adData.images.map((img, idx) => (
+                    <img
+                      key={idx}
+                      src={img.url}
+                      alt={`Preview ${idx}`}
+                      className="w-24 h-24 object-cover rounded"
+                    />
+                  ))}
+                <label
+                  htmlFor="images"
+                  className="flex items-center justify-center w-24 h-24 border border-dashed rounded cursor-pointer"
+                >
+                  +
                 </label>
                 <input
                   type="file"
@@ -345,260 +350,208 @@ const AdCenter = () => {
                   name="images"
                   accept="image/*"
                   multiple
-                  onChange={(e) => handleImageChange(e)}
-                  className="hidden w-11/12 gap-6 items-center flex-1 border rounded py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] "
+                  onChange={handleImageChange}
+                  className="hidden"
                 />
-
-
               </div>
-            </>)}
-            {step === 2 && (<>
-              {/* User Type Selection */}
-              <div className="mb-2">
-                <label className="text-lg font-normal text-gray-600">Target Audience</label>
-                <div className="flex flex-wrap gap-2 mt-2">
-                  <label className="flex items-center gap-2 border rounded w-fit py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] text-gray-700 text-base mb-0">
-                    <input
-                      type="radio"
-                      name="audianceType"
-                      value="allUsers"
-                      checked={adData.audianceType === "allUsers"}
-                      onChange={handleChange}
-                    />
-                    All Users
+              {/* Age Group */}
+              <div className="flex items-center mb-4 gap-4">
+                <div className="flex-1">
+                  <label htmlFor="ageGroup[minAge]" className="text-lg text-gray-600">
+                    Minimum Age
                   </label>
-                  <label className="flex items-center gap-2 border rounded w-fit py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] text-gray-700 text-base mb-0">
-                    <input
-                      type="radio"
-                      name="audianceType"
-                      value="byState"
-                      checked={adData.audianceType === "byState"}
-                      onChange={handleChange}
-                    />
-                    By State
+                  <input
+                    type="number"
+                    id="ageGroup[minAge]"
+                    name="ageGroup[minAge]"
+                    value={adData["ageGroup[minAge]"]}
+                    onChange={handleChange}
+                    className="border rounded w-full py-2 px-3 bg-[#FAFAFA]"
+                  />
+                </div>
+                <div className="flex-1">
+                  <label htmlFor="ageGroup[maxAge]" className="text-lg text-gray-600">
+                    Maximum Age
                   </label>
-                  <label className="flex items-center gap-2 border rounded w-fit py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] text-gray-700 text-base mb-0">
-                    <input
-                      type="radio"
-                      name="audianceType"
-                      value="byCity"
-                      checked={adData.audianceType === "byCity"}
-                      onChange={handleChange}
-                    />
-                    By City
-                  </label>
-                  <label className="flex items-center gap-2 border rounded w-fit py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] text-gray-700 text-base mb-0">
-                    <input
-                      type="radio"
-                      name="audianceType"
-                      value="byCommunity"
-                      checked={adData.audianceType === "byCommunity"}
-                      onChange={handleChange}
-                    />
-                    By Communities
-                  </label>
+                  <input
+                    type="number"
+                    id="ageGroup[maxAge]"
+                    name="ageGroup[maxAge]"
+                    value={adData["ageGroup[maxAge]"]}
+                    onChange={handleChange}
+                    className="border rounded w-full py-2 px-3 bg-[#FAFAFA]"
+                  />
                 </div>
               </div>
-
-              <div className="flex items-center justify-center gap-2">
-                {adData.audianceType === "byState" || adData.audianceType === "byCity" ? (
-                  <div className="mb-4 flex-1">
-                    <label className="block text-gray-600 font-semibold text-sm">Select State</label>
+              {/* Combined Date and Time */}
+              <div className="flex flex-col mb-4">
+                <label className="text-lg text-gray-600">
+                  Select Date & Time Range
+                </label>
+                <div className="flex gap-4 mt-2">
+                  <input
+                    type="datetime-local"
+                    name="dateSlot[startDate]"
+                    value={adData["dateSlot[startDate]"]}
+                    onChange={handleChange}
+                    min={getMinDateTime()}
+                    className="border rounded w-full py-2 px-3 bg-[#FAFAFA]"
+                  />
+                  <input
+                    type="datetime-local"
+                    name="dateSlot[endDate]"
+                    value={adData["dateSlot[endDate]"]}
+                    onChange={handleChange}
+                    min={adData["dateSlot[startDate]"] || getMinDateTime()}
+                    className="border rounded w-full py-2 px-3 bg-[#FAFAFA]"
+                  />
+                </div>
+              </div>
+              {/* Premium Toggle */}
+              <div className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  id="premium"
+                  name="premium"
+                  checked={adData.premium || false}
+                  onChange={handlePremiumChange}
+                  className="mr-2"
+                />
+                <label htmlFor="premium" className="text-gray-600">
+                  Premium (Add Rs.50)
+                </label>
+              </div>
+            </>
+          )}
+          {step === 2 && (
+            <>
+              {/* Audience Selection */}
+              <div className="mb-2">
+                <label className="text-lg text-gray-600">Target Audience</label>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {["allUsers", "byState", "byCity", "byCommunity"].map((type) => (
+                    <label
+                      key={type}
+                      className="flex items-center gap-2 border rounded py-3 px-4 border-gray-300 bg-[#FAFAFA] text-gray-700 text-base"
+                    >
+                      <input
+                        type="radio"
+                        name="audianceType"
+                        value={type}
+                        checked={adData.audianceType === type}
+                        onChange={handleChange}
+                      />
+                      {type === "allUsers"
+                        ? "All Users"
+                        : type === "byState"
+                        ? "By State"
+                        : type === "byCity"
+                        ? "By City"
+                        : "By Communities"}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-4 mb-4">
+                {(adData.audianceType === "byState" ||
+                  adData.audianceType === "byCity") && (
+                  <div className="flex-1">
+                    <label className="block text-gray-600 font-semibold text-sm">
+                      Select State(s)
+                    </label>
                     <StateSelect
                       isMulti
-                      countryid={101} // Fixed to India (Country ID 101)
+                      countryid={101}
                       onChange={handleStateChange}
-                      placeHolder="Select State"
+                      placeHolder="Select State(s)"
                     />
                   </div>
-                ) : null}
-
-                {adData.audianceType === "byCity" ? (
-                  <div className="mb-4 flex-1">
-                    <label className="block text-gray-600 font-semibold text-sm">Select Cities</label>
+                )}
+                {adData.audianceType === "byCity" && (
+                  <div className="flex-1">
+                    <label className="block text-gray-600 font-semibold text-sm">
+                      Select City(ies)
+                    </label>
                     <CitySelect
                       countryid={101}
-                      stateid={selectedStates.id}
+                      stateid={selectedStates.length > 0 ? selectedStates[0].value : null}
                       onChange={handleCityChange}
-                      placeHolder="Select City"
-                      disabled={!selectedStates.id}
+                      placeHolder="Select City(ies)"
+                      disabled={selectedStates.length === 0}
                     />
                   </div>
-                ) : null}
-
-                {adData.audianceType === "byCommunity" ? (
-                  <div className="mb-4 flex-1">
-                    <label className="block text-gray-600 font-semibold text-sm">Select Communities</label>
-                    {/* Multi-select component using react-select */}
+                )}
+                {adData.audianceType === "byCommunity" && (
+                  <div className="flex-1">
+                    <label className="block text-gray-600 font-semibold text-sm">
+                      Select Communities
+                    </label>
                     <Select
                       isMulti
                       name="communities"
-                      value={adData.communities && Array.isArray(adData.communities)
-                        ? adData.communities.map(communityName => {
-                          const community = communitiesData.find((community) => community.communityName === communityName);
-                          return community ? { value: community.communityName, label: community.communityName } : null;
-                        }).filter(Boolean) // Remove any null values
-                        : []}
+                      value={
+                        adData.communities && Array.isArray(adData.communities)
+                          ? adData.communities.map((communityName) => {
+                              const community = communitiesData.find(
+                                (c) => c.communityName === communityName
+                              );
+                              return community
+                                ? { value: community.communityName, label: community.communityName }
+                                : null;
+                            }).filter(Boolean)
+                          : []
+                      }
                       onChange={(selectedOptions) => {
-                        const selectedValues = selectedOptions.map(option => option.value); // This will now be community names
+                        const selectedValues = selectedOptions.map(
+                          (option) => option.value
+                        );
                         dispatch(setAdData({ communities: selectedValues }));
-                        //console.log(adData, selectedValues);
                       }}
                       options={communitiesData.map((community) => ({
-                        value: community.communityName, // Use communityName as the value
+                        value: community.communityName,
                         label: community.communityName,
                       }))}
                       className="border rounded w-full p-2"
                     />
                   </div>
-                ) : null}
-
+                )}
               </div>
-
-              {/* Age Group */}
-              <label className="text-lg font-normal text-gray-600">Target Audience Age Group</label>
-              <div className="flex items-center mb-4">
-
-                <div className=" flex gap-6 items-center flex-1 border rounded w-[48%] py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] ">
-                  <label htmlFor="minAge" className="block text-base text-[#a5a5a5] text-nowrap mb-0">Minimum Age</label>
-                  <input
-                    type="number"
-                    id="minAge"
-                    name="minAge"
-                    value={adData.minAge || ""}
-                    onChange={handleChange}
-                    className="bg-[#FAFAFA] rounded w-full focus:outline-none"
-                  />
-                </div>
-                <div className="w-[4%] border-t-2 border-gray-300"></div>
-                <div className=" flex gap-6 items-center flex-1 border rounded w-[48%] py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] ">
-                  <label htmlFor="maxAge" className="block text-base text-[#a5a5a5] text-nowrap mb-0">Maximum Age</label>
-                  <input
-                    type="number"
-                    id="maxAge"
-                    name="maxAge"
-                    value={adData.maxAge || ""}
-                    onChange={handleChange}
-                    className="bg-[#FAFAFA] rounded w-full focus:outline-none"
-                  />
-                </div>
-              </div>
-
-              {/* Date Slot */}
-              <label className="text-lg font-normal text-gray-600">Date Slot</label>
-              <div className="flex items-center mb-4">
-                <div className="flex gap-6 items-center flex-1 border rounded w-[48%] py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] cursor-pointer">
-                  <label
-                    htmlFor="startDate"
-                    className="flex justify-between text-base text-[#a5a5a5] text-nowrap mb-0 w-full"
-                  >
-                    Start Date
-                    <input
-                      type="date"
-                      id="startDate"
-                      name="startDate"
-                      value={adData.startDate || ""}
-                      onChange={handleChange}
-                      className="bg-[#FAFAFA] rounded w-full focus:outline-none text-black"
-                    />
-                  </label>
-                </div>
-
-                <div className="w-[4%] border-t-2 border-gray-300"></div>
-
-                <div className="flex gap-6 items-center flex-1 border rounded w-[48%] py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] cursor-pointer">
-                  <label
-                    htmlFor="endDate"
-                    className="flex justify-between text-base text-[#a5a5a5] text-nowrap mb-0 w-full"
-                  >
-                    End Date
-                    <input
-                      type="date"
-                      id="endDate"
-                      name="endDate"
-                      value={adData.endDate || ""}
-                      onChange={handleChange}
-                      className="bg-[#FAFAFA] rounded w-full focus:outline-none text-black"
-                    />
-                  </label>
-                </div>
-              </div>
-
-
-              {/* Time Slot */}
-              <label className="text-lg font-normal text-gray-600">Time Slot</label>
-              <div className="flex items-center mb-4">
-                <div className=" flex gap-6 items-center flex-1 border rounded w-[48%] py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] ">
-                  <label htmlFor="start" className="flex justify-between text-base text-[#a5a5a5] text-nowrap mb-0 w-full">From
-                    <input
-                      type="time"
-                      id="start"
-                      name="start"
-                      value={adData.start || ""}
-                      onChange={handleChange}
-                      className="bg-[#FAFAFA] rounded w-full focus:outline-none text-black"
-                    />
-                  </label>
-                </div>
-                <div className="w-[4%] border-t-2 border-gray-300"></div>
-                <div className=" flex gap-6 items-center flex-1 border roundedw-[48%]  py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] ">
-                  <label htmlFor="end" className="flex justify-between text-base text-[#a5a5a5] text-nowrap mb-0 w-full">To
-                    <input
-                      type="time"
-                      id="end"
-                      name="end"
-                      value={adData.end || ""}
-                      onChange={handleChange}
-                      className="bg-[#FAFAFA] rounded w-full focus:outline-none text-black"
-                    />
-                  </label>
-                </div>
-              </div>
-
-            </>)}
-            <div className="flex justify-between mt-6">
-              <button
-                onClick={handleBack}
-                disabled={step === 1}
-                className="px-8 py-3 bg-gray-400 text-base font-semibold text-white rounded-full hover:bg-gray-300"
-              >
-                Back
-              </button>
-              {step < 2 ? (
+              <div className="flex justify-between mt-6">
                 <button
-                  onClick={handleNext}
-                  className="px-8 py-3 bg-[#4A00E0] text-base font-semibold text-white rounded-full hover:bg-gray-400"
+                  onClick={handleBack}
+                  disabled={step === 1}
+                  className="px-8 py-3 bg-gray-400 text-white rounded-full text-base font-semibold hover:bg-gray-300"
                 >
-                  Next
+                  Back
                 </button>
-              ) : (
-                <button
-                  onClick={handleSubmit2}
-                  className="px-8 py-3 bg-gradient text-base font-semibold text-white rounded-full hover:bg-gray-400"
-                >
-                  Proceed to Pay
-                </button>
-              )}
-            </div>
-            {/* <button
-              onClick={handleSubmit}
-              className="px-4 py-2 bg-green-500 text-white rounded w-full"
-            >
-              Submit
-            </button> */}
-          </form>
-        </div>
-      </div >
+                {step < 2 ? (
+                  <button
+                    onClick={handleNext}
+                    className="px-8 py-3 bg-[#4A00E0] text-white rounded-full text-base font-semibold hover:bg-gray-400"
+                  >
+                    Next
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleProceedToPay}
+                    className="px-8 py-3 bg-gradient text-white rounded-full text-base font-semibold hover:bg-gray-400"
+                  >
+                    Proceed to Pay
+                  </button>
+                )}
+              </div>
+            </>
+          )}
+        </form>
+      </div>
       <div className="lg:w-2/5 w-full">
         <div className="hidden lg:block">
           <AdPreview />
         </div>
         <TotalPrice ref={totalPriceRef} />
       </div>
-    </div >
-
+    </div>
   );
-
 };
 
 export default AdCenter;

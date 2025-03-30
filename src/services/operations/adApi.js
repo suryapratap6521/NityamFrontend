@@ -19,30 +19,29 @@ export const fetchAllCommunities = async (token,dispatch) => {
     } 
   };
 
-  export const createAd = async (formData,dispatch, token) => {
+  export const createAd = async (formData, dispatch, token) => {
     dispatch(setLoading(true));
-      try {
-        const toastId = toast.loading("Creating ad...");
-        const response = await apiConnector(
-          "POST",
-          adEndpoints.CREATE_AD,
-          formData,
-          {
-            Authorization: `Bearer ${token}`,
-          }
-        );
-        if (!response?.data?.success) {
-          throw new Error("Could not create ad");
+    try {
+      const toastId = toast.loading("Creating ad...");
+      const response = await apiConnector(
+        "POST",
+        adEndpoints.CREATE_AD,
+        formData,
+        {
+          Authorization: `Bearer ${token}`,
         }
-        toast.dismiss(toastId);
-        // console.log(response.data);
-        dispatch(setAdData(response.data.data));
-        return response;
-      } catch (error) {
-        toast.dismiss();
-        toast.error("page creation failed");
-        throw error;
+      );
+      if (!response?.data?.success) {
+        throw new Error("Could not create ad");
       }
-    
+      toast.dismiss(toastId);
+      // Update adData with returned data if needed.
+      dispatch(setAdData(response.data.data));
+      return response;
+    } catch (error) {
+      toast.dismiss();
+      toast.error("Page creation failed");
+      throw error;
+    }
   };
  

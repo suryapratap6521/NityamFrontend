@@ -71,3 +71,28 @@ export const fetchEventDetails = async (eventId, token, dispatch) => {
     toast.dismiss(toastId);
   }
 };
+
+
+export const fetchEventById = async (eventId, token, dispatch) => {
+  toast.dismiss();
+  const toastId = toast.loading("Loading event details...");
+  dispatch(setLoading(true));
+  try {
+    // Replace the :id placeholder with the actual eventId in the endpoint
+    const url = eventEndpoints.VIEW_PAGE.replace(':id', eventId);
+    const response = await apiConnector("GET", url, null, {
+      Authorization: `Bearer ${token}`,
+    });
+    console.log(response.data);
+    dispatch(setEventData(response.data));
+    toast.dismiss(toastId);
+    return response;
+  } catch (error) {
+    console.error(error);
+    toast.error("Problem in fetching the event details");
+    throw error;
+  } finally {
+    dispatch(setLoading(false));
+    toast.dismiss(toastId);
+  }
+};
