@@ -10,7 +10,7 @@ import { createAd } from "../../../services/operations/adApi";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-// Initial ad data structure; ensure your Redux slice is initialized similarly.
+// Initial ad data structure
 const initialAdData = {
   title: "",
   description: "",
@@ -36,7 +36,7 @@ const AdCenter = () => {
   const communitiesData = useSelector((state) => state.ad.communities || []);
   const token = useSelector((state) => state.auth.token);
 
-  // Local state for location selections
+  // Local states for location selections
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [selectedStates, setSelectedStates] = useState([]);
@@ -46,7 +46,7 @@ const AdCenter = () => {
   const API_KEY = "emRDWFZrcTRpMWxUNHdhTEluQktQbFFoZUhoRFhLS2Znc2RNSHJnRQ==";
   const BASE_URL = "https://api.countrystatecity.in/v1/countries/IN";
 
-  // Wait for pageData to load.
+  // Always render a loading indicator if pageData isn't ready.
   if (!pageData._id) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -55,6 +55,7 @@ const AdCenter = () => {
     );
   }
 
+  // Fetch states
   useEffect(() => {
     const fetchStates = async () => {
       try {
@@ -75,35 +76,37 @@ const AdCenter = () => {
     fetchStates();
   }, [API_KEY, BASE_URL]);
 
+  // Fetch cities based on selected states
   useEffect(() => {
-    if (selectedStates.length > 0) {
-      const fetchCities = async () => {
-        try {
-          let allCities = [];
-          for (let state of selectedStates) {
-            const response = await axios.get(
-              `${BASE_URL}/states/${state.value}/cities`,
-              { headers: { "X-CSCAPI-KEY": API_KEY } }
-            );
-            allCities = allCities.concat(
-              response.data.map((city) => ({
-                value: city.name,
-                label: city.name,
-              }))
-            );
-          }
-          setCities(allCities);
-        } catch (error) {
-          console.error("Error fetching cities:", error);
-          toast.error("Error fetching cities.");
+    const fetchCities = async () => {
+      if (selectedStates.length === 0) {
+        setCities([]);
+        return;
+      }
+      try {
+        let allCities = [];
+        for (let state of selectedStates) {
+          const response = await axios.get(
+            `${BASE_URL}/states/${state.value}/cities`,
+            { headers: { "X-CSCAPI-KEY": API_KEY } }
+          );
+          allCities = allCities.concat(
+            response.data.map((city) => ({
+              value: city.name,
+              label: city.name,
+            }))
+          );
         }
-      };
-      fetchCities();
-    } else {
-      setCities([]);
-    }
+        setCities(allCities);
+      } catch (error) {
+        console.error("Error fetching cities:", error);
+        toast.error("Error fetching cities.");
+      }
+    };
+    fetchCities();
   }, [selectedStates, API_KEY, BASE_URL]);
 
+  // Fetch communities
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -116,22 +119,20 @@ const AdCenter = () => {
     fetchData();
   }, [dispatch, token]);
 
-  // Handle state selection. Expecting multiple selection.
+  // Handlers for location selection
   const handleStateChange = (selected) => {
     setSelectedStates(selected);
     dispatch(setAdData({ state: selected.map((s) => s.label) }));
-    // Clear city selection
     setSelectedCities([]);
     dispatch(setAdData({ city: [] }));
   };
 
-  // Handle city selection.
   const handleCityChange = (selected) => {
     setSelectedCities(selected);
     dispatch(setAdData({ city: selected.map((c) => c.label) }));
   };
 
-  // Premium toggle handler.
+  // Premium toggle handler
   const handlePremiumChange = (e) => {
     dispatch(setAdData({ premium: e.target.checked }));
   };
@@ -147,7 +148,7 @@ const AdCenter = () => {
     "Fill Form",
   ];
 
-  // Append new images to existing images.
+  // Append new images to existing array
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length + (adData.images?.length || 0) > 5) {
@@ -164,12 +165,13 @@ const AdCenter = () => {
     dispatch(setAdData({ images: [...(adData.images || []), ...imagePreviews] }));
   };
 
+  // Generic input change handler
   const handleChange = (e) => {
     const { name, value } = e.target;
     dispatch(setAdData({ [name]: value }));
   };
 
-  // Helper: get current datetime formatted for datetime-local input.
+  // Helper: get current datetime for datetime-local input.
   const getMinDateTime = () => {
     const now = new Date();
     const year = now.getFullYear();
@@ -180,27 +182,27 @@ const AdCenter = () => {
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   };
 
+  // Form submission: create FormData and call createAd API.
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!adData["dateSlot[startDate]"] || !adData["dateSlot[endDate]"]) {
       toast.warn("Please fill in both start and end date/time.");
       return;
     }
-
     const formData = new FormData();
     formData.append("title", adData.title);
     formData.append("description", adData.description);
     formData.append("pageId", pageData._id);
     formData.append("price", 1000); // Static price; adjust as needed
 
-    const startDateTime = new Date(adData["dateSlot[startDate]"]).toISOString();
-    const endDateTime = new Date(adData["dateSlot[endDate]"]).toISOString();
-    formData.append("dateSlot[startDate]", startDateTime);
-    formData.append("dateSlot[endDate]", endDateTime);
+    // Convert datetime-local values to ISO strings.
+    const startISO = new Date(adData["dateSlot[startDate]"]).toISOString();
+    const endISO = new Date(adData["dateSlot[endDate]"]).toISOString();
+    formData.append("dateSlot[startDate]", startISO);
+    formData.append("dateSlot[endDate]", endISO);
 
     formData.append("ageGroup[minAge]", adData["ageGroup[minAge]"]);
     formData.append("ageGroup[maxAge]", adData["ageGroup[maxAge]"]);
-
     formData.append("optionType", adData.audianceType);
     formData.append("premium", adData.premium ? "true" : "false");
 
@@ -224,7 +226,7 @@ const AdCenter = () => {
     try {
       const response = await createAd(formData, dispatch, token);
       toast.success("Ad created successfully!");
-      // Clear form fields
+      // Clear the form.
       dispatch(setAdData(initialAdData));
       setSelectedStates([]);
       setSelectedCities([]);
@@ -244,8 +246,7 @@ const AdCenter = () => {
     if (step > 1) setStep(step - 1);
   };
 
-  // In your code, you used handleSubmit2 to trigger payment via TotalPrice component.
-  // Here, we assume the "Proceed to Pay" button on step 2 calls handleSubmit.
+  // "Proceed to Pay" triggers submission.
   const handleProceedToPay = (e) => {
     e.preventDefault();
     handleSubmit(e);

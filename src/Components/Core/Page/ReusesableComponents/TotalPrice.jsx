@@ -12,6 +12,7 @@ const TotalPrice = React.forwardRef((props, ref) => {
   const userData = useSelector((state) => state.profile.user || {});
   const { Razorpay } = useRazorpay();
 
+  // Calculate days between two datetime-local values.
   const calculateDays = (start, end) => {
     const startDate = new Date(start);
     const endDate = new Date(end);
@@ -20,7 +21,7 @@ const TotalPrice = React.forwardRef((props, ref) => {
 
   let numberOfItems = 0;
   if (adData.audianceType === "allUsers") {
-    numberOfItems = 100; // adjust as needed
+    numberOfItems = 100; // Adjust as needed
   } else if (adData.audianceType === "byState" && Array.isArray(adData.state)) {
     numberOfItems = adData.state.length;
   } else if (adData.audianceType === "byCity" && Array.isArray(adData.city)) {
@@ -31,7 +32,8 @@ const TotalPrice = React.forwardRef((props, ref) => {
 
   const startDateTime = adData["dateSlot[startDate]"];
   const endDateTime = adData["dateSlot[endDate]"];
-  const numberOfDays = startDateTime && endDateTime ? calculateDays(startDateTime, endDateTime) : 0;
+  const numberOfDays =
+    startDateTime && endDateTime ? calculateDays(startDateTime, endDateTime) : 0;
 
   let price = (numberOfItems * numberOfDays * 50) / 2;
   if (adData.premium) {
