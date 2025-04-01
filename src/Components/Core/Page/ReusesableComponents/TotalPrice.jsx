@@ -31,7 +31,7 @@ const TotalPrice = React.forwardRef((props, ref) => {
     try {
       setLoadingCount(true);
       let count = 0;
-      const baseURL = "http://localhost:8080/api/v1/advpost"; // adjust if needed
+      const baseURL = "https://nityambackend.onrender.com/api/v1/advpost"; // adjust if needed
 
       if (adData.audianceType === "allUsers") {
         const res = await axios.get(`${baseURL}/getcommunities`, {
