@@ -14,10 +14,11 @@ const TotalPrice = React.forwardRef((props, ref) => {
 
   const [communitiesCount, setCommunitiesCount] = useState(0);
   const [numberOfDays, setNumberOfDays] = useState(0);
-  const [price, setPrice] = useState(0);
+  const [basePrice, setBasePrice] = useState(0);
   const [loadingCount, setLoadingCount] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
 
-  // Helper function: calculates days difference (rounding up)
+  // Helper: Calculate difference in days
   const calculateDays = (start, end) => {
     const startDate = new Date(start);
     const endDate = new Date(end);
@@ -25,7 +26,7 @@ const TotalPrice = React.forwardRef((props, ref) => {
     return Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
   };
 
-  // Fetch communities count based on the audience type
+  // Fetch communities count based on selected audience
   const fetchCommunitiesCount = async () => {
     try {
       setLoadingCount(true);
@@ -63,7 +64,7 @@ const TotalPrice = React.forwardRef((props, ref) => {
     }
   };
 
-  // Calculate days when startDate and endDate change
+  // Calculate number of days when dates change
   useEffect(() => {
     if (adData.startDate && adData.endDate) {
       const days = calculateDays(adData.startDate, adData.endDate);
@@ -75,25 +76,34 @@ const TotalPrice = React.forwardRef((props, ref) => {
     fetchCommunitiesCount();
   }, [adData.audianceType, adData.state, adData.city, adData.communities, token]);
 
-  // Calculate total price
+  // Calculate base price (without premium)
   useEffect(() => {
     if (communitiesCount && numberOfDays) {
-      setPrice((communitiesCount * numberOfDays) / 4);
+      // Your existing price logic: (communitiesCount * numberOfDays) / 4
+      setBasePrice((communitiesCount * numberOfDays) / 4);
     } else {
-      setPrice(0);
+      setBasePrice(0);
     }
   }, [communitiesCount, numberOfDays]);
 
-  // Updated handleSubmit that uses FormData
+  // Calculate total price, adding Rs.50 if premium is selected
+  const totalPrice = isPremium ? basePrice + 50 : basePrice;
+
+  // Handle premium toggle change
+  const handlePremiumToggle = (e) => {
+    setIsPremium(e.target.checked);
+  };
+
+  // Updated handleSubmit that uses FormData and includes premium flag
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (price <= 0) {
+    if (totalPrice <= 0) {
       alert("Price is 0. Please ensure that you have selected the proper audience and dates.");
       return;
     }
 
-    // Verify that pageData._id is available
+    // Ensure pageData has a valid _id
     if (!pageData._id) {
       alert("Page ID is missing. Please ensure page data is loaded.");
       return;
@@ -105,7 +115,7 @@ const TotalPrice = React.forwardRef((props, ref) => {
     formData.append("title", adData.title || "");
     formData.append("description", adData.description || "");
     formData.append("pageId", pageData._id);
-    formData.append("price", price);
+    formData.append("price", totalPrice);
 
     // Append nested fields as flat keys
     formData.append("ageGroup[minAge]", adData.minAge || "");
@@ -137,6 +147,9 @@ const TotalPrice = React.forwardRef((props, ref) => {
     formData.append("buttonLabel[type]", adData.type || "");
     formData.append("buttonLabel[value]", adData.value || "");
 
+    // Append premium flag (as string "true" or "false")
+    formData.append("premium", isPremium ? "true" : "false");
+
     // Append image files, if any
     if (adData.images && Array.isArray(adData.images)) {
       adData.images.forEach((imageObj) => {
@@ -150,7 +163,7 @@ const TotalPrice = React.forwardRef((props, ref) => {
       if (response && response.data) {
         const options = {
           key: "rzp_test_kCQKUReLyS3Siq", // Replace with your Razorpay key
-          amount: price * 100, // in paise
+          amount: totalPrice * 100, // in paise
           currency: "INR",
           name: "Your App Name",
           description: "Payment for Advertised Post",
@@ -208,9 +221,24 @@ const TotalPrice = React.forwardRef((props, ref) => {
               <p className="text-base text-[#000000]">{numberOfDays}</p>
             </div>
             <div className="w-full flex justify-between mt-2 border-t pt-2 border-[#00000020]">
-              <p className="text-base text-[#00000080]">Total</p>
+              <p className="text-base text-[#00000080]">Base Price</p>
               <p className="text-lg font-medium text-[#000000]">
-                {price.toFixed(2)}
+                {basePrice.toFixed(2)}
+              </p>
+            </div>
+            <div className="w-full flex justify-between mt-2">
+              <label className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  checked={isPremium}
+                  onChange={handlePremiumToggle}
+                />
+                <span className="text-base text-[#00000080]">
+                  Add Premium (+Rs. 50)
+                </span>
+              </label>
+              <p className="text-lg font-medium text-[#000000]">
+                {totalPrice.toFixed(2)}
               </p>
             </div>
           </div>
