@@ -155,7 +155,7 @@ const Posts = () => {
             <AdPosts ad={adData[(Math.floor(index / 5)) % adData.length]} />
           )}
         </React.Fragment>
-      ))}s
+      ))}
     </div>
   );
 

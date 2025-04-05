@@ -135,12 +135,12 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="bg-white">
+    <div className="bg-white md:mt-[150px] mt-[60px]">
       <div className="w-full flex justify-between">
         {/* LEFT SIDEBAR: Services & Events Previews */}
         {!isSmallScreen && (
           <div className="w-3/12 bg-white p-4 hidden lg:flex flex-col items-center">
-            <div className="bg-[#fafafa] w-full px-4 py-4 rounded-lg border border-gray-200 max-w-[350px]">
+            <div className="bg-[#fafafa] w-full px-4 py-4 rounded-lg border border-gray-200 max-w-[350px] overflow-scroll">
               <div className="flex w-full items-center justify-between">
                 <h1 className="text-lg font-semibold text-gray-600">Services</h1>
                 <Link to="/dashboard/services">
@@ -217,7 +217,7 @@ const Dashboard = () => {
                 )}
             </div>
 
-            <div className="bg-[#fafafa] w-full px-4 py-4 rounded-lg border border-gray-200 max-w-[350px] mt-4">
+            <div className="bg-[#fafafa] w-full px-4 py-4 rounded-lg border border-gray-200 max-w-[350px] mt-4 overflow-scroll">
               <div className="flex w-full items-center justify-between">
                 <h1 className="text-lg font-semibold text-gray-600">Upcoming Events</h1>
                 <Link to="/dashboard/events">
@@ -244,7 +244,7 @@ const Dashboard = () => {
                         {ad?.title.length > 30 ? ad.title.substring(0, 10) + "..." : ad.title}
                       </p>
                       <p className="text-xs md:text-sm text-gray-600 truncate">{timeRange}</p>
-                      <p className="text-xs md:text-sm text-gray-600 truncate">{ad?.location.slice(0,10)}...</p>
+                      <p className="text-xs md:text-sm text-gray-600 truncate">{ad?.location.slice(0, 10)}...</p>
                     </div>
                     <div className="w-12 h-12 ml-3 flex-shrink-0 hidden md:block">
                       {ad.imgPath?.[0] ? (
@@ -268,7 +268,7 @@ const Dashboard = () => {
           </div>
         )}
 
-        <div className="lg:w-6/12 w-full overflow-y-auto p-4 lg:mb-0 mb-14 max-h-[86vh] no-scrollbar">
+        <div className="lg:w-6/12 w-full overflow-y-auto p-4 lg:mb-0 mb-14 max-h-[84.5vh] no-scrollbar">
           <CreatePostSection />
           <Posts />
         </div>
