@@ -250,7 +250,7 @@ export function login(email, password, navigate) {
           dispatch(setUser({ ...response.data.user, image: userImage }));
           Cookies.set("token", JSON.stringify(response.data.token), { expires: 1 });
           Cookies.set("user", JSON.stringify(response.data.user), { expires: 1 });
-          
+          console.log(Cookies.get("user"), "user data in login api")
           // Navigate to dashboard
           navigate("/dashboard");
 

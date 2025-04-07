@@ -26,34 +26,45 @@ const TotalPrice = React.forwardRef((props, ref) => {
     return Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
   };
 
-  // Fetch communities count based on selected audience
+  // Fetch communities count based on selected audience type
   const fetchCommunitiesCount = async () => {
     try {
       setLoadingCount(true);
       let count = 0;
       const baseURL = "https://nityambackend.onrender.com/api/v1/advpost"; // adjust if needed
 
-      if (adData.audianceType === "allUsers") {
-        const res = await axios.get(`${baseURL}/getcommunities`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        count = res.data.length;
-      } else if (adData.audianceType === "byState") {
-        const res = await axios.post(
-          `${baseURL}/getcommunitybystate`,
-          { states: adData.state || [] },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        count = res.data.communities.length;
-      } else if (adData.audianceType === "byCity") {
-        const res = await axios.post(
-          `${baseURL}/getcommunitybycity`,
-          { cities: adData.city || [] },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        count = res.data.communities.length;
-      } else if (adData.audianceType === "byCommunity") {
-        count = adData.communities ? adData.communities.length : 0;
+      switch (adData.audianceType) {
+        case "allUsers": {
+          const res = await axios.get(`${baseURL}/getcommunities`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          count = res.data.length;
+          break;
+        }
+        case "byState": {
+          const res = await axios.post(
+            `${baseURL}/getcommunitybystate`,
+            { states: adData.state || [] },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          count = res.data.communities?.length || 0;
+          break;
+        }
+        case "byCity": {
+          const res = await axios.post(
+            `${baseURL}/getcommunitybycity`,
+            { cities: adData.city || [] },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          count = res.data.communities?.length || 0;
+          break;
+        }
+        case "byCommunity": {
+          count = adData.communities?.length || 0;
+          break;
+        }
+        default:
+          count = 0;
       }
       setCommunitiesCount(count);
     } catch (error) {
@@ -72,14 +83,15 @@ const TotalPrice = React.forwardRef((props, ref) => {
     }
   }, [adData.startDate, adData.endDate]);
 
+  // Fetch communities count whenever the audience or related fields change
   useEffect(() => {
     fetchCommunitiesCount();
   }, [adData.audianceType, adData.state, adData.city, adData.communities, token]);
 
-  // Calculate base price (without premium)
+  // Calculate base price (without premium) using your price logic
   useEffect(() => {
     if (communitiesCount && numberOfDays) {
-      // Your existing price logic: (communitiesCount * numberOfDays) / 4
+      // For example: base price = (communitiesCount * numberOfDays) / 4
       setBasePrice((communitiesCount * numberOfDays) / 4);
     } else {
       setBasePrice(0);
@@ -103,7 +115,6 @@ const TotalPrice = React.forwardRef((props, ref) => {
       return;
     }
 
-    // Ensure pageData has a valid _id
     if (!pageData._id) {
       alert("Page ID is missing. Please ensure page data is loaded.");
       return;

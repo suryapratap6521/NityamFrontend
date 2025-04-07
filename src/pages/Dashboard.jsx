@@ -66,6 +66,7 @@ const Dashboard = () => {
   const { loading: profileLoading } = useSelector((state) => state.auth);
   const { loading: authLoading } = useSelector((state) => state.profile);
   const { user } = useSelector((state) => state.profile);
+  console.log(user,"==================?")
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
