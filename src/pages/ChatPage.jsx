@@ -11,7 +11,7 @@ const ChatPage = () => {
   console.log(user)
 
   return (
-    <div className=" md:mb-0 mb-14 bg-white flex justify-around w-full lg:flex-row flex-col p-4">
+    <div className=" md:mb-0 md:mt-[150px] mt-[60px] mb-14 bg-white flex justify-around w-full lg:flex-row flex-col p-4">
 
       <MyChat fetchAgain={fetchAgain} />
       <ChatBox fetchAgain={fetchAgain} setFetchAgain={setFetchAgain} />

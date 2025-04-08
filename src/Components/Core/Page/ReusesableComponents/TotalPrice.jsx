@@ -26,45 +26,35 @@ const TotalPrice = React.forwardRef((props, ref) => {
     return Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
   };
 
-  // Fetch communities count based on selected audience type
+  // Fetch communities count based on selected audience
   const fetchCommunitiesCount = async () => {
     try {
       setLoadingCount(true);
       let count = 0;
-      const baseURL = "https://nityambackend.onrender.com/api/v1/advpost"; // adjust if needed
+      const baseURL = "https://nityambackend.onrender.com/api/v1/advpost";
 
-      switch (adData.audianceType) {
-        case "allUsers": {
-          const res = await axios.get(`${baseURL}/getcommunities`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          count = res.data.length;
-          break;
-        }
-        case "byState": {
-          const res = await axios.post(
-            `${baseURL}/getcommunitybystate`,
-            { states: adData.state || [] },
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-          count = res.data.communities?.length || 0;
-          break;
-        }
-        case "byCity": {
-          const res = await axios.post(
-            `${baseURL}/getcommunitybycity`,
-            { cities: adData.city || [] },
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-          count = res.data.communities?.length || 0;
-          break;
-        }
-        case "byCommunity": {
-          count = adData.communities?.length || 0;
-          break;
-        }
-        default:
-          count = 0;
+      if (adData.audianceType === "allUsers") {
+        const res = await axios.get(`${baseURL}/getcommunities`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        count = res.data.length;
+      } else if (adData.audianceType === "byState") {
+        const res = await axios.post(
+          `${baseURL}/getcommunitybystate`,
+          { states: adData.state || [] },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        count = res.data.communities.length;
+      } else if (adData.audianceType === "byCity") {
+        const res = await axios.post(
+          `${baseURL}/getcommunitybycity`,
+          { cities: adData.city || [] },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        count = res.data.communities.length;
+      } else if (adData.audianceType === "byCommunity") {
+        // When byCommunity is selected, use the communities user-selected
+        count = adData.communities ? adData.communities.length : 0;
       }
       setCommunitiesCount(count);
     } catch (error) {
@@ -83,15 +73,14 @@ const TotalPrice = React.forwardRef((props, ref) => {
     }
   }, [adData.startDate, adData.endDate]);
 
-  // Fetch communities count whenever the audience or related fields change
+  // Re-fetch communities whenever audience or selected locations change
   useEffect(() => {
     fetchCommunitiesCount();
   }, [adData.audianceType, adData.state, adData.city, adData.communities, token]);
 
-  // Calculate base price (without premium) using your price logic
+  // Calculate base price (without premium)
   useEffect(() => {
     if (communitiesCount && numberOfDays) {
-      // For example: base price = (communitiesCount * numberOfDays) / 4
       setBasePrice((communitiesCount * numberOfDays) / 4);
     } else {
       setBasePrice(0);
@@ -106,9 +95,11 @@ const TotalPrice = React.forwardRef((props, ref) => {
     setIsPremium(e.target.checked);
   };
 
-  // Updated handleSubmit that uses FormData and includes premium flag
+  // Submit handler that uses the FormData payload including premium flag
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e && typeof e.preventDefault === "function") {
+      e.preventDefault();
+    }
 
     if (totalPrice <= 0) {
       alert("Price is 0. Please ensure that you have selected the proper audience and dates.");
@@ -149,16 +140,16 @@ const TotalPrice = React.forwardRef((props, ref) => {
       formData.append("cities", JSON.stringify(adData.city));
     }
     if (adData.audianceType === "byCommunity" && adData.communities) {
-      adData.communities.forEach((community) => {
-        formData.append("communities", community);
-      });
+      adData.communities.forEach((community) =>
+        formData.append("communities", community)
+      );
     }
 
     // Append button label fields
     formData.append("buttonLabel[type]", adData.type || "");
     formData.append("buttonLabel[value]", adData.value || "");
 
-    // Append premium flag (as string "true" or "false")
+    // Append premium flag
     formData.append("premium", isPremium ? "true" : "false");
 
     // Append image files, if any
@@ -169,7 +160,6 @@ const TotalPrice = React.forwardRef((props, ref) => {
     }
 
     try {
-      // Create ad (and Razorpay order) with the FormData payload
       const response = await createAd(formData, dispatch, token);
       if (response && response.data) {
         const options = {
@@ -198,7 +188,6 @@ const TotalPrice = React.forwardRef((props, ref) => {
     }
   };
 
-  // Expose handleSubmit via ref for parent access if needed
   useImperativeHandle(ref, () => ({
     handleSubmit,
   }));
@@ -211,16 +200,9 @@ const TotalPrice = React.forwardRef((props, ref) => {
       ) : (
         <>
           <div className="mt-5 w-full">
+            {/* Always show "Total Communities" regardless of audience type */}
             <div className="w-full flex justify-between">
-              <p className="text-base text-[#00000080]">
-                {adData.audianceType === "byState"
-                  ? "No. of States"
-                  : adData.audianceType === "byCity"
-                  ? "No. of Cities"
-                  : adData.audianceType === "byCommunity"
-                  ? "No. of Communities"
-                  : "Total Communities"}
-              </p>
+              <p className="text-base text-[#00000080]">Total Communities</p>
               <p className="text-base text-[#000000]">
                 {adData.audianceType === "byCommunity"
                   ? adData.communities?.length || 0

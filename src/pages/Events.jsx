@@ -95,7 +95,7 @@ const EventItem = ({ event, onClick }) => {
   return (
     <div
       ref={itemRef}
-      className="bg-white rounded-lg shadow-md border border-gray-200 p-4 mb-6 cursor-pointer hover:bg-gray-50 transition-all duration-300"
+      className="bg-white rounded-lg border border-gray-200 p-4 mb-3 cursor-pointer hover:bg-gray-50 transition-all duration-300"
       onClick={() => onClick && onClick(event)}
     >
       {/* Header with date and event details */}
@@ -109,15 +109,16 @@ const EventItem = ({ event, onClick }) => {
             <ExpandableText text={event?.title} threshold={40} />
           </p>
           <p className="text-sm text-gray-600 break-words">{timeRange}</p>
-          <p className="text-sm text-gray-600 break-words">{event.location}</p>
-          <a
-            href={mapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm text-blue-500 underline hover:text-blue-700"
-          >
-            Get Directions
-          </a>
+          <div className="flex">
+            <p className="text-sm text-gray-600 break-words">{event.location}</p>
+            <a
+              href={mapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-blue-500 underline hover:text-blue-700"
+            ><svg version="1.1" width="18" height="18" x="0" y="0" viewBox="0 0 511.998 511.998" ><g><path d="M505.743 6.249c-6.08-6.101-15.211-7.893-23.168-4.672l-469.333 192C4.474 197.182-.881 206.121.122 215.55a21.33 21.33 0 0 0 17.387 18.773l220.139 40.021 40.043 220.139c1.685 9.323 9.323 16.405 18.752 17.408.747.064 1.493.107 2.219.107 8.576 0 16.448-5.184 19.755-13.269l192-469.333a21.34 21.34 0 0 0-4.674-23.147z" fill="#007aff" opacity="1" ></path></g></svg>
+            </a>
+          </div>
         </div>
       </div>
 
@@ -168,7 +169,7 @@ const EventItem = ({ event, onClick }) => {
       >
         <Box sx={modalStyle} onClick={(e) => e.stopPropagation()}>
           <div className="relative">
-          <IconButton
+            <IconButton
               onClick={() => setOpenImageModal(false)}
               className="absolute top-2 right-2 bg-white bg-opacity-70 rounded-full hover:bg-opacity-90"
             >
@@ -195,7 +196,7 @@ const EventItem = ({ event, onClick }) => {
                 </IconButton>
               </>
             )}
-            
+
           </div>
         </Box>
       </Modal>
@@ -228,7 +229,7 @@ const Events = () => {
   };
 
   return (
-    <div className="bg-white flex justify-around w-full md:mb-0 mb-14">
+    <div className="bg-white md:mt-[150px] mt-[60px] flex justify-around w-full md:mb-0 mb-14">
       <div className="w-full md:w-9/12 md:py-4 md:px-16 md:pl-24 p-4 mt-2 lg:mb-0 mb-14 max-h-[86vh] overflow-y-auto no-scrollbar">
         <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-end">
           <div>
