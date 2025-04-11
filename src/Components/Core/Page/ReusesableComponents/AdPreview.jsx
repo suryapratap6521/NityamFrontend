@@ -26,7 +26,7 @@ const AdPreview = () => {
   };
 
   return (
-    <div className="container bg-[#fafafa] border border-gray-300 items-start  rounded-md flex flex-column mx-auto p-6">
+    <div className="container bg-[#fafafa] border border-gray-300 items-start  rounded-md flex flex-column ml-auto p-6 max-w-[17rem]">
       {/* <div className="flex w-full">
         <div className="border-white rounded-full bg-white">
           {pageData.profilePic ? (
@@ -80,7 +80,7 @@ const AdPreview = () => {
                 <img
                   src={img.url}
                   alt={`Preview ${index + 1}`}
-                  className="w-full h-56 rounded-md object-cover " // Adjust the image styling
+                  className="w-full h-56 rounded-md object-cover" // Adjust the image styling
                 />
               </div>
             ))}
@@ -96,14 +96,13 @@ const AdPreview = () => {
         )}
 
       </div>
-      <p className={`text-xl font-normal text-[${adData.title == '' ? '#5a5a5a' : '#000000'}] w-fit mt-3`}>
+      <p className={`text-xl font-normal text-[${adData.title == '' ? '#5a5a5a' : '#000000'}] w-full mt-3 break-words`}>
         {adData.title || "Your Ad title..."}
       </p>
-      <p className={`text-sm font-normal text-gray-400 w-fit my-2`}>
+      <p className="text-sm font-normal text-gray-400 w-full my-2 break-words">
         {adData.description || "Description..."}
       </p>
-
-      <button className="w-fit mt-2 p-2 text-[#4A00E0] text-sm px-8 rounded-md bg-[#4A00E020]">
+      <button className="w-fit mt-2 p-2 text-[#4A00E0] text-sm px-8 rounded-md bg-[#4A00E020] truncate">
         {adData.type || "Button Label"}
       </button>
     </div>
