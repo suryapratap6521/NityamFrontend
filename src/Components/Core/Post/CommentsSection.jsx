@@ -3,6 +3,7 @@ import { Button, IconButton } from "@mui/material";
 import like from "../../../assests/like.png";
 import unlike from "../../../assests/unlike.png";
 import { calculateTime } from "../../../utils/miliToHours";
+import SendIcon from '@mui/icons-material/Send';
 
 const CommentsSection = ({ post, handleComment, user, setCommentText, commentText, setReplyText, replyText, handleReply, handleCommentLike, handleReplyLike }) => {
   const [showAllComments, setShowAllComments] = useState(false);
@@ -26,7 +27,7 @@ const CommentsSection = ({ post, handleComment, user, setCommentText, commentTex
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-xl mb-4 p-4">
+    <div className="mx-auto bg-white rounded-xl overflow-hidden mb-4 p-0 md:p-3">
       {post.comments.length > 1 && !showAllComments && (
         <span
           onClick={handleShowAllComments}
@@ -60,7 +61,7 @@ const CommentsSection = ({ post, handleComment, user, setCommentText, commentTex
                   ? handleCommentLike(post._id, comment._id)
                   : handleCommentLike(post._id, comment._id)
               }>
-                {comment.likes.includes(user._id) ? (<span style={{color:"red"}}><b>Like</b></span>) : (<span><b>Like</b></span>)}
+                {comment.likes.includes(user._id) ? (<span style={{ color: "red" }}><b>Like</b></span>) : (<span><b>Like</b></span>)}
               </Button>
               <Button size="small" onClick={() => setReplyingToCommentId(comment._id)}>
                 Reply
@@ -100,36 +101,36 @@ const CommentsSection = ({ post, handleComment, user, setCommentText, commentTex
                         : handleReplyLike(post._id, comment._id, reply._id)
                     }
                   >
-                    {reply.likes.includes(user._id) ? (<span style={{color:"red"}}><b>Like</b></span>) : (<span><b>Like</b></span>)}
+                    {reply.likes.includes(user._id) ? (<span style={{ color: "red" }}><b>Like</b></span>) : (<span><b>Like</b></span>)}
                   </Button>
                   <img
-                      src={reply.likes.includes(user._id) ? like : unlike}
-                      alt="like/unlike"
-                      className="h-5 w-5"
+                    src={reply.likes.includes(user._id) ? like : unlike}
+                    alt="like/unlike"
+                    className="h-5 w-5"
                   />
-                  <span>{reply.likes.length===0?"":reply.likes.length}</span>
+                  <span>{reply.likes.length === 0 ? "" : reply.likes.length}</span>
                 </div>
               </div>
             ))}
             {replyingToCommentId === comment._id && (
               <div className="mt-4 flex items-center ml-11 w-74">
-                <img 
-                  src={user?.image} 
-                  className="w-8 h-8 rounded-full mr-3" 
+                <img
+                  src={user?.image}
+                  className="w-8 h-8 rounded-full mr-3"
                   alt="User Avatar"
                 />
                 <form className="flex w-full items-center" onSubmit={(e) => handleReplySubmit(e, comment._id)}>
-                  <input 
-                    type="text" 
+                  <input
+                    type="text"
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
                     placeholder="Add a reply..."
-                    className="w-full border rounded-2xl p-2 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500 text-gray-700" 
+                    className="w-full border rounded-2xl p-2 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500 text-gray-700"
                   />
-                  <Button 
+                  <Button
                     type="submit"
-                    variant="contained" 
-                    color="success" 
+                    variant="contained"
+                    color="success"
                     sx={{ borderRadius: '18px', marginLeft: '8px' }}
                   >
                     Reply
@@ -141,27 +142,24 @@ const CommentsSection = ({ post, handleComment, user, setCommentText, commentTex
         ))}
       </div>
       <div className="mt-4 flex items-center">
-        <img 
-          src={user?.image} 
-          className="w-8 h-8 rounded-full mr-3" 
+        <img
+          src={user?.image}
+          className="sm:w-8 sm:h-8 hidden sm:block rounded-full mr-3"
           alt="User Avatar"
         />
         <form className="flex w-full items-center" onSubmit={handleSubmit}>
-          <input 
-            type="text" 
-            placeholder="Add a comment..." 
+          <input
+            type="text"
+            placeholder="Add a comment..."
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
-            className="w-full border rounded-2xl p-2 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500 text-gray-700" 
+            className="w-full border rounded-2xl p-2 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500 text-gray-700"
           />
-          <Button 
-            type="submit"
-            variant="contained" 
-            color="success" 
-            sx={{ borderRadius: '18px', marginLeft: '8px' }}
+          <button
+            className='bg-gradient rounded-full p-2 ml-2'
           >
-            Comment
-          </Button>
+            <SendIcon sx={{ color: 'white' }} />
+          </button>
         </form>
       </div>
     </div>

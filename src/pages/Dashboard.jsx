@@ -66,7 +66,7 @@ const Dashboard = () => {
   const { loading: profileLoading } = useSelector((state) => state.auth);
   const { loading: authLoading } = useSelector((state) => state.profile);
   const { user } = useSelector((state) => state.profile);
-  console.log(user,"==================?")
+  console.log(user, "==================?")
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -136,11 +136,11 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="bg-white md:mt-[150px] mt-[60px]">
+    <div className="bg-white md:mt-[138px] mt-[60px]">
       <div className="w-full flex justify-between">
         {/* LEFT SIDEBAR: Services & Events Previews */}
         {!isSmallScreen && (
-          <div className="w-3/12 bg-white p-4 hidden lg:flex flex-col items-center">
+          <div className="w-3/12 bg-white p-4 hidden lg:flex flex-col items-center max-h-[84.5vh] no-scrollbar overflow-y-auto">
             <div className="bg-[#fafafa] w-full px-4 py-4 rounded-lg border border-gray-200 max-w-[350px] overflow-scroll">
               <div className="flex w-full items-center justify-between">
                 <h1 className="text-lg font-semibold text-gray-600">Services</h1>
@@ -275,7 +275,7 @@ const Dashboard = () => {
         </div>
 
         {!isSmallScreen && (
-          <div className="w-3/12 bg-white p-4 hidden lg:block">
+          <div className="w-3/12 bg-white p-4 hidden lg:block max-h-[84.5vh] no-scrollbar overflow-y-auto">
             <Advertisements />
           </div>
         )}

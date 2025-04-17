@@ -1,5 +1,5 @@
-const BASE_URL = "https://nityambackend.onrender.com/api/v1";
-//const BASE_URL = 'http://localhost:8080/api/v1';
+//const BASE_URL = "https://nityambackend.onrender.com/api/v1";
+const BASE_URL = 'http://localhost:8080/api/v1';
 // const BASE_URL = "https://nityambackend-production.up.railway.app/api/v1";
 
 
@@ -77,4 +77,5 @@ export const adEndpoints = {
   GET_COMMUNITIES: `${BASE_URL}/advpost/getcommunities`,
   CREATE_AD: `${BASE_URL}/advpost/createadvpost`,
   GET_AD: `${BASE_URL}/advpost/advpost`,
+  VERFITY_AD: `${BASE_URL}/advpost/verify-payment`,
 };

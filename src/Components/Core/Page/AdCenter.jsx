@@ -120,7 +120,7 @@ const AdCenter = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      dispatch(resetAdData());
+      //dispatch(resetAdData());
       try {
         await fetchAllCommunities(token, dispatch);
       } catch (error) {
@@ -162,11 +162,15 @@ const AdCenter = () => {
       setErrorList((prev) => ({ ...prev, description: "Maximum length for description is 256" }));
       isValid = false
     }
-    if (isValid == true) {
+    if (isValid) {
       setErrorList((prev) => ({ ...prev, [name]: "" }));
-      dispatch(setAdData({ [name]: value }));  // Dispatch updated data to Redux store
-    }
 
+      if (name === "startDate") {
+        dispatch(setAdData({ startDate: value, endDate: "" })); // Reset endDate
+      } else {
+        dispatch(setAdData({ [name]: value }));
+      }
+    }
 
   };
 
@@ -456,8 +460,8 @@ const AdCenter = () => {
 
                 {/* Button Label */}
                 <label className="text-lg font-normal text-gray-600">Button</label>
-                <div className="flex items-baseline mb-4 justify-between">
-                  <div className="flex flex-col w-[48%]">
+                <div className="flex flex-col sm:flex-row gap-1 sm:gap-0  items-baseline mb-4 justify-between">
+                  <div className="flex flex-col sm:w-[48%] w-full">
                     <div className="flex gap-6 items-center flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA]">
                       <select
                         id="type"
@@ -478,8 +482,8 @@ const AdCenter = () => {
                       <span className="text-red-600 pl-1">{errorList.type}</span>
                     )}
                   </div>
-                  <div className="w-[4%]"></div>
-                  <div className="flex flex-col w-[48%]">
+                  <div className="sm:w-[4%] w-0 border-t-2 border-gray-300"></div>
+                  <div className="flex flex-col sm:w-[48%] w-full">
                     <div className="flex gap-6 items-center flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA]">
                       <input
                         type="text"
@@ -670,8 +674,8 @@ const AdCenter = () => {
 
                 {/* Age Group */}
                 <label className="text-lg font-normal text-gray-600">Target Audience Age Group</label>
-                <div className="flex items-baseline mb-4">
-                  <div className="flex flex-col w-[48%]">
+                <div className="flex flex-col sm:flex-row gap-1 sm:gap-0  items-baseline mb-4">
+                  <div className="flex flex-col sm:w-[48%] w-full">
                     <div className="flex gap-6 items-center flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA]">
                       <label htmlFor="minAge" className="block text-base text-[#838383] text-nowrap mb-0">
                         Minimum Age
@@ -689,8 +693,8 @@ const AdCenter = () => {
                       <span className="text-red-600 pl-1">{errorList.minAge}</span>
                     )}
                   </div>
-                  <div className="w-[4%] border-t-2 border-gray-300"></div>
-                  <div className="flex flex-col w-[48%]">
+                  <div className="sm:w-[4%] w-0 border-t-2 border-gray-300"></div>
+                  <div className="flex flex-col sm:w-[48%] w-full">
                     <div className="flex gap-6 items-center flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA]">
                       <label htmlFor="maxAge" className="block text-base text-[#838383] text-nowrap mb-0">
                         Maximum Age
@@ -727,6 +731,7 @@ const AdCenter = () => {
                           value={adData.startDate || ""}
                           onChange={handleChange}
                           className="bg-[#FAFAFA] rounded w-full focus:outline-none text-black"
+                          min={new Date().toISOString().split("T")[0]} // today's date
                         />
                       </label>
                     </div>
@@ -750,6 +755,8 @@ const AdCenter = () => {
                           value={adData.endDate || ""}
                           onChange={handleChange}
                           className="bg-[#FAFAFA] rounded w-full focus:outline-none text-black"
+                          min={adData.startDate || ""}
+
                         />
                       </label>
                     </div>
@@ -761,8 +768,8 @@ const AdCenter = () => {
 
                 {/* Time Slot */}
                 <label className="text-lg font-normal text-gray-600">Time Slot</label>
-                <div className="flex items-baseline mb-4">
-                  <div className="flex flex-col w-[48%]">
+                <div className="flex flex-col sm:flex-row gap-1 sm:gap-0  items-baseline mb-4">
+                  <div className="flex flex-col sm:w-[48%] w-full">
                     <div className="flex gap-6 items-center flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA]">
                       <label htmlFor="start" className="flex justify-between text-base text-[#838383] text-nowrap mb-0 w-full">
                         From
@@ -780,8 +787,8 @@ const AdCenter = () => {
                       <span className="text-red-600 pl-1">{errorList.start}</span>
                     )}
                   </div>
-                  <div className="w-[4%] border-t-2 border-gray-300"></div>
-                  <div className="flex flex-col w-[48%]">
+                  <div className="sm:w-[4%] w-0 border-t-2 border-gray-300"></div>
+                  <div className="flex flex-col sm:w-[48%] w-full">
                     <div className="flex gap-6 items-center flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA]">
                       <label htmlFor="end" className="flex justify-between text-base text-[#838383] text-nowrap mb-0 w-full">
                         To
