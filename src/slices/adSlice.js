@@ -3,8 +3,8 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   adData: {},  // Default state is an empty object
   loading: false,
-  communities:[],
-  allAds:[],
+  communities: [],
+  allAds: [],
 };
 
 const adSlice = createSlice({
@@ -19,14 +19,17 @@ const adSlice = createSlice({
     },
     setCommunities(state, action) {
       state.communities = action.payload;
-  },
-  setAllAds(state, action) {
-    state.allAds = action.payload;
-    state.error = null;
-    localStorage.setItem("ad", JSON.stringify(action.payload));
-  },
+    },
+    setAllAds(state, action) {
+      state.allAds = action.payload;
+      state.error = null;
+      localStorage.setItem("ad", JSON.stringify(action.payload));
+    },
+    resetAdData(state) {
+      state.adData = {};  // Reset adData to empty object
+    },
   },
 });
 
-export const { setAdData, setLoading, setCommunities,setAllAds} = adSlice.actions;
+export const { setAdData, setLoading, setCommunities, setAllAds, resetAdData } = adSlice.actions;
 export default adSlice.reducer;

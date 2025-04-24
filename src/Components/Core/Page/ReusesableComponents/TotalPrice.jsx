@@ -194,7 +194,7 @@ const TotalPrice = React.forwardRef((props, ref) => {
 
   return (
     <div className="container bg-[#fafafa] border border-gray-300 rounded-md flex flex-col mx-auto p-6 mt-10">
-      <p className="text-2xl text-[#000000]">Total Amount</p>
+      <p className="text-2xl text-[#000000] mr-auto">Total Amount</p>
       {loadingCount ? (
         <p>Loading community details...</p>
       ) : (
@@ -235,12 +235,12 @@ const TotalPrice = React.forwardRef((props, ref) => {
               </p>
             </div>
           </div>
-          <button
+          {/* <button
             className="px-4 w-full py-2 bg-gradient rounded-full text-white text-lg font-medium mt-4"
             onClick={handleSubmit}
           >
             Proceed to Pay
-          </button>
+          </button> */}
         </>
       )}
     </div>
