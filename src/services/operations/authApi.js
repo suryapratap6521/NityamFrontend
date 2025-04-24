@@ -239,9 +239,10 @@ export function login(email, password, navigate) {
           if (!response.data.message) {
             throw new Error(response.data.message);
           }
+
           // Success message from the API
           const successMessage = response.data.message;
-
+          console.log(response,"response from login");
           // Set token and user in Redux store and cookies
           dispatch(setToken(response.data.token));
           const userImage = response?.data?.user?.image

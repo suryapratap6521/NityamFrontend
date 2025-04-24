@@ -44,15 +44,21 @@ import { addNotification } from "./slices/notificationSlice";
 import { fetchNotifications } from "./services/operations/notificationApi";
 import { useNavigate } from "react-router-dom";
 import WelcomeSplash from "./Components/Common/WelcomeSplash";
+import {useLocation} from "react-router-dom";
 // import PostView from "./Components/Core/Post/PostView";
 import Events from "./pages/Events";
 // import PostView from "./Components/Core/Post/PostView";
 function App() {
-
+  
+  const location=useLocation();
   const { user } = useSelector((state) => state.profile);
   const {token}=useSelector((state)=>state.auth);
   const dispatch=useDispatch();
   const navigate=useNavigate();
+
+  if(token!==null && location.pathname==='/'){
+    navigate('/dashboard');
+  }
   
 // App.js
 

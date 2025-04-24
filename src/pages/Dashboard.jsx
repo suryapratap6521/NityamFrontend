@@ -15,9 +15,14 @@ import EVENT_IMAGE from "../assests/events.jpg";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Button } from "@mui/material";
+import {location} from 'react-router-dom';
 /** 
  * Utility function to parse date/time 
  */
+
+
+
+
 const formatEventDate = (isoString) => {
   const date = new Date(isoString);
   const day = date.getDate();
