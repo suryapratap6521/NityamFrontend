@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedChat } from "../../../../slices/chatSlice";
 import { Box, Typography, IconButton, FormControl, TextField } from "@mui/material";
@@ -32,6 +32,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [socketConnected, setSocketConnected] = useState(false);
   const [typing, setTyping] = useState(false);
   const [istyping, setIsTyping] = useState(false);
+  const textareaRef = useRef(null);
 
 
   const defaultOptions = {
@@ -93,6 +94,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         );
         setNewMessage(""); // Move this line here
         socket.emit("new Message", data.message);
+        if (textareaRef.current) {
+          textareaRef.current.style.height = "auto"; // ✅ Reset the height
+        }
         setMessages([...messages, data.message]); // Update messages state
       } catch (error) {
         console.log(error);
@@ -136,6 +140,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
 
   const typingHandler = (e) => {
+    const textarea = textareaRef.current;
+    textarea.style.height = 'auto'; // reset height
+    textarea.style.height = Math.min(textarea.scrollHeight, 72) + 'px';
     setNewMessage(e.target.value);
 
     if (!socketConnected) return;
@@ -231,7 +238,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             )}
           </Box>
           <div
-            className="flex flex-col justify-end p-0 w-full lg:h-[60vh] h-[73.5vh]"
+            className="flex flex-col justify-end p-0 w-full lg:h-[62vh] h-[73.5vh]"
 
           >
             {loading ? (<Loader />) : (<div className="messages">
@@ -253,7 +260,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               )}
 
               <div className="w-full flex items-center justify-between pt-3">
-                <div className="w-10/12 flex items-center border border-gray-300 rounded-full bg-white p-3 gap-2">
+                <div class="w-[88%] flex items-center border border-gray-300 rounded-xl bg-white p-3 gap-2">
                   <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clip-path="url(#clip0_48_574)">
                       <path d="M25.9064 20.4061L24.3963 16.0113C25.1242 14.5233 25.5088 12.8685 25.5114 11.2034C25.5159 8.30821 24.3958 5.57074 22.3573 3.49531C20.3184 1.41948 17.6015 0.25095 14.707 0.205095C11.7056 0.157665 8.88439 1.29933 6.76341 3.42026C4.71824 5.46537 3.58389 8.1615 3.54799 11.0426C1.53228 12.5603 0.342526 14.9264 0.346436 17.4538C0.348315 18.6365 0.61451 19.8121 1.11892 20.8752L0.0787682 23.9022C-0.100033 24.4225 0.0305768 24.9875 0.419663 25.3766C0.693475 25.6505 1.05448 25.7963 1.42574 25.7963C1.58194 25.7963 1.73997 25.7705 1.8941 25.7175L4.92112 24.6773C5.98422 25.1818 7.15986 25.4479 8.34255 25.4498H8.35515C10.9201 25.4497 13.3043 24.2293 14.8164 22.1642C16.39 22.1227 17.9469 21.7418 19.3544 21.0533L23.7492 22.5634C23.9282 22.6252 24.1163 22.6568 24.3057 22.657C24.7469 22.657 25.1759 22.4837 25.5013 22.1582C25.9636 21.6959 26.1188 21.0245 25.9064 20.4061ZM8.35504 23.9022H8.34494C7.29813 23.9006 6.25859 23.6426 5.33889 23.156C5.24536 23.1065 5.14267 23.0767 5.03718 23.0685C4.93169 23.0603 4.82563 23.0738 4.72556 23.1082L1.62165 24.1747L2.68821 21.0709C2.72259 20.9708 2.73609 20.8647 2.72786 20.7592C2.71963 20.6537 2.68986 20.5511 2.64038 20.4575C2.15379 19.5378 1.89572 18.4983 1.8941 17.4514C1.89151 15.7676 2.54653 14.1716 3.69201 12.9765C4.06616 15.2574 5.15324 17.3592 6.83826 19.0143C8.51084 20.6571 10.6133 21.7031 12.8818 22.045C11.684 23.2257 10.0693 23.9022 8.35504 23.9022ZM24.4069 21.0639C24.3629 21.1079 24.3107 21.1199 24.252 21.0997L19.5472 19.483C19.4471 19.4486 19.3411 19.4351 19.2356 19.4434C19.1301 19.4516 19.0274 19.4814 18.9339 19.5309C17.5906 20.2415 16.0726 20.6184 14.544 20.6207H14.5294C9.40744 20.6207 5.1767 16.46 5.09555 11.3393C5.05467 8.76036 6.03566 6.33663 7.85774 4.51454C9.67983 2.69246 12.104 1.71183 14.6825 1.75245C19.8082 1.83375 23.9718 6.07231 23.9638 11.201C23.9614 12.7296 23.5846 14.2476 22.874 15.5908C22.8245 15.6843 22.7948 15.787 22.7865 15.8925C22.7783 15.998 22.7918 16.1041 22.8262 16.2041L24.4428 20.9089C24.463 20.9678 24.4509 21.02 24.4069 21.0639Z" fill="black" />
@@ -266,7 +273,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     </defs>
 
                   </svg>
-                  <input type='text' placeholder="Say Something..." onChange={typingHandler} value={newMessage} className="w-10/12 bg-none focus:outline-0" onKeyDown={sendMessage}
+                  <textarea
+                    ref={textareaRef}
+                    placeholder="Say Something..."
+                    value={newMessage}
+                    onChange={typingHandler}
+                    onKeyDown={sendMessage}
+                    rows={1}
+                    className="w-10/12 bg-transparent focus:outline-0 resize-none overflow-hidden leading-tight"
+                    style={{ maxHeight: '72px' }}
                   />
                 </div>
 
