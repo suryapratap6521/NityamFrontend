@@ -9,8 +9,13 @@ const Advertisements = () => {
     const dispatch = useDispatch();
     const adData = useSelector((state) => state.ad.allAds || []);
     // console.log("adData", Array.isArray(adData), adData.length, adData)
-
+    if (adData.length === 0) {
+        return (
+            <h2 className="text-base font-light text-gray-600">No Advertisement</h2>
+        );
+    }
     return (
+
         <div className="w-full flex flex-col items-center sticky top-[130px]">
 
             <div className="flex items-center gap-1 w-full  max-w-64">
@@ -42,7 +47,10 @@ const Advertisements = () => {
         </div>
 
 
-    );
+
+    )
+
+
 }
 
 export default Advertisements;

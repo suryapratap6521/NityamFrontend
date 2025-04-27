@@ -2,7 +2,9 @@ import React, { useEffect, useState, useImperativeHandle } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { useRazorpay } from "react-razorpay";
-import { createAd } from "../../../../services/operations/adApi";
+import { createAd, verifyAd } from "../../../../services/operations/adApi";
+import toast from "react-hot-toast";
+import Swal from "sweetalert2";
 
 const TotalPrice = React.forwardRef((props, ref) => {
   const dispatch = useDispatch();
@@ -166,11 +168,73 @@ const TotalPrice = React.forwardRef((props, ref) => {
           key: "rzp_test_kCQKUReLyS3Siq", // Replace with your Razorpay key
           amount: totalPrice * 100, // in paise
           currency: "INR",
-          name: "Your App Name",
+          name: "Nithyam",
           description: "Payment for Advertised Post",
           order_id: response.data.orderId,
           handler: async (paymentResponse) => {
-            alert("Payment Successful! Advertised post created.");
+            try {
+
+              const verifyPayload = {
+                razorpay_order_id: paymentResponse.razorpay_order_id,
+                razorpay_payment_id: paymentResponse.razorpay_payment_id,
+                razorpay_signature: paymentResponse.razorpay_signature,
+                postData: {
+                  title: adData.title,
+                  pageId: pageData._id,
+                  timeSlot: {
+                    start: adData.start,
+                    end: adData.end
+                  },
+                  dateSlot: {
+                    startDate: new Date(adData.startDate).toISOString(),
+                    endDate: new Date(adData.endDate).toISOString(),
+                  },
+                  ageGroup: {
+                    minAge: adData.minAge,
+                    maxAge: adData.maxAge,
+                  },
+                  communities: adData.communities || [],
+                  buttonLabel: {
+                    type: adData.type,
+                    value: adData.value,
+                  },
+                  premium: isPremium,
+                },
+              };
+
+              const verifyRes = await verifyAd(verifyPayload, dispatch, token);
+
+              if (verifyRes?.data?.success) {
+                // Get combined start date and time
+                const startDateTime = new Date(`${adData.startDate}T${adData.start}`);
+                const now = new Date();
+
+                if (startDateTime <= now) {
+                  Swal.fire({
+                    title: "Ad Created & Shared!",
+                    text: "Your ad has been successfully created and shared immediately.",
+                    icon: "success",
+                    confirmButtonText: "Continue to Dashboard",
+                  }).then(() => {
+                    window.location.href = "/dashboard";
+                  });
+                } else {
+                  Swal.fire({
+                    title: "Ad Scheduled!",
+                    text: `Your ad has been created and scheduled for later (${startDateTime.toLocaleString()}).`,
+                    icon: "info",
+                    confirmButtonText: "Continue to Dashboard",
+                  }).then(() => {
+                    window.location.href = "/dashboard";
+                  });
+                }
+              } else {
+                toast.error("Payment verification failed on the backend.");
+              }
+            } catch (err) {
+              console.error("Verification error:", err);
+              toast.error("Something went wrong while verifying the payment.");
+            }
           },
           prefill: {
             name: userData.firstName,
