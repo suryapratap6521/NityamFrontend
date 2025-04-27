@@ -8,6 +8,10 @@ import Select from "react-select";
 import { CitySelect, StateSelect } from "react-country-state-city";
 import { createAd } from "../../../services/operations/adApi";
 import axios from "axios";
+import { resetAdData } from "../../../slices/adSlice";
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 
 const cityOptions = [
   { value: "new-york", label: "New York" },
@@ -31,8 +35,7 @@ const AdCenter = () => {
   // Local states used for dropdown selections
   const [selectedStates, setSelectedStates] = useState([]);
   const [selectedCities, setSelectedCities] = useState([]);
-  console.log(selectedCities);
-  console.log(selectedStates);
+  const navigate = useNavigate();
 
   const API_KEY = "emRDWFZrcTRpMWxUNHdhTEluQktQbFFoZUhoRFhLS2Znc2RNSHJnRQ==";
   const BASE_URL = "https://api.countrystatecity.in/v1/countries/IN";
@@ -117,6 +120,7 @@ const AdCenter = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      //dispatch(resetAdData());
       try {
         await fetchAllCommunities(token, dispatch);
       } catch (error) {
@@ -143,13 +147,31 @@ const AdCenter = () => {
       size: file.size,
       type: file.type,
     }));
+    setErrorList((prev) => ({ ...prev, images: "" }));
     dispatch(setAdData({ images: imagePreviews }));
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setErrorList((prev) => ({ ...prev, [name]: "" }));
-    dispatch(setAdData({ [name]: value }));  // Dispatch updated data to Redux store
+    let isValid = true
+    if (name == 'title' && value.length > 256) {
+      setErrorList((prev) => ({ ...prev, title: "Maximum length for title is 256" }));
+      isValid = false
+    }
+    if (name == 'description' && value.length > 256) {
+      setErrorList((prev) => ({ ...prev, description: "Maximum length for description is 256" }));
+      isValid = false
+    }
+    if (isValid) {
+      setErrorList((prev) => ({ ...prev, [name]: "" }));
+
+      if (name === "startDate") {
+        dispatch(setAdData({ startDate: value, endDate: "" })); // Reset endDate
+      } else {
+        dispatch(setAdData({ [name]: value }));
+      }
+    }
+
   };
 
   const handleSubmit = async (e) => {
@@ -199,7 +221,7 @@ const AdCenter = () => {
     // Append location filters based on selected option
     if (selectedStates) {
       let statesLabels = selectedStates.map(item => item.label);
-      formData.append("states", JSON.stringify(statesLabels)); 
+      formData.append("states", JSON.stringify(statesLabels));
     }
     if (selectedCities) {
       let cityLabels = selectedCities.map(item => item.label);
@@ -359,11 +381,34 @@ const AdCenter = () => {
       totalPriceRef.current.handleSubmit(e);
     }
   };
+  const handleBackClick = () => {
+    if (adData != {}) {
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'You have unsaved changes. Do you really want to leave?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#338e37',
+        confirmButtonText: 'Yes, leave',
+        cancelButtonText: 'Stay here',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate(-1);
+        }
+      });
+    } else {
+      navigate(-1);
+    }
+  };
 
   return (
-    <div className="max-w-[1320px] items-start flex flex-col lg:flex-row mx-auto p-6 lg:mb-0 mb-14">
+    <div className="max-w-[1320px] items-start flex flex-col lg:flex-row mx-auto md:p-6 p-3 lg:mb-0 mb-14">
       <div className="lg:w-3/5 w-full p-4">
         <div>
+          <div className="p-2 bg-[#8E2DE220] rounded-full w-8 h-8 flex justify-center align-items-center pl-3 mb-3 hover:scale-110" onClick={handleBackClick}>
+            <ArrowBackIosIcon fontSize="14" style={{ color: "#8E2DE2" }} />
+          </div>
           <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#8E2DE2]">
             Create New Ad
           </h1>
@@ -415,8 +460,8 @@ const AdCenter = () => {
 
                 {/* Button Label */}
                 <label className="text-lg font-normal text-gray-600">Button</label>
-                <div className="flex items-baseline mb-4 justify-between">
-                  <div className="flex flex-col w-[48%]">
+                <div className="flex flex-col sm:flex-row gap-1 sm:gap-0  items-baseline mb-4 justify-between">
+                  <div className="flex flex-col sm:w-[48%] w-full">
                     <div className="flex gap-6 items-center flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA]">
                       <select
                         id="type"
@@ -437,8 +482,8 @@ const AdCenter = () => {
                       <span className="text-red-600 pl-1">{errorList.type}</span>
                     )}
                   </div>
-                  <div className="w-[4%]"></div>
-                  <div className="flex flex-col w-[48%]">
+                  <div className="sm:w-[4%] w-0 border-t-2 border-gray-300"></div>
+                  <div className="flex flex-col sm:w-[48%] w-full">
                     <div className="flex gap-6 items-center flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA]">
                       <input
                         type="text"
@@ -502,8 +547,8 @@ const AdCenter = () => {
               <>
                 {/* User Type Selection */}
                 <div className="mb-1">
-                  <label className="text-lg font-semibold">Target Audience</label>
-                  <div className="flex gap-2 mt-2">
+                  <label className="text-lg font-normal text-gray-600">Target Audience</label>
+                  <div className="flex gap-2 mt-2 flex-wrap">
                     <label className="flex items-center gap-2">
                       <input
                         type="radio"
@@ -598,15 +643,15 @@ const AdCenter = () => {
                           value={
                             adData.communities && Array.isArray(adData.communities)
                               ? adData.communities
-                                  .map((communityName) => {
-                                    const community = communitiesData.find(
-                                      (community) => community.communityName === communityName
-                                    );
-                                    return community
-                                      ? { value: community.communityName, label: community.communityName }
-                                      : null;
-                                  })
-                                  .filter(Boolean)
+                                .map((communityName) => {
+                                  const community = communitiesData.find(
+                                    (community) => community.communityName === communityName
+                                  );
+                                  return community
+                                    ? { value: community.communityName, label: community.communityName }
+                                    : null;
+                                })
+                                .filter(Boolean)
                               : []
                           }
                           onChange={(selectedOptions) => {
@@ -629,8 +674,8 @@ const AdCenter = () => {
 
                 {/* Age Group */}
                 <label className="text-lg font-normal text-gray-600">Target Audience Age Group</label>
-                <div className="flex items-baseline mb-4">
-                  <div className="flex flex-col w-[48%]">
+                <div className="flex flex-col sm:flex-row gap-1 sm:gap-0  items-baseline mb-4">
+                  <div className="flex flex-col sm:w-[48%] w-full">
                     <div className="flex gap-6 items-center flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA]">
                       <label htmlFor="minAge" className="block text-base text-[#838383] text-nowrap mb-0">
                         Minimum Age
@@ -648,8 +693,8 @@ const AdCenter = () => {
                       <span className="text-red-600 pl-1">{errorList.minAge}</span>
                     )}
                   </div>
-                  <div className="w-[4%] border-t-2 border-gray-300"></div>
-                  <div className="flex flex-col w-[48%]">
+                  <div className="sm:w-[4%] w-0 border-t-2 border-gray-300"></div>
+                  <div className="flex flex-col sm:w-[48%] w-full">
                     <div className="flex gap-6 items-center flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA]">
                       <label htmlFor="maxAge" className="block text-base text-[#838383] text-nowrap mb-0">
                         Maximum Age
@@ -671,8 +716,8 @@ const AdCenter = () => {
 
                 {/* Date Slot */}
                 <label className="text-lg font-normal text-gray-600">Date Slot</label>
-                <div className="flex items-baseline mb-4">
-                  <div className="flex flex-col w-[48%]">
+                <div className="flex flex-col sm:flex-row gap-1 sm:gap-0 items-baseline mb-4">
+                  <div className="flex flex-col sm:w-[48%] w-full">
                     <div className="flex gap-6 items-center flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] cursor-pointer">
                       <label
                         htmlFor="startDate"
@@ -686,6 +731,7 @@ const AdCenter = () => {
                           value={adData.startDate || ""}
                           onChange={handleChange}
                           className="bg-[#FAFAFA] rounded w-full focus:outline-none text-black"
+                          min={new Date().toISOString().split("T")[0]} // today's date
                         />
                       </label>
                     </div>
@@ -694,8 +740,8 @@ const AdCenter = () => {
                     )}
                   </div>
 
-                  <div className="w-[4%] border-t-2 border-gray-300"></div>
-                  <div className="flex flex-col w-[48%]">
+                  <div className="sm:w-[4%] w-0 border-t-2 border-gray-300"></div>
+                  <div className="flex flex-col sm:w-[48%] w-full">
                     <div className="flex gap-6 items-center flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] cursor-pointer">
                       <label
                         htmlFor="endDate"
@@ -709,6 +755,8 @@ const AdCenter = () => {
                           value={adData.endDate || ""}
                           onChange={handleChange}
                           className="bg-[#FAFAFA] rounded w-full focus:outline-none text-black"
+                          min={adData.startDate || ""}
+
                         />
                       </label>
                     </div>
@@ -720,8 +768,8 @@ const AdCenter = () => {
 
                 {/* Time Slot */}
                 <label className="text-lg font-normal text-gray-600">Time Slot</label>
-                <div className="flex items-baseline mb-4">
-                  <div className="flex flex-col w-[48%]">
+                <div className="flex flex-col sm:flex-row gap-1 sm:gap-0  items-baseline mb-4">
+                  <div className="flex flex-col sm:w-[48%] w-full">
                     <div className="flex gap-6 items-center flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA]">
                       <label htmlFor="start" className="flex justify-between text-base text-[#838383] text-nowrap mb-0 w-full">
                         From
@@ -739,8 +787,8 @@ const AdCenter = () => {
                       <span className="text-red-600 pl-1">{errorList.start}</span>
                     )}
                   </div>
-                  <div className="w-[4%] border-t-2 border-gray-300"></div>
-                  <div className="flex flex-col w-[48%]">
+                  <div className="sm:w-[4%] w-0 border-t-2 border-gray-300"></div>
+                  <div className="flex flex-col sm:w-[48%] w-full">
                     <div className="flex gap-6 items-center flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA]">
                       <label htmlFor="end" className="flex justify-between text-base text-[#838383] text-nowrap mb-0 w-full">
                         To
@@ -761,29 +809,34 @@ const AdCenter = () => {
                 </div>
               </>
             )}
-            <div className="flex justify-between mt-6">
-              <button
-                onClick={handleBack}
-                disabled={step === 1}
-                className="px-8 py-3 bg-gray-400 text-base font-semibold text-white rounded-full hover:bg-gray-300"
-              >
-                Back
-              </button>
+            <div className="flex justify-between mt-6 ">
+              {step != 1 ? (
+                <button
+                  onClick={handleBack}
+                  disabled={step === 1}
+                  className="px-8 py-3 bg-gray-400 text-base font-semibold text-white rounded-full hover:bg-gray-300"
+                >
+                  Back
+                </button>
+              ) : null}
               {step < 2 ? (
                 <button
                   onClick={handleNext}
-                  className="px-8 py-3 bg-[#4A00E0] text-base font-semibold text-white rounded-full hover:bg-gray-400"
+                  className="px-8 py-3 bg-[#4A00E0] text-base font-semibold text-white rounded-full hover:bg-gray-400 ml-auto"
                 >
                   Next
                 </button>
-              ) : (
-                <button
-                  onClick={handleNext}
-                  className="px-8 py-3 bg-gradient text-base font-semibold text-white rounded-full hover:bg-gray-400"
-                >
-                  Proceed to Pay
-                </button>
-              )}
+              ) :
+                (
+                  <button
+                    onClick={handleNext}
+                    className="px-8 py-3 bg-gradient text-base font-semibold text-white rounded-full hover:bg-gray-400"
+                  >
+                    Proceed to Pay
+                  </button>
+                )
+
+              }
             </div>
           </form>
         </div>

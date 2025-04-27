@@ -107,8 +107,8 @@ const MyChat = ({ fetchAgain }) => {
                       : chat.chatName}
                   </h6>
                   {chat.latestMessage && (
-                    <p class="text-sm text-gray-600 flex items-center gap-1">
-                      <b>{chat.latestMessage.sender.firstName}</b>
+                    <p class="text-sm text-gray-600 flex items-center gap-1 max-w-[64%] overflow-hidden whitespace-nowrap truncate">
+                      <span class="font-bold">{chat.latestMessage.sender.firstName}</span>
                       {chat.latestMessage.content.length > 50
                         ? chat.latestMessage.content.substring(0, 51) + '...'
                         : chat.latestMessage.content}

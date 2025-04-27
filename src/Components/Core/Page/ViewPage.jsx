@@ -63,7 +63,7 @@ const ViewPage = () => {
     });
   };
   return (
-    <div className="container items-start border-t-0 flex flex-row mx-auto p-6">
+    <div className="container items-start border-t-0 flex flex-row mx-auto p-6 md:mt-[150px] mt-[60px]">
 
       <div className="lg:w-4/12 w-full p-4">
         <div>
