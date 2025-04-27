@@ -8,7 +8,7 @@ import axios from "axios";
 import { locationEndpoints } from "../../../services/apis";
 import verificationImage from "../../../assests/signup_image.jpg"; // Replace with your actual image path
 import nityamNeedsLogo from "../../../assests/nityam_mlogo.png";
-
+import { getNextRoute } from "../../Core/Auth/nextRoute";
 export default function Verification() {
   const [document, setDocument] = useState(null);
   const [verificationMethod, setVerificationMethod] = useState("");
@@ -16,7 +16,7 @@ export default function Verification() {
   const [accessToken, setAccessToken] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [typingTimeout, setTypingTimeout] = useState(null);
-
+  const signUpData = useSelector((state) => state.auth.signUpData);
   // For skip confirmation modal
   const [showSkipModal, setShowSkipModal] = useState(false);
 
@@ -76,12 +76,10 @@ export default function Verification() {
 
   // Actually skip if user confirms
   const handleSkip = () => {
-    dispatch(
-      SetSignUpData({
-        verificationDetails: { skipped: true, skippedAt: Date.now() },
-      })
-    );
-    navigate("/profession");
+    dispatch(SetSignUpData({
+      verificationDetails: { skipped: true, skippedAt: Date.now() }
+    }));
+    navigate(getNextRoute({ ...signUpData, verificationDetails: { skipped: true } }));
   };
 
   const handleSubmit = async (e) => {

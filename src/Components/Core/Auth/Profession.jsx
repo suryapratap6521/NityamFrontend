@@ -6,13 +6,13 @@ import { profession } from "../../../services/operations/authApi";
 import professionImage from "../../../assests/signup_image.jpg"; // Replace with your actual image path
 import nityamNeedsLogo from "../../../assests/nityam_mlogo.png";
 import { SetSignUpData } from "../../../slices/authSlice";
-
+import { getNextRoute } from "../../Core/Auth/nextRoute";
 export default function Profession() {
   const [selectedProfession, setSelectedProfession] = useState("");
   const [customProfession, setCustomProfession] = useState("");
   const [hourlyCharge, setHourlyCharge] = useState(10); // default to minimum value
   const [isOther, setIsOther] = useState(false);
-
+  const signUpData = useSelector((state) => state.auth.signUpData);
   // State for the Skip confirmation modal
   const [showSkipModal, setShowSkipModal] = useState(false);
 
@@ -57,13 +57,10 @@ export default function Profession() {
 
   // Called when user confirms skip in the modal
   const handleSkipConfirm = () => {
-    dispatch(
-      SetSignUpData({ 
-        professionalDetails: { skipped: true, skippedAt: Date.now() }
-      })
-    );
-    setShowSkipModal(false);
-    navigate("/welcome");
+    dispatch(SetSignUpData({
+      professionalDetails: { skipped: true, skippedAt: Date.now() }
+    }));
+    navigate(getNextRoute({ ...signUpData, professionalDetails: { skipped: true } }));
   };
 
   // Handle form submission

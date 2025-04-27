@@ -95,7 +95,12 @@ function Navbar() {
               <img src={logo} style={{ width: "11rem", height: "2rem" }} alt="logo" />
             </Typography>
 
-            <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}>
+            <Box   sx={{
+    display: "flex",
+    justifyContent: "flex-end", // This moves children to the right
+    alignItems: "center",
+    flexGrow: 1,
+  }}>
               {token && location.pathname === "/dashboard/chat" && <SideDrawer />}
 
               {token && (
@@ -104,7 +109,7 @@ function Navbar() {
                   sx={{
                     backgroundColor: "green",
                     color: "white",
-                    marginRight: 2,
+                   
                     "&:hover": { backgroundColor: "darkgreen" },
                     borderRadius: "50%",
                     width: 40,
@@ -154,9 +159,7 @@ function Navbar() {
               <Box
                 sx={{
                   flexGrow: 0,
-                  border: "1.5px solid #00000042",
-                  borderRadius: "50px",
-                  padding: "4px 20px 4px 4px",
+                  borderRadius: "50px"
                 }}
               >
                 <Tooltip title="Open settings">
@@ -166,9 +169,7 @@ function Navbar() {
                       src={user?.image || ""}
                       sx={{ width: "34px", height: "34px", marginRight: "10px" }}
                     />
-                    <p className="text-sm text-gray-800">
-                      {user?.firstName} {user?.lastName}
-                    </p>
+                    
                   </IconButton>
                 </Tooltip>
                 <Menu

@@ -7,7 +7,8 @@ import styled from "@emotion/styled";
 import { toast } from "react-hot-toast";
 import { useState } from "react";
 import { updateDisplayPicture, updateProfile } from "../../../services/operations/settingsApi";
-
+import VerificationCard from "../Settings/VerificationCard";
+import ProfessionCard from "../Settings/ProfessionCard";
 const ProfileContainer = styled(Box)(({ theme }) => ({
   maxWidth: 1260,
   margin: '80px auto 0',
@@ -28,6 +29,7 @@ const SectionCard = styled(Card)(({ theme }) => ({
 
 export default function MyProfile() {
   const { user } = useSelector((state) => state.profile);
+  console.log(user,"this is the user for the profile section");
   const { token } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -193,7 +195,30 @@ export default function MyProfile() {
           )}
         </CardContent>
       </SectionCard>
+      <SectionCard>
+  <CardContent>
+    {user?.verificationByPostalCard==="true" || user?.documentUrl!=="" ? (
+      <Typography color="green" sx={{ fontWeight: 'bold' }}>
+        ✅ Verification Done …
+      </Typography>
+    ) : (
+      <VerificationCard onComplete={() => navigate('/verification')} />
+    )}
+  </CardContent>
+</SectionCard>
 
+{/* Profession Section */}
+<SectionCard>
+  <CardContent>
+    {user?.profession!=="" ? (
+      <Typography color="green" sx={{ fontWeight: 'bold' }}>
+        ✅ Profession Done …
+      </Typography>
+    ) : (
+      <ProfessionCard onComplete={() => navigate('/profession')} />
+    )}
+  </CardContent>
+</SectionCard>
       <SectionCard>
         <CardContent sx={{ p: 4 }}>
           <Typography variant="h6" fontWeight="700" gutterBottom sx={{ mb: 3 }}>
