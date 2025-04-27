@@ -1,4 +1,6 @@
+import React from "react";
 import { FaCalendarAlt, FaMapMarkerAlt } from "react-icons/fa";
+import ExpandableText from "../../Common/ExpandableText"; // adjust the path as needed
 
 export default function EventDetails({ post }) {
   const formatDate = (dateString) =>
@@ -11,6 +13,9 @@ export default function EventDetails({ post }) {
 
   return (
     <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+      <h2 className="text-2xl font-bold mb-3">
+        {/* <ExpandableText text={post.title} threshold={50} /> */}
+      </h2>
       <div className="flex items-center space-x-2 mb-2">
         <FaCalendarAlt className="text-blue-600" />
         <span className="font-medium">
@@ -26,6 +31,9 @@ export default function EventDetails({ post }) {
           Hosted by: {post.hostedBy}
         </p>
       )}
+      <div className="mt-4 text-gray-800">
+        <ExpandableText text={post.description} threshold={150} />
+      </div>
     </div>
   );
 }

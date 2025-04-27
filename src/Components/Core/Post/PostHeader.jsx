@@ -8,6 +8,7 @@ export default function PostHeader({ post, onMenuOpen, calculateTime }) {
         <img
           className="h-12 w-12 rounded-full object-cover border-2 border-white"
           src={post?.postByUser?.image || "https://via.placeholder.com/150"}
+          referrerPolicy="no-referrer"
           alt={`${post.postByUser?.firstName}`}
         />
         <div>
@@ -15,7 +16,7 @@ export default function PostHeader({ post, onMenuOpen, calculateTime }) {
             {`${post.postByUser?.firstName} ${post.postByUser?.lastName}`}
           </h4>
           <p className="text-sm text-gray-500">
-            {post.postByUser?.communityDetails?.communityName} • 
+            {post.postByUser?.communityDetails?.communityName} •
             {post.postByUser?.city} • {calculateTime(post?.createdAt)}
           </p>
         </div>

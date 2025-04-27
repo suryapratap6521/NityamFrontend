@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setAdData } from "../../../slices/adSlice";
 import AdPreview from "./ReusesableComponents/AdPreview";
@@ -8,6 +8,7 @@ import Select from "react-select";
 import { CitySelect, StateSelect } from "react-country-state-city";
 import { createAd } from "../../../services/operations/adApi";
 import axios from "axios";
+
 const cityOptions = [
   { value: "new-york", label: "New York" },
   { value: "los-angeles", label: "Los Angeles" },
@@ -15,34 +16,44 @@ const cityOptions = [
   { value: "houston", label: "Houston" },
   { value: "phoenix", label: "Phoenix" },
 ];
+
 const AdCenter = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const dispatch = useDispatch();
+  const [step, setStep] = useState(1);
+  const [errorList, setErrorList] = useState({});
   const adData = useSelector((state) => state.ad.adData || {});
   const pageData = useSelector((state) => state.page.pageData || {});
   const communitiesData = useSelector((state) => state.ad.communities || []);
   const token = useSelector((state) => state.auth.token);
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
+  // Local states used for dropdown selections
   const [selectedStates, setSelectedStates] = useState([]);
   const [selectedCities, setSelectedCities] = useState([]);
   console.log(selectedCities);
   console.log(selectedStates);
+
   const API_KEY = "emRDWFZrcTRpMWxUNHdhTEluQktQbFFoZUhoRFhLS2Znc2RNSHJnRQ==";
   const BASE_URL = "https://api.countrystatecity.in/v1/countries/IN";
   console.log(selectedStates);
-  console.log(selectedCities)
-  const handleStateChange = (selectedState) => {
-    setSelectedStates(selectedState);
-    dispatch(setAdData({ state: selectedState.name }));
-    setSelectedCities([]); // Reset city selection when state changes
-    dispatch(setAdData({ city: "" }));
+  console.log(selectedCities);
+
+  // NEW FEATURE: use custom handler to update both local and Redux state for states
+  const handleStateChange = (selectedOptions) => {
+    setSelectedStates(selectedOptions);
+    dispatch(setAdData({ state: selectedOptions.map((opt) => opt.label) })); // Handle multiple states
+    // When states change, reset cities in both local state and Redux
+    setSelectedCities([]);
+    dispatch(setAdData({ city: [] }));
   };
 
-  const handleCityChange = (selectedCity) => {
-    setSelectedCities(selectedCity);
-    dispatch(setAdData({ city: selectedCity.name }));
+  // NEW FEATURE: use custom handler for city selection
+  const handleCityChange = (selectedOptions) => {
+    setSelectedCities(selectedOptions);
+    dispatch(setAdData({ city: selectedOptions.map((opt) => opt.label) })); // Handle multiple cities
   };
+
   const businessTypes = [
     "Contact Us",
     "Send Enquiry",
@@ -79,9 +90,12 @@ const AdCenter = () => {
         try {
           let allCities = [];
           for (let state of selectedStates) {
-            const response = await axios.get(`${BASE_URL}/states/${state.value}/cities`, {
-              headers: { "X-CSCAPI-KEY": API_KEY },
-            });
+            const response = await axios.get(
+              `${BASE_URL}/states/${state.value}/cities`,
+              {
+                headers: { "X-CSCAPI-KEY": API_KEY },
+              }
+            );
             allCities = [
               ...allCities,
               ...response.data.map((city) => ({
@@ -104,42 +118,37 @@ const AdCenter = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-
         await fetchAllCommunities(token, dispatch);
-        //console.log(communitiesData)
-
       } catch (error) {
         console.error(error);
       }
     };
     fetchData();
-  }, []);
-
-
+  }, [token, dispatch]);
 
   const filteredBusinessTypes = businessTypes.filter((type) =>
     type.toLowerCase().includes(searchTerm.toLowerCase())
   );
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-
     if (files.length > 5) {
       alert("You can only upload up to 5 images.");
       return;
     }
-
-    // Convert files to an array of objects for preview purposes
-    const imagePreviews = files.map(file => ({
+    // Store both the file and its preview details
+    const imagePreviews = files.map((file) => ({
+      file, // actual File object
       url: URL.createObjectURL(file),
-      file: file
+      name: file.name,
+      size: file.size,
+      type: file.type,
     }));
-
     dispatch(setAdData({ images: imagePreviews }));
   };
 
-
   const handleChange = (e) => {
     const { name, value } = e.target;
+    setErrorList((prev) => ({ ...prev, [name]: "" }));
     dispatch(setAdData({ [name]: value }));  // Dispatch updated data to Redux store
   };
 
@@ -166,11 +175,6 @@ const AdCenter = () => {
     }
 
     let selectedCommunities;
-
-    // if (adData.audianceType === "byState") {
-    //   selectedStates = adData.states;
-    // } else if (adData.audianceType === "byCity") {
-    //   selectedCities = adData.cities;
     if (adData.audianceType === "byCommunity") {
       selectedCommunities = adData.communities;
     }
@@ -178,6 +182,7 @@ const AdCenter = () => {
     // Create FormData
     const formData = new FormData();
     formData.append("title", adData.title);
+    formData.append("description", adData.description);
     formData.append("pageId", pageData._id);
     formData.append("price", 1000); // Assuming price is static
 
@@ -190,14 +195,11 @@ const AdCenter = () => {
     formData.append("dateSlot[endDate]", endDateTime.toISOString());
 
     // Append audience type (optionType)
-    formData.append("optionType", adData.audianceType);  // ✅ Fixed this
-    // console.log(adaudianceType)
+    formData.append("optionType", adData.audianceType);
     // Append location filters based on selected option
     if (selectedStates) {
-      console.log(selectedStates);
       let statesLabels = selectedStates.map(item => item.label);
-      console.log(statesLabels);
-      formData.append("states", JSON.stringify(statesLabels)); // Use JSON.stringify to ensure proper array formatting in the form data
+      formData.append("states", JSON.stringify(statesLabels)); 
     }
     if (selectedCities) {
       let cityLabels = selectedCities.map(item => item.label);
@@ -228,294 +230,572 @@ const AdCenter = () => {
     }
   };
 
+  const handleNext = (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    let isValid = true;
+    if (step === 1) {
+      if (!adData.title) {
+        setErrorList((prev) => ({ ...prev, title: "Please Enter Title" }));
+        isValid = false;
+      } else {
+        setErrorList((prev) => ({ ...prev, title: "" }));
+      }
 
+      if (!adData.description) {
+        setErrorList((prev) => ({ ...prev, description: "Please Enter Description" }));
+        isValid = false;
+      } else {
+        setErrorList((prev) => ({ ...prev, description: "" }));
+      }
+
+      if (!adData.type) {
+        setErrorList((prev) => ({ ...prev, type: "Please Enter Button Type" }));
+        isValid = false;
+      } else {
+        setErrorList((prev) => ({ ...prev, type: "" }));
+      }
+      const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+)(\/[^\s]*)?$/;
+      if (!adData.value) {
+        setErrorList((prev) => ({ ...prev, value: "Please Enter Bussiness Url" }));
+        isValid = false;
+      } else if (!urlRegex.test(adData.value)) {
+        setErrorList((prev) => ({ ...prev, value: "Please enter a valid business URL" }));
+        isValid = false;
+      } else {
+        setErrorList((prev) => ({ ...prev, value: "" }));
+      }
+
+      if (!adData.images || adData.images.length === 0) {
+        setErrorList((prev) => ({ ...prev, images: "Please Upload at least 1 image" }));
+        isValid = false;
+      } else {
+        setErrorList((prev) => ({ ...prev, images: "" }));
+      }
+    }
+
+    if (step === 2) {
+      if (!adData.audianceType) {
+        setErrorList((prev) => ({ ...prev, audianceType: "Please Enter Audiance Type" }));
+        isValid = false;
+      } else {
+        setErrorList((prev) => ({ ...prev, audianceType: "" }));
+      }
+      if ((adData.audianceType === "byState" || adData.audianceType === "byCity") && selectedStates.length === 0) {
+        setErrorList((prev) => ({ ...prev, selectedStates: "Please Enter States" }));
+        isValid = false;
+      } else {
+        setErrorList((prev) => ({ ...prev, selectedStates: "" }));
+      }
+      if (adData.audianceType === "byCity" && selectedCities.length === 0) {
+        setErrorList((prev) => ({ ...prev, selectedCities: "Please Enter City" }));
+        isValid = false;
+      } else {
+        setErrorList((prev) => ({ ...prev, selectedCities: "" }));
+      }
+      if (adData.audianceType === "byCommunity" && (!adData.communities || adData.communities.length === 0)) {
+        setErrorList((prev) => ({ ...prev, communities: "Please Enter Communities" }));
+        isValid = false;
+      } else {
+        setErrorList((prev) => ({ ...prev, communities: "" }));
+      }
+      if (!adData.minAge) {
+        setErrorList((prev) => ({ ...prev, minAge: "Please Enter Minimum Age" }));
+        isValid = false;
+      } else {
+        setErrorList((prev) => ({ ...prev, minAge: "" }));
+      }
+      if (!adData.maxAge) {
+        setErrorList((prev) => ({ ...prev, maxAge: "Please Enter Maximum Age" }));
+        isValid = false;
+      } else {
+        setErrorList((prev) => ({ ...prev, maxAge: "" }));
+      }
+      if (!adData.startDate) {
+        setErrorList((prev) => ({ ...prev, startDate: "Please Enter Start Date" }));
+        isValid = false;
+      } else {
+        setErrorList((prev) => ({ ...prev, startDate: "" }));
+      }
+      if (!adData.endDate) {
+        setErrorList((prev) => ({ ...prev, endDate: "Please Enter End Date" }));
+        isValid = false;
+      } else {
+        setErrorList((prev) => ({ ...prev, endDate: "" }));
+      }
+      if (!adData.start) {
+        setErrorList((prev) => ({ ...prev, start: "Please Enter Start Time" }));
+        isValid = false;
+      } else {
+        setErrorList((prev) => ({ ...prev, start: "" }));
+      }
+      if (!adData.end) {
+        setErrorList((prev) => ({ ...prev, end: "Please Enter End Time" }));
+        isValid = false;
+      } else {
+        setErrorList((prev) => ({ ...prev, end: "" }));
+      }
+    }
+    if (isValid) {
+      setErrorList({});
+      if (step === 2) {
+        handleSubmit2();
+      } else {
+        if (step < 2) setStep(step + 1);
+      }
+    }
+  };
+
+  const handleBack = (event) => {
+    event.stopPropagation();
+    event.preventDefault();
+    if (step > 1) setStep(step - 1);
+  };
+
+  const totalPriceRef = useRef(null);
+
+  const handleSubmit2 = (e) => {
+    if (totalPriceRef.current) {
+      totalPriceRef.current.handleSubmit(e);
+    }
+  };
 
   return (
-    <div className="container items-start border-t-0 flex flex-col lg:flex-row mx-auto p-6 lg:mb-0 mb-14">
+    <div className="max-w-[1320px] items-start flex flex-col lg:flex-row mx-auto p-6 lg:mb-0 mb-14">
       <div className="lg:w-3/5 w-full p-4">
         <div>
           <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#8E2DE2]">
             Create New Ad
           </h1>
-          <p className="text-gray-400 leading-4 text-sm mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod</p>
+          <p className="text-gray-400 leading-4 text-sm mb-4">
+            Design and launch impactful ads effortlessly.
+          </p>
         </div>
         <div className="lg:w-10/12 w-full">
-          <form>
-            {/* Title */}
-            <div className="mb-4">
-              <label htmlFor="title" className="text-lg font-normal text-gray-600">Title</label>
-              <input
-                type="text"
-                id="title"
-                name="title"
-                placeholder="Enter the title for your ad"
-                value={adData.title || ""}
-                onChange={handleChange} // Handle change for title
-                className="border rounded w-full py-3 px-4 border-gray-300 bg-[#FAFAFA]"
-              />
-            </div>
+          <form onSubmit={(e) => e.preventDefault()}>
+            {step === 1 && (
+              <>
+                {/* Title */}
+                <div className="mb-1">
+                  <label htmlFor="title" className="text-lg font-normal text-gray-600">
+                    Title
+                  </label>
+                  <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    placeholder="Enter the title for your ad"
+                    value={adData.title || ""}
+                    onChange={handleChange}
+                    className="border rounded w-full py-3 px-4 border-gray-300 bg-[#FAFAFA]"
+                  />
+                  {errorList.title && errorList.title !== "" && (
+                    <span className="text-red-600 pl-1">{errorList.title}</span>
+                  )}
+                </div>
 
-            {/* User Type Selection */}
-            <div className="mb-1">
-              <label className="text-lg font-normal text-gray-600">Target Audience</label>
-              <div className="flex gap-2 mt-2">
-                <label className="flex items-center gap-2 border rounded w-fit py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] text-gray-700 text-base">
+                {/* Description */}
+                <div className="mb-1">
+                  <label htmlFor="description" className="text-lg font-normal text-gray-600">
+                    Description
+                  </label>
                   <input
-                    type="radio"
-                    name="audianceType"
-                    value="allUsers"
-                    checked={adData.audianceType === "allUsers"}
+                    type="text"
+                    id="description"
+                    name="description"
+                    placeholder="Enter the description for your ad"
+                    value={adData.description || ""}
                     onChange={handleChange}
+                    className="border rounded w-full py-3 px-4 border-gray-300 bg-[#FAFAFA]"
                   />
-                  All Users
-                </label>
-                <label className="flex items-center gap-2 border rounded w-fit py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] text-gray-700 text-base">
-                  <input
-                    type="radio"
-                    name="audianceType"
-                    value="byState"
-                    checked={adData.audianceType === "byState"}
-                    onChange={handleChange}
-                  />
-                  By State
-                </label>
-                <label className="flex items-center gap-2 border rounded w-fit py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] text-gray-700 text-base">
-                  <input
-                    type="radio"
-                    name="audianceType"
-                    value="byCity"
-                    checked={adData.audianceType === "byCity"}
-                    onChange={handleChange}
-                  />
-                  By City
-                </label>
-                <label className="flex items-center gap-2 border rounded w-fit py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] text-gray-700 text-base">
-                  <input
-                    type="radio"
-                    name="audianceType"
-                    value="byCommunity"
-                    checked={adData.audianceType === "byCommunity"}
-                    onChange={handleChange}
-                  />
-                  By Communities
-                </label>
-              </div>
-            </div>
+                  {errorList.description && errorList.description !== "" && (
+                    <span className="text-red-600 pl-1">{errorList.description}</span>
+                  )}
+                </div>
 
-            <div className="flex items-center justify-center gap-2">
-              {adData.audianceType === "byState" || adData.audianceType === "byCity" ? (
-                <div className="mb-4 flex-1">
-                  <label className="block text-gray-600 font-semibold text-sm">Select State</label>
-                  <StateSelect
-                    isMulti
-                    countryid={101} // Fixed to India (Country ID 101)
-                    onChange={handleStateChange}
-                    placeHolder="Select State"
+                {/* Button Label */}
+                <label className="text-lg font-normal text-gray-600">Button</label>
+                <div className="flex items-baseline mb-4 justify-between">
+                  <div className="flex flex-col w-[48%]">
+                    <div className="flex gap-6 items-center flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA]">
+                      <select
+                        id="type"
+                        name="type"
+                        value={adData.type || ""}
+                        onChange={handleChange}
+                        className="bg-[#FAFAFA] rounded w-full focus:outline-none text-base text-gray-600"
+                      >
+                        <option value="">Select Button Type</option>
+                        {filteredBusinessTypes.map((type, index) => (
+                          <option key={index} value={type}>
+                            {type}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    {errorList.type && errorList.type !== "" && (
+                      <span className="text-red-600 pl-1">{errorList.type}</span>
+                    )}
+                  </div>
+                  <div className="w-[4%]"></div>
+                  <div className="flex flex-col w-[48%]">
+                    <div className="flex gap-6 items-center flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA]">
+                      <input
+                        type="text"
+                        id="value"
+                        name="value"
+                        value={adData.value || ""}
+                        onChange={handleChange}
+                        className="bg-[#FAFAFA] rounded w-full focus:outline-none"
+                        placeholder="Bussiness Url"
+                      />
+                    </div>
+                    {errorList.value && errorList.value !== "" && (
+                      <span className="text-red-600 pl-1">{errorList.value}</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Multi-Select for Images */}
+                <label htmlFor="images" className="text-lg font-normal text-gray-600">
+                  Upload Images (Select up to 5)
+                </label>
+                <div className="mb-4 flex items-center gap-4">
+                  <label
+                    htmlFor="images"
+                    className="flex gap-6 items-center text-gray-600 justify-between flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA]"
+                  >
+                    {adData.images && adData.images.length !== 0
+                      ? `${adData.images.length} Image(s) Selected`
+                      : "Choose Your Ad Photos"}
+                    <div className="m-0 p-3 rounded-full bg-gradient">
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M18 20H4V6H13V4H4C2.9 4 2 4.9 2 6V20C2 21.1 2.9 22 4 22H18C19.1 22 20 21.1 20 20V11H18V20ZM10.21 16.83L8.25 14.47L5.5 18H16.5L12.96 13.29L10.21 16.83ZM20 4V1H18V4H15C15.01 4.01 15 6 15 6H18V8.99C18.01 9 20 8.99 20 8.99V6H23V4H20Z"
+                          fill="white"
+                        />
+                      </svg>
+                    </div>
+                  </label>
+                  <input
+                    type="file"
+                    id="images"
+                    name="images"
+                    accept="image/*"
+                    multiple
+                    onChange={(e) => handleImageChange(e)}
+                    className="hidden"
                   />
                 </div>
-              ) : null}
-
-              {adData.audianceType === "byCity" ? (
-                <div className="mb-4 flex-1">
-                  <label className="block text-gray-600 font-semibold text-sm">Select Cities</label>
-                  <CitySelect
-                    countryid={101}
-                    stateid={selectedStates.id}
-                    onChange={handleCityChange}
-                    placeHolder="Select City"
-                    disabled={!selectedStates.id}
-                  />
+                {errorList.images && errorList.images !== "" && (
+                  <span className="text-red-600 pl-1">{errorList.images}</span>
+                )}
+              </>
+            )}
+            {step === 2 && (
+              <>
+                {/* User Type Selection */}
+                <div className="mb-1">
+                  <label className="text-lg font-semibold">Target Audience</label>
+                  <div className="flex gap-2 mt-2">
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="audianceType"
+                        value="allUsers"
+                        checked={adData.audianceType === "allUsers"}
+                        onChange={handleChange}
+                      />
+                      All Users
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="audianceType"
+                        value="byState"
+                        checked={adData.audianceType === "byState"}
+                        onChange={handleChange}
+                      />
+                      By State
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="audianceType"
+                        value="byCity"
+                        checked={adData.audianceType === "byCity"}
+                        onChange={handleChange}
+                      />
+                      By City
+                    </label>
+                    <label className="flex items-center gap-2">
+                      <input
+                        type="radio"
+                        name="audianceType"
+                        value="byCommunity"
+                        checked={adData.audianceType === "byCommunity"}
+                        onChange={handleChange}
+                      />
+                      By Communities
+                    </label>
+                  </div>
+                  {errorList.audianceType && errorList.audianceType !== "" && (
+                    <span className="text-red-600 pl-1">{errorList.audianceType}</span>
+                  )}
                 </div>
-              ) : null}
 
-              {adData.audianceType === "byCommunity" ? (
-                <div className="mb-4 flex-1">
-                  <label className="block text-gray-600 font-semibold text-sm">Select Communities</label>
-                  {/* Multi-select component using react-select */}
-                  <Select
-                    isMulti
-                    name="communities"
-                    value={adData.communities && Array.isArray(adData.communities)
-                      ? adData.communities.map(communityName => {
-                        const community = communitiesData.find((community) => community.communityName === communityName);
-                        return community ? { value: community.communityName, label: community.communityName } : null;
-                      }).filter(Boolean) // Remove any null values
-                      : []}
-                    onChange={(selectedOptions) => {
-                      const selectedValues = selectedOptions.map(option => option.value); // This will now be community names
-                      dispatch(setAdData({ communities: selectedValues }));
-                      //console.log(adData, selectedValues);
-                    }}
-                    options={communitiesData.map((community) => ({
-                      value: community.communityName, // Use communityName as the value
-                      label: community.communityName,
-                    }))}
-                    className="border rounded w-full p-2"
-                  />
+                <div className="flex items-center justify-center gap-2 mb-4">
+                  {(adData.audianceType === "byState" || adData.audianceType === "byCity") && (
+                    <div className="flex-1">
+                      <div className="">
+                        <label className="block text-gray-600 font-medium">Select State</label>
+                        {/* Use new custom handler for state selection */}
+                        <Select
+                          isMulti
+                          options={states}
+                          value={selectedStates}
+                          onChange={handleStateChange}
+                        />
+                      </div>
+                      {errorList.selectedStates && errorList.selectedStates !== "" && (
+                        <span className="text-red-600 pl-1 mb-4 d-block">{errorList.selectedStates}</span>
+                      )}
+                    </div>
+                  )}
+
+                  {adData.audianceType === "byCity" && (
+                    <div className="flex-1">
+                      <div className="">
+                        <label className="block text-gray-600 font-medium">Select Cities</label>
+                        {/* Use new custom handler for city selection */}
+                        <Select
+                          isMulti
+                          options={cities}
+                          value={selectedCities}
+                          onChange={handleCityChange}
+                          isDisabled={selectedStates.length === 0}
+                        />
+                      </div>
+                      {errorList.selectedCities && errorList.selectedCities !== "" && (
+                        <span className="text-red-600 pl-1 mb-4 d-block">{errorList.selectedCities}</span>
+                      )}
+                    </div>
+                  )}
+
+                  {adData.audianceType === "byCommunity" && (
+                    <div className="flex-1">
+                      <div className="flex-1">
+                        <label className="block text-gray-600 font-medium">Select Communities</label>
+                        <Select
+                          isMulti
+                          name="communities"
+                          value={
+                            adData.communities && Array.isArray(adData.communities)
+                              ? adData.communities
+                                  .map((communityName) => {
+                                    const community = communitiesData.find(
+                                      (community) => community.communityName === communityName
+                                    );
+                                    return community
+                                      ? { value: community.communityName, label: community.communityName }
+                                      : null;
+                                  })
+                                  .filter(Boolean)
+                              : []
+                          }
+                          onChange={(selectedOptions) => {
+                            const selectedValues = selectedOptions.map(option => option.value);
+                            dispatch(setAdData({ communities: selectedValues }));
+                          }}
+                          options={communitiesData.map((community) => ({
+                            value: community.communityName,
+                            label: community.communityName,
+                          }))}
+                          className="border rounded w-full p-2"
+                        />
+                      </div>
+                      {errorList.communities && errorList.communities !== "" && (
+                        <span className="text-red-600 pl-1 mb-4 d-block">{errorList.communities}</span>
+                      )}
+                    </div>
+                  )}
                 </div>
-              ) : null}
 
-            </div>
+                {/* Age Group */}
+                <label className="text-lg font-normal text-gray-600">Target Audience Age Group</label>
+                <div className="flex items-baseline mb-4">
+                  <div className="flex flex-col w-[48%]">
+                    <div className="flex gap-6 items-center flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA]">
+                      <label htmlFor="minAge" className="block text-base text-[#838383] text-nowrap mb-0">
+                        Minimum Age
+                      </label>
+                      <input
+                        type="number"
+                        id="minAge"
+                        name="minAge"
+                        value={adData.minAge || ""}
+                        onChange={handleChange}
+                        className="bg-[#FAFAFA] rounded w-full focus:outline-none"
+                      />
+                    </div>
+                    {errorList.minAge && errorList.minAge !== "" && (
+                      <span className="text-red-600 pl-1">{errorList.minAge}</span>
+                    )}
+                  </div>
+                  <div className="w-[4%] border-t-2 border-gray-300"></div>
+                  <div className="flex flex-col w-[48%]">
+                    <div className="flex gap-6 items-center flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA]">
+                      <label htmlFor="maxAge" className="block text-base text-[#838383] text-nowrap mb-0">
+                        Maximum Age
+                      </label>
+                      <input
+                        type="number"
+                        id="maxAge"
+                        name="maxAge"
+                        value={adData.maxAge || ""}
+                        onChange={handleChange}
+                        className="bg-[#FAFAFA] rounded w-full focus:outline-none"
+                      />
+                    </div>
+                    {errorList.maxAge && errorList.maxAge !== "" && (
+                      <span className="text-red-600 pl-1">{errorList.maxAge}</span>
+                    )}
+                  </div>
+                </div>
 
-            {/* Time Slot */}
-            <label className="text-lg font-normal text-gray-600">Time Slot</label>
-            <div className="flex items-center mb-4">
-              <div className=" flex gap-6 items-center flex-1 border rounded w-[48%] py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] ">
-                <label htmlFor="start" className="block text-base text-gray-600 text-nowrap mb-0">Start Date</label>
-                <input
-                  type="time"
-                  id="start"
-                  name="start"
-                  value={adData.start || ""}
-                  onChange={handleChange}
-                  className="bg-[#FAFAFA] rounded w-full focus:outline-none"
-                />
-              </div>
-              <div className="w-[4%] border-t-2 border-gray-300"></div>
-              <div className=" flex gap-6 items-center flex-1 border roundedw-[48%]  py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] ">
-                <label htmlFor="end" className="block text-base text-gray-600 text-nowrap mb-0">End Date</label>
-                <input
-                  type="time"
-                  id="end"
-                  name="end"
-                  value={adData.end || ""}
-                  onChange={handleChange}
-                  className="bg-[#FAFAFA] rounded w-full focus:outline-none"
-                />
-              </div>
-            </div>
+                {/* Date Slot */}
+                <label className="text-lg font-normal text-gray-600">Date Slot</label>
+                <div className="flex items-baseline mb-4">
+                  <div className="flex flex-col w-[48%]">
+                    <div className="flex gap-6 items-center flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] cursor-pointer">
+                      <label
+                        htmlFor="startDate"
+                        className="flex justify-between text-base text-[#838383] text-nowrap mb-0 w-full"
+                      >
+                        Start Date
+                        <input
+                          type="date"
+                          id="startDate"
+                          name="startDate"
+                          value={adData.startDate || ""}
+                          onChange={handleChange}
+                          className="bg-[#FAFAFA] rounded w-full focus:outline-none text-black"
+                        />
+                      </label>
+                    </div>
+                    {errorList.startDate && errorList.startDate !== "" && (
+                      <span className="text-red-600 pl-1">{errorList.startDate}</span>
+                    )}
+                  </div>
 
-            {/* Age Group */}
-            <label className="text-lg font-normal text-gray-600">Target Audience Age Group</label>
-            <div className="flex items-center mb-4">
+                  <div className="w-[4%] border-t-2 border-gray-300"></div>
+                  <div className="flex flex-col w-[48%]">
+                    <div className="flex gap-6 items-center flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] cursor-pointer">
+                      <label
+                        htmlFor="endDate"
+                        className="flex justify-between text-base text-[#838383] text-nowrap mb-0 w-full"
+                      >
+                        End Date
+                        <input
+                          type="date"
+                          id="endDate"
+                          name="endDate"
+                          value={adData.endDate || ""}
+                          onChange={handleChange}
+                          className="bg-[#FAFAFA] rounded w-full focus:outline-none text-black"
+                        />
+                      </label>
+                    </div>
+                    {errorList.endDate && errorList.endDate !== "" && (
+                      <span className="text-red-600 pl-1">{errorList.endDate}</span>
+                    )}
+                  </div>
+                </div>
 
-              <div className=" flex gap-6 items-center flex-1 border rounded w-[48%] py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] ">
-                <label htmlFor="minAge" className="block text-base text-gray-600 text-nowrap mb-0">Minimum Age</label>
-                <input
-                  type="number"
-                  id="minAge"
-                  name="minAge"
-                  value={adData.minAge || ""}
-                  onChange={handleChange}
-                  className="bg-[#FAFAFA] rounded w-full focus:outline-none"
-                />
-              </div>
-              <div className="w-[4%] border-t-2 border-gray-300"></div>
-              <div className=" flex gap-6 items-center flex-1 border rounded w-[48%] py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] ">
-                <label htmlFor="maxAge" className="block text-base text-gray-600 text-nowrap mb-0">Maximum Age</label>
-                <input
-                  type="number"
-                  id="maxAge"
-                  name="maxAge"
-                  value={adData.maxAge || ""}
-                  onChange={handleChange}
-                  className="bg-[#FAFAFA] rounded w-full focus:outline-none"
-                />
-              </div>
-            </div>
-
-            {/* Date Slot */}
-            <label className="text-lg font-normal text-gray-600">Date Slot</label>
-            <div className="flex items-center mb-4">
-              <div className=" flex gap-6 items-center flex-1 border rounded w-[48%] py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] ">
-                <label htmlFor="startDate" className="block text-base text-gray-600 text-nowrap mb-0">Start Date</label>
-                <input
-                  type="date"
-                  id="startDate"
-                  name="startDate"
-                  value={adData.startDate || ""}
-                  onChange={handleChange}
-                  className="bg-[#FAFAFA] rounded w-full focus:outline-none"
-                />
-              </div>
-              <div className="w-[4%] border-t-2 border-gray-300"></div>
-              <div className=" flex gap-6 items-center flex-1 border rounded w-[48%] py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] ">
-                <label htmlFor="endDate" className="block text-base text-gray-600 text-nowrap mb-0">End Date</label>
-                <input
-                  type="date"
-                  id="endDate"
-                  name="endDate"
-                  value={adData.endDate || ""}
-                  onChange={handleChange}
-                  className="bg-[#FAFAFA] rounded w-full focus:outline-none"
-                />
-              </div>
-            </div>
-
-            {/* Button Label */}
-            <label className="text-lg font-normal text-gray-600">Button</label>
-            <div className="flex items-center mb-4 justify-between">
-              <div className=" flex gap-6 items-center flex-1 border rounded w-[48%] py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] ">
-                {/* <label htmlFor="type" className="block text-base text-gray-600 text-nowrap mb-0">Type</label> */}
-                <select
-                  id="type"
-                  name="type"
-                  value={adData.type || ""}
-                  onChange={handleChange}
-                  className="bg-[#FAFAFA] rounded w-full focus:outline-none text-base text-gray-600 text-nowrap mb-0"
+                {/* Time Slot */}
+                <label className="text-lg font-normal text-gray-600">Time Slot</label>
+                <div className="flex items-baseline mb-4">
+                  <div className="flex flex-col w-[48%]">
+                    <div className="flex gap-6 items-center flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA]">
+                      <label htmlFor="start" className="flex justify-between text-base text-[#838383] text-nowrap mb-0 w-full">
+                        From
+                        <input
+                          type="time"
+                          id="start"
+                          name="start"
+                          value={adData.start || ""}
+                          onChange={handleChange}
+                          className="bg-[#FAFAFA] rounded w-full focus:outline-none text-black"
+                        />
+                      </label>
+                    </div>
+                    {errorList.start && errorList.start !== "" && (
+                      <span className="text-red-600 pl-1">{errorList.start}</span>
+                    )}
+                  </div>
+                  <div className="w-[4%] border-t-2 border-gray-300"></div>
+                  <div className="flex flex-col w-[48%]">
+                    <div className="flex gap-6 items-center flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA]">
+                      <label htmlFor="end" className="flex justify-between text-base text-[#838383] text-nowrap mb-0 w-full">
+                        To
+                        <input
+                          type="time"
+                          id="end"
+                          name="end"
+                          value={adData.end || ""}
+                          onChange={handleChange}
+                          className="bg-[#FAFAFA] rounded w-full focus:outline-none text-black"
+                        />
+                      </label>
+                    </div>
+                    {errorList.end && errorList.end !== "" && (
+                      <span className="text-red-600 pl-1">{errorList.end}</span>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
+            <div className="flex justify-between mt-6">
+              <button
+                onClick={handleBack}
+                disabled={step === 1}
+                className="px-8 py-3 bg-gray-400 text-base font-semibold text-white rounded-full hover:bg-gray-300"
+              >
+                Back
+              </button>
+              {step < 2 ? (
+                <button
+                  onClick={handleNext}
+                  className="px-8 py-3 bg-[#4A00E0] text-base font-semibold text-white rounded-full hover:bg-gray-400"
                 >
-                  <option value="">Select Button Type</option>
-                  {filteredBusinessTypes.map((type, index) => (
-                    <option key={index} value={type}>{type}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="w-[4%] "></div>
-              <div className=" flex gap-6 items-center flex-1 border rounded w-[48%] py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] ">
-                {/* <label htmlFor="value" className="block text-base text-gray-600 text-nowrap mb-0">Redirect Path</label> */}
-                <input
-                  type="text"
-                  id="value"
-                  name="value"
-                  value={adData.value || ""}
-                  onChange={handleChange}
-                  className="bg-[#FAFAFA] rounded w-full focus:outline-none"
-                  placeholder="Redirect Path"
-                />
-              </div>
+                  Next
+                </button>
+              ) : (
+                <button
+                  onClick={handleNext}
+                  className="px-8 py-3 bg-gradient text-base font-semibold text-white rounded-full hover:bg-gray-400"
+                >
+                  Proceed to Pay
+                </button>
+              )}
             </div>
-
-            {/* Multi-Select for Images */}
-            <label htmlFor="images" className="text-lg font-normal text-gray-600">Upload Images (Select up to 5)</label>
-            <div className="mb-4 flex items-center gap-4">
-              <label htmlFor="images" className=" flex gap-6 items-center text-gray-600 justify-between flex-1 border rounded w-full py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] ">Choose Your Ad Photos
-                <div className="m-0 p-3 rounded-full bg-gradient"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M18 20H4V6H13V4H4C2.9 4 2 4.9 2 6V20C2 21.1 2.9 22 4 22H18C19.1 22 20 21.1 20 20V11H18V20ZM10.21 16.83L8.25 14.47L5.5 18H16.5L12.96 13.29L10.21 16.83ZM20 4V1H18V4H15C15.01 4.01 15 6 15 6H18V8.99C18.01 9 20 8.99 20 8.99V6H23V4H20Z" fill="white" />
-                </svg>
-
-                </div>
-              </label>
-              <input
-                type="file"
-                id="images"
-                name="images"
-                accept="image/*"
-                multiple
-                onChange={(e) => handleImageChange(e)}
-                className="hidden w-11/12 gap-6 items-center flex-1 border rounded py-3 px-4 pr-6 border-gray-300 bg-[#FAFAFA] "
-              />
-
-
-            </div>
-            {/* <button
-              onClick={handleSubmit}
-              className="px-4 py-2 bg-green-500 text-white rounded w-full"
-            >
-              Submit
-            </button> */}
           </form>
         </div>
-      </div >
+      </div>
       <div className="lg:w-2/5 w-full">
         <div className="hidden lg:block">
           <AdPreview />
         </div>
-        <TotalPrice />
+        {step >= 2 && <TotalPrice ref={totalPriceRef} />}
       </div>
-    </div >
-
+    </div>
   );
-
 };
 
 export default AdCenter;

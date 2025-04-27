@@ -5,8 +5,9 @@ import { setLoading, setPageData, setUserPages,setCommunities} from '../../slice
 
 export const createPage = async (formData,dispatch, token) => {
   dispatch(setLoading(true));
+  const toastId = toast.loading("Creating page...");
     try {
-      const toastId = toast.loading("Creating page...");
+
       const response = await apiConnector(
         "POST",
         pageEndpoints.CREATE_PAGE,
@@ -26,18 +27,18 @@ export const createPage = async (formData,dispatch, token) => {
       toast.dismiss();
       toast.error("page creation failed");
       throw error;
+    }finally {
+      dispatch(setLoading(false));
+      toast.dismiss(toastId);
     }
   
 };
 
-export const fetchPagesByUser = async (userId, token, dispatch, isLoading) => {
+export const fetchPagesByUser = async (token, dispatch, isLoading) => {
   if (isLoading) return;
 
   const toastId = toast.loading("Loading...");
   dispatch(setLoading(true));
-  let body = {
-    userId: userId
-  };
 
   try {
     const response = await apiConnector("GET", pageEndpoints.GET_PAGES,null,{
@@ -79,6 +80,30 @@ export const fetchPageDetails = async (pageId, token, dispatch) => {
     throw error;
   } finally {
     dispatch(setLoading(false));
+    toast.dismiss(toastId);
+  }
+};
+
+export const deletePage = async (pageId,token) => {
+  // if (!pageId || !token) return; // Prevent API call if no ID or token
+
+  // dispatch(setLoading(true));
+  const toastId = toast.loading("Deleting Page....");
+
+  try {
+    const response = await apiConnector("DELETE", pageEndpoints.DELETE_PAGE, { pageId }, {
+      Authorization: `Bearer ${token}`,
+    });
+    console.log(response)
+
+    // dispatch(setPageData(response.data.data)); // Update Redux state
+    return response;
+  } catch (error) {
+    console.error("Error fetching page details:", error);
+    toast.error("Failed to load page details");
+    throw error;
+  } finally {
+    // dispatch(setLoading(false));
     toast.dismiss(toastId);
   }
 };

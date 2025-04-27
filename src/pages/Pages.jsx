@@ -20,14 +20,13 @@ const Pages = () => {
     const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
     useEffect(() => {
-        console.log("hit")
         const fetchData = async () => {
 
             try {
-                if (!loading) {
 
-                    await fetchPagesByUser(user._id, token, dispatch);
-                }
+
+                await fetchPagesByUser(token, dispatch);
+
             } catch (error) {
                 console.error(error);
             }
@@ -41,7 +40,7 @@ const Pages = () => {
 
 
     return (
-        <div className="md:mb-0 mb-14 bg-white flex justify-around w-full">
+        <div className="md:mb-0 mb-14 bg-white flex justify-around w-full md:mt-[150px] mt-[60px]">
 
             <div className="w-full md:w-9/12 md:py-4 md:px-16 md:pl-24 p-4 md:mt-0 mt-2 max-h-[86vh] no-scrollbar overflow-scroll">
                 <div className="w-full mb-4 flex md:flex-row flex-col justify-between md:items-end">
@@ -49,7 +48,7 @@ const Pages = () => {
                         <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#8E2DE2]">
                             Pages
                         </h1>
-                        <p className="text-gray-400 leading-4 text-sm ">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod</p>
+                        <p className="text-gray-400 leading-4 text-sm "></p>
                     </div>
                     <Link to="/dashboard/page/create"
                         onClick={() => handlePageClick({})}
@@ -71,7 +70,7 @@ const Pages = () => {
                             <Link to="/dashboard/page/view"
                                 onClick={() => handlePageClick(page)}
                                 className="flex justify-center items-center md:items-start hover:bg-gray-200 p-2 rounded-md cursor-pointer transition-all duration-300 w-full bg-[#FAFAFA] border border-[#00000020]">
-                                <div className="flex flex-col justify-center">
+                                <div className="flex flex-col justify-center items-center">
                                     <div className="w-36 h-36">
                                         <img src={page.businessProfilePicture} alt="Post Media" class="w-full h-full rounded-full m-auto object-cover cursor-pointer" />
                                     </div>

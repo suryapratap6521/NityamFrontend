@@ -8,7 +8,7 @@ const Advertisements = () => {
 
     const dispatch = useDispatch();
     const adData = useSelector((state) => state.ad.allAds || []);
-    console.log("adData", Array.isArray(adData), adData.length, adData)
+    // console.log("adData", Array.isArray(adData), adData.length, adData)
 
     return (
         <div className="w-full flex flex-col items-center sticky top-[130px]">

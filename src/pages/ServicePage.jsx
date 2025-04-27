@@ -10,7 +10,7 @@ const ServicePage = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   return (
-    <div className="md:mb-0 mb-14 bg-white flex justify-around w-full">
+    <div className="md:mb-0 mb-14 bg-white md:mt-[150px] mt-[60px] flex justify-around w-full">
 
       <div className="w-full md:w-9/12 md:py-4 md:px-16 md:pl-24 p-4 md:mt-0 mt-2 max-h-[86vh] no-scrollbar overflow-scroll">
         <div className="w-full mb-4 flex md:flex-row flex-col justify-between md:items-end">
@@ -18,8 +18,8 @@ const ServicePage = () => {
             <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#8E2DE2]">
               Services
             </h1>
-            <p className="text-gray-400 leading-4 text-sm ">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod</p>
-          </div>
+            <p className="text-gray-400 leading-4 text-sm">
+              Explore a range of professional services designed to meet your needs. </p></div>
           <Link to="/dashboard/addservice"
 
             className="flex justify-center items-center hover:bg-gray-200 p-2 px-6 rounded-lg cursor-pointer transition-all duration-300 bg-[#8E2DE220] w-fit mt-1 md:mt-0">
@@ -44,5 +44,3 @@ const ServicePage = () => {
 }
 
 export default ServicePage
-
-

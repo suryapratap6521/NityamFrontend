@@ -13,7 +13,7 @@ import PostHeader from "./PostHeader";
 import PostActions from "./PostActions";
 import Poll from "./Poll";
 import EventDetails from "./EventDetails";
-
+import ExpandableText from "../../Common/ExpandableText";
 const SinglePost = ({
   post,
   user,
@@ -79,7 +79,7 @@ const SinglePost = ({
       />
 
       <div className="mt-4">
-        {post.title && <p className="text-gray-800 mb-4">{post.title}</p>}
+        {post.title && <p className="text-gray-800 mb-4"><ExpandableText text={post?.title} threshold={80} /></p>}
 
         {renderMedia()}
 

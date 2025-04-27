@@ -22,10 +22,10 @@ function Uploader({ onImageUpload }) {
         onClick={() => document.querySelector(".input-field").click()}
         className="upload-form"
       >
-        <input 
-          type="file" 
-          accept="image/*" 
-          className="input-field" 
+        <input
+          type="file"
+          accept="image/*"
+          className="input-field"
           hidden
           onChange={handleFileChange}
         />
@@ -33,15 +33,15 @@ function Uploader({ onImageUpload }) {
           <img src={image} width={150} height={150} alt={fileName} className="uploaded-image" />
         ) : (
           <div className="upload-placeholder">
-            <MdCloudUpload color="#1475cf" size={60} />
+            <MdCloudUpload color="#8E2DE2" size={60} />
             <p>Browse Files to upload</p>
           </div>
         )}
       </form>
       <section className="uploaded-row">
-        <AiFillFileImage color="#1475cf" />
+        <AiFillFileImage color="#8E2DE2" />
         <span className="upload-content">
-          {fileName} 
+          {fileName}
           {image && (
             <MdDelete
               className="delete-icon"

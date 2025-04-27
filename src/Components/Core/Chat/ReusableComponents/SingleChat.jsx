@@ -155,11 +155,16 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       }
     }, timerLength);
   }
+  const handleKeyDown = (e) => {
 
+    if (e.key === "Enter") {
+      console.log(e.key)
+    }
+  };
 
 
   return (
-    <div>
+    <>
       {selectedChat ? (
         <>
           <Box
@@ -226,7 +231,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             )}
           </Box>
           <div
-            className="flex flex-col justify-end p-3 w-full lg:h-[60vh] h-[72vh]"
+            className="flex flex-col justify-end p-0 w-full lg:h-[60vh] h-[73.5vh]"
 
           >
             {loading ? (<Loader />) : (<div className="messages">
@@ -247,7 +252,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 <></>
               )}
 
-              <div className="w-full flex items-center justify-between">
+              <div className="w-full flex items-center justify-between pt-3">
                 <div className="w-10/12 flex items-center border border-gray-300 rounded-full bg-white p-3 gap-2">
                   <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clip-path="url(#clip0_48_574)">
@@ -261,7 +266,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     </defs>
 
                   </svg>
-                  <input type='text' placeholder="Say Something..." onChange={typingHandler} value={newMessage} className="w-10/12 bg-none" />
+                  <input type='text' placeholder="Say Something..." onChange={typingHandler} value={newMessage} className="w-10/12 bg-none focus:outline-0" onKeyDown={sendMessage}
+                  />
                 </div>
 
                 <button onclick={sendMessage} className="m-0 1/12 p-3 rounded-full bg-gradient"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -286,7 +292,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           </h1>
         </Box>
       )}
-    </div>
+    </>
   );
 };
 

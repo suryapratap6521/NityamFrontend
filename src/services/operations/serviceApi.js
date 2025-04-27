@@ -4,7 +4,6 @@ import toast from 'react-hot-toast';
 import { setLoading, setServiceData, setUserServices,setCommunities} from '../../slices/serviceSlice';
 
 export const getServices = async (token, dispatch) => {
-  toast.dismiss();
   try {
     const toastId = toast.loading("Loading...");
     const response = await apiConnector("GET", serviceEndpoints.GET_SERVICES, null, {
@@ -25,7 +24,6 @@ export const getServices = async (token, dispatch) => {
 };
 
 export const createService = async (formData, token) => {
-  toast.dismiss();
   try {
     const toastId = toast.loading("Creating service...");
     const response = await apiConnector("POST", serviceEndpoints.CREATE_SERVICE, formData, {
@@ -40,5 +38,30 @@ export const createService = async (formData, token) => {
     toast.dismiss();
     toast.error("Service creation failed");
     throw error; 
+  }
+};
+
+
+export const getServiceById = async (serviceId, token, dispatch) => {
+  toast.dismiss();
+  const toastId = toast.loading("Loading service details...");
+  dispatch(setLoading(true)); // assuming your serviceSlice uses setLoading
+  try {
+    // The endpoint is like: BASE_URL/services/service/:id, so we append the serviceId to the URL
+    const url = serviceEndpoints.GET_SERVICE_BY_ID.replace(':id', serviceId);
+    const response = await apiConnector("GET", url, null, {
+      Authorization: `Bearer ${token}`,
+    });
+    console.log(response.data);
+    dispatch(setServiceData(response.data));
+    toast.dismiss(toastId);
+    return response;
+  } catch (error) {
+    console.error(error);
+    toast.error("Problem in fetching the service details");
+    throw error;
+  } finally {
+    dispatch(setLoading(false));
+    toast.dismiss(toastId);
   }
 };

@@ -248,9 +248,10 @@ export function login(email, password, navigate) {
             ? response.data.user.image
             : `https://api.dicebear.com/5.x/initials/svg?seed=${response.data.user.firstName} ${response.data.user.lastName}`;
           dispatch(setUser({ ...response.data.user, image: userImage }));
+          console.log(response.data.user, "user data in login api"); 
           Cookies.set("token", JSON.stringify(response.data.token), { expires: 1 });
           Cookies.set("user", JSON.stringify(response.data.user), { expires: 1 });
-          
+          console.log(Cookies.get("user"), "user data in login api")
           // Navigate to dashboard
           navigate("/dashboard");
 
