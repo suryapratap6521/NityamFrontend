@@ -51,7 +51,7 @@ export default function Login() {
 
   const handleGoogleLogin = () => {
     // Redirect to your backend Google OAuth endpoint.
-    window.location.href = 'http://localhost:8080/api/v1/auth/google';
+    window.location.href = 'https://nityambackend.onrender.com/api/v1/auth/google';
   };
 
   return (
