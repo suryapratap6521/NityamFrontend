@@ -2,7 +2,7 @@
 import { apiConnector } from '../apiConnector';
 import { postEndpoints } from '../apis';
 import toast from 'react-hot-toast';
-import { setPosts,updatePoll } from '../../slices/postSlice';
+import { setPosts, updatePoll } from '../../slices/postSlice';
 import { setAllAds } from '../../slices/adSlice';
 import { handleResponse } from "../../utils/apiUtils";
 
@@ -18,8 +18,34 @@ export const getAllPosts = async (token, dispatch) => {
       throw new Error("Could not fetch posts");
     }
 
-    dispatch(setPosts(response.data.communityPost));
-    dispatch(setAllAds(response.data.communityAdvertisedPosts));
+    const posts = response.data.communityPost.map(post => ({
+      ...post,
+      type: 0, // Marking as post
+    }));
+
+    const ads = response.data.communityAdvertisedPosts.map(ad => ({
+      ...ad,
+      type: 1, // Marking as ad
+    }));
+
+    const combined = [];
+    let postIndex = 0;
+    let adIndex = 0;
+
+    while (postIndex < posts.length) {
+      // Add up to 3 posts
+      for (let i = 0; i < 3 && postIndex < posts.length; i++) {
+        combined.push(posts[postIndex++]);
+      }
+
+      // Add 1 ad if available
+      if (adIndex < ads.length) {
+        combined.push(ads[adIndex++]);
+      }
+    }
+
+    dispatch(setPosts(combined));
+    dispatch(setAllAds(ads));
     localStorage.setItem("posts", JSON.stringify(response.data.communityPost));
     localStorage.setItem("ad", JSON.stringify(response.data.communityAdvertisedPosts));
 
@@ -34,11 +60,11 @@ export const getAllPosts = async (token, dispatch) => {
 export const createPost = async (formData, token) => {
   const toastId = toast.loading("Creating post...");
   try {
-    
+
     const response = await apiConnector("POST", postEndpoints.CREATE_POST, formData, {
       Authorization: `Bearer ${token}`,
     });
-    
+
     console.log(response, "Response");
 
     // Handle non-201 status codes
@@ -46,15 +72,15 @@ export const createPost = async (formData, token) => {
       throw new Error(`Error: Received status code ${response?.status}`);
     }
     toast.success("Post created successfully");
-    
+
   } catch (error) {
     console.error('Error in createPost API call:', error.response?.data || error.message);
     toast.error(error.response?.data || error.message);
     throw error; // Re-throw the error to handle it in the component
-    
+
   }
-  finally{
-  toast.dismiss(toastId);
+  finally {
+    toast.dismiss(toastId);
   }
 };
 
@@ -163,9 +189,9 @@ export const commentDelete = async (postId, commentId, dispatch, token) => {
     throw error;
   }
 }
-export const reply=async(postId,commentId,text,dispatch,token)=>{
+export const reply = async (postId, commentId, text, dispatch, token) => {
   try {
-    const response=await apiConnector("POST",postEndpoints.REPLY,{postId,commentId,text},{
+    const response = await apiConnector("POST", postEndpoints.REPLY, { postId, commentId, text }, {
       Authorization: `Bearer ${token}`,
     })
     const updatedComment = response.data.allPosts;
@@ -177,13 +203,13 @@ export const reply=async(postId,commentId,text,dispatch,token)=>{
   }
 }
 
-export const commentLike=async(postId,commentId,dispatch,token)=>{
+export const commentLike = async (postId, commentId, dispatch, token) => {
   try {
     const response = await apiConnector("POST", postEndpoints.LIKE_COMMENT, { postId, commentId }, {
       Authorization: `Bearer ${token}`,
     })
     const updatedComment = response.data.allPosts;
-    console.log(updatedComment,"----------->updatedComment");
+    console.log(updatedComment, "----------->updatedComment");
     dispatch(setPosts(updatedComment));
   } catch (error) {
     console.error("Error Liking comment:", error);
@@ -192,13 +218,13 @@ export const commentLike=async(postId,commentId,dispatch,token)=>{
   }
 }
 
-export const replyLike=async(postId,commentId,replyId,dispatch,token)=>{
+export const replyLike = async (postId, commentId, replyId, dispatch, token) => {
   try {
-    const response=await apiConnector("POST",postEndpoints.LIKE_REPLY,{postId,commentId,replyId},{
+    const response = await apiConnector("POST", postEndpoints.LIKE_REPLY, { postId, commentId, replyId }, {
       Authorization: `Bearer ${token}`,
     })
     const updatedComment = response.data.allPosts;
-    console.log(updatedComment,"----------->updatedComment h ye")
+    console.log(updatedComment, "----------->updatedComment h ye")
     dispatch(setPosts(updatedComment));
   } catch (error) {
     console.error("Error commenting post:", error);
@@ -207,12 +233,12 @@ export const replyLike=async(postId,commentId,replyId,dispatch,token)=>{
   }
 }
 
-export const nestedReply=async( postId, commentId, replyId,text,dispatch,token)=>{
+export const nestedReply = async (postId, commentId, replyId, text, dispatch, token) => {
   try {
-    const response=await apiConnector("POST",postEndpoints.NESTED_REPLY,{postId, commentId, replyId,text},{
+    const response = await apiConnector("POST", postEndpoints.NESTED_REPLY, { postId, commentId, replyId, text }, {
       Authorization: `Bearer ${token}`,
     })
-   
+
   } catch (error) {
     console.error("Error commenting post:", error);
     toast.error("Error commenting post");

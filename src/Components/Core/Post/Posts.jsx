@@ -129,33 +129,34 @@ const Posts = () => {
   };
 
 
-
+  console.log(posts)
 
   return (
     <div className="posts-container">
       {posts.map((post, index) => (
-        <React.Fragment key={post._id}>
-          <SinglePost
-            post={post}
-            user={user}
-            handleLike={handleLike}
-            handleUnlike={handleUnlike}
-            handleComment={handleComment}
-            setCommentText={setCommentText}
-            commentText={commentText}
-            handleDeletePost={handleDeletePost}
-            setReplyText={setReplyText}
-            replyText={replyText}
-            handleCommentLike={handleCommentLike}
-            handleReply={handleReply}
-            handleReplyLike={handleReplyLike}
-          />
-          {((index + 1) % 5 === 0) && adData.length > 0 && (
-
-            <AdPosts ad={adData[(Math.floor(index / 5)) % adData.length]} />
+        <React.Fragment key={post._id || `ad-${index}`}>
+          {post.type === 0 ? (
+            <SinglePost
+              post={post}
+              user={user}
+              handleLike={handleLike}
+              handleUnlike={handleUnlike}
+              handleComment={handleComment}
+              setCommentText={setCommentText}
+              commentText={commentText}
+              handleDeletePost={handleDeletePost}
+              setReplyText={setReplyText}
+              replyText={replyText}
+              handleCommentLike={handleCommentLike}
+              handleReply={handleReply}
+              handleReplyLike={handleReplyLike}
+            />
+          ) : (
+            <AdPosts ad={post} />
           )}
         </React.Fragment>
       ))}
+
     </div>
   );
 

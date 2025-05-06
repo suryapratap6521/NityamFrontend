@@ -16,6 +16,8 @@ import io from "socket.io-client";
 import Lottie from "react-lottie";
 import animationData from "../../../../animations/typing.json";
 import { setNotification } from "../../../../slices/chatSlice";
+import useSound from 'use-sound';
+import messageSound from '../../../../assests/sounds/message.mp3';
 const ENDPOINT = "https://nityambackend.onrender.com";
 var socket, selectedChatCompare;
 
@@ -33,7 +35,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [typing, setTyping] = useState(false);
   const [istyping, setIsTyping] = useState(false);
   const textareaRef = useRef(null);
-
+  const [play] = useSound(messageSound);
 
   const defaultOptions = {
     loop: true,
@@ -75,7 +77,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
 
   const sendMessage = async (event) => {
-    if (event.key === "Enter" && newMessage) {
+    console.log(event)
+    if ((event.key === "Enter" || event.type === 'click') && newMessage) {
       socket.emit("stop typing", selectedChat._id)
       try {
         const config = {
@@ -98,6 +101,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           textareaRef.current.style.height = "auto"; // ✅ Reset the height
         }
         setMessages([...messages, data.message]); // Update messages state
+        play();
+
       } catch (error) {
         console.log(error);
         toast.error("Error in sending the messages");
@@ -285,7 +290,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                   />
                 </div>
 
-                <button onclick={sendMessage} className="m-0 1/12 p-3 rounded-full bg-gradient"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <button onClick={sendMessage} className="m-0 1/12 p-3 rounded-full bg-gradient w-fit"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path fill-rule="evenodd" clip-rule="evenodd" d="M1.3049 3.54199C1.21905 3.19965 1.23324 2.83987 1.3458 2.50536C1.45836 2.17085 1.66456 1.87567 1.9399 1.65487C2.21524 1.43407 2.54816 1.29693 2.89913 1.25973C3.25011 1.22252 3.60438 1.28682 3.9199 1.44499L21.7299 10.35C22.0365 10.503 22.2945 10.7384 22.4748 11.0299C22.6551 11.3214 22.7506 11.6573 22.7506 12C22.7506 12.3427 22.6551 12.6786 22.4748 12.9701C22.2945 13.2615 22.0365 13.497 21.7299 13.65L3.9199 22.555C3.60438 22.7132 3.25011 22.7775 2.89913 22.7403C2.54816 22.7031 2.21524 22.5659 1.9399 22.3451C1.66456 22.1243 1.45836 21.8291 1.3458 21.4946C1.23324 21.1601 1.21905 20.8003 1.3049 20.458L3.1699 13L13.9999 12L3.1699 11L1.3049 3.54199Z" fill="white" />
                 </svg>
                 </button>

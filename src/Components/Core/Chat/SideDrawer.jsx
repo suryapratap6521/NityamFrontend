@@ -11,6 +11,7 @@ import Loader from "../../Common/Loader";
 import { accessChat } from "../../../services/operations/chatApi";
 import { setChats } from "../../../slices/chatSlice";
 import UserCard from "./ReusableComponents/UserCard";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const SideDrawer = () => {
   const dispatch = useDispatch();
@@ -20,6 +21,7 @@ const SideDrawer = () => {
   const [open, setOpen] = useState(false);
   const { token } = useSelector((state) => state.auth);
   const { chats } = useSelector((state) => state.chat);
+  const location = useLocation();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -80,7 +82,7 @@ const SideDrawer = () => {
             backgroundColor: "#D5F5E3",
             padding: "5px",
             borderRadius: "20px",
-            width: { xs: "100%", md: "300px" },
+            width: { xs: "100%", md: location.pathname == "/dashboard/chat" ? '100%' : "300px" },
           }}
           placeholder="Search Users..."
           variant="standard"

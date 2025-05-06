@@ -96,7 +96,7 @@ function Navbar() {
             </Typography>
 
             <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center" }}>
-              {token && location.pathname === "/dashboard/chat" && <SideDrawer />}
+              {token && location.pathname != "/dashboard/chat" && <SideDrawer />}
 
               {token && (
                 <IconButton
