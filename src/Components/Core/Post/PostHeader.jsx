@@ -9,7 +9,7 @@ export default function PostHeader({ post, onMenuOpen, calculateTime }) {
           className="h-12 w-12 rounded-full object-cover border-2 border-white"
           src={post?.postByUser?.image || "https://via.placeholder.com/150"}
           referrerPolicy="no-referrer"
-          alt={`${post.postByUser?.firstName}`}
+          alt={post.postByUser?.firstName}
         />
         <div>
           <h4 className="font-semibold text-gray-800">

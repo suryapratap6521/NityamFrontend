@@ -42,21 +42,36 @@ const Posts = () => {
     getPosts();
   }, [token, dispatch]);
 
-  const handleLike = async (postId) => {
-    try {
-      await likePost(postId, token, dispatch);
-    } catch (error) {
-      console.error("Error liking post:", error);
-    }
-  };
+const handleLike = async (postId) => {
+  try {
+    const updatedPost = await likePost(postId, token);
+    updatedPost.type = 0; // Ensure post type is retained for rendering
 
-  const handleUnlike = async (postId) => {
-    try {
-      await unlikePost(postId, token, dispatch);
-    } catch (error) {
-      console.error("Error unliking post:", error);
-    }
-  };
+    const updatedPosts = posts.map((post) =>
+      post._id === updatedPost._id ? updatedPost : post
+    );
+
+    dispatch(setPosts(updatedPosts));
+  } catch (error) {
+    console.error("Error liking post:", error);
+  }
+};
+
+const handleUnlike = async (postId) => {
+  try {
+    const updatedPost = await unlikePost(postId, token);
+    updatedPost.type = 0; // Ensure post type is retained for rendering
+
+    const updatedPosts = posts.map((post) =>
+      post._id === updatedPost._id ? updatedPost : post
+    );
+
+    dispatch(setPosts(updatedPosts));
+  } catch (error) {
+    console.error("Error unliking post:", error);
+  }
+};
+
 
   const handlePopoverOpen = (event, postId) => {
     setAnchorEl(event.currentTarget);
@@ -129,7 +144,7 @@ const Posts = () => {
   };
 
 
-  console.log(posts)
+  console.log(posts,"--->")
 
   return (
     <div className="posts-container">

@@ -46,6 +46,7 @@ import { useNavigate } from "react-router-dom";
 import WelcomeSplash from "./Components/Common/WelcomeSplash";
 // import PostView from "./Components/Core/Post/PostView";
 import Events from "./pages/Events";
+import { socket } from "./config/socket";
 // import PostView from "./Components/Core/Post/PostView";
 function App() {
 
@@ -58,20 +59,41 @@ function App() {
 
 
 
+// useEffect(() => {
+//   if (token) {
+//     dispatch(fetchNotifications(token)); // ✅ Correct way to dispatch async thunk
+//   }
+
+  
+
+//   socket.on("newNotification", (notification) => {
+//     dispatch(addNotification(notification));
+//   });
+
+//   return () => socket.disconnect();
+// }, [token, dispatch]);
+
+
 useEffect(() => {
-  if (token) {
-    dispatch(fetchNotifications(token)); // ✅ Correct way to dispatch async thunk
+  if (token && user?._id) {
+    dispatch(fetchNotifications(token));
+
+    if (!socket.connected) {
+      socket.connect(); // ✅ Only connect after auth
+    }
+
+    socket.emit("setup", user); // ✅ Send userData to backend
+
+    socket.on("newNotification", (notification) => {
+      dispatch(addNotification(notification));
+    });
+
+    return () => {
+      socket.off("newNotification");
+      socket.disconnect(); // Optional: disconnect on unmount
+    };
   }
-
-  const socket = io('https://nityambackend.onrender.com');
-
-  socket.on("newNotification", (notification) => {
-    dispatch(addNotification(notification));
-  });
-
-  return () => socket.disconnect();
-}, [token, dispatch]);
-
+}, [token, user, dispatch]);
 
 
   return (

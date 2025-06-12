@@ -1,4 +1,3 @@
-// SinglePost.jsx
 import React, { useState } from "react";
 import { IconButton } from "@mui/material";
 import { BsThreeDots } from "react-icons/bs";
