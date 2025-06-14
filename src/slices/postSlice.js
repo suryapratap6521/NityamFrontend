@@ -5,6 +5,7 @@ const initialState = {
   posts: localStorage.getItem("posts")
     ? JSON.parse(localStorage.getItem("posts"))
     : [],
+    sharedPost:null,
   error: null,
 };
 
@@ -35,8 +36,11 @@ const postSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
     },
+    setSharedPost: (state, action) => {
+    state.sharedPost = action.payload;
+  },
   },
 });
 
-export const { setLoading, setPosts, updatePoll, setError } = postSlice.actions;
+export const { setLoading, setPosts, updatePoll, setError,setSharedPost } = postSlice.actions;
 export default postSlice.reducer;
