@@ -14,7 +14,7 @@ const Sidebar = () => {
 
   const isActive = (path) => location.pathname === path;
 
-  if (location.pathname == '/dashboard' || location.pathname == '/dashboard/events' || location.pathname == '/dashboard/services' || location.pathname == '/dashboard/chat' || location.pathname == '/dashboard/page') {
+  if (location.pathname == '/dashboard' || location.pathname == '/dashboard/events' || location.pathname == '/dashboard/services' || location.pathname == '/dashboard/chat' || location.pathname == '/dashboard/page' || location.pathname == '/dashboard/page/view') {
     return (
       <>
         <div className="w-full md:border-b-2 border-t-2 md:border-t-0 border-t-gray-200 md:border-b-gray-200 fixed md:fixed top-auto md:top-[56px] bottom-0 md:bottom-auto z-[100] bg-white">

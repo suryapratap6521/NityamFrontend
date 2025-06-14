@@ -47,6 +47,7 @@ import WelcomeSplash from "./Components/Common/WelcomeSplash";
 import {useLocation} from "react-router-dom";
 // import PostView from "./Components/Core/Post/PostView";
 import Events from "./pages/Events";
+import GoogleAuthSuccess from "./pages/GoogleAuthSuccess";
 // import PostView from "./Components/Core/Post/PostView";
 function App() {
   
@@ -156,6 +157,14 @@ useEffect(() => {
             <OpenRoute>
               <GoogleAfterDetails />
             </OpenRoute>
+          }
+        />
+         <Route
+          path="/google-auth-success"
+          element={
+            <PrivateRoute>
+            <GoogleAuthSuccess />
+            </PrivateRoute>
           }
         />
 

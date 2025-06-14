@@ -1,4 +1,3 @@
-// src/Components/Core/Auth/GoogleAuthHandler.jsx
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import Cookies from 'js-cookie';
@@ -10,7 +9,6 @@ const GoogleAuthHandler = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Helper to safely parse the token
   const getTokenFromCookie = () => {
     const tokenCookie = Cookies.get('token');
     if (!tokenCookie) return null;
@@ -22,27 +20,30 @@ const GoogleAuthHandler = () => {
   };
 
   useEffect(() => {
-    const userCookie = Cookies.get('user');
-    const token = getTokenFromCookie();
+    const timer = setTimeout(() => {
+      const userCookie = Cookies.get('user');
+      const token = getTokenFromCookie();
 
-    if (userCookie && token) {
-      const user = JSON.parse(userCookie);
-      dispatch(setUser(user));
-      dispatch(setToken(token));
+      if (userCookie && token) {
+        const user = JSON.parse(userCookie);
+        dispatch(setUser(user));
+        dispatch(setToken(token));
 
-      // Check for onboarding completeness based on available fields.
-      const hasOnboarding =
-        (user.communityDetails && user.communityDetails.trim() !== '') ||
-        (user.city && user.state && user.postalCost && user.community);
+        const hasOnboarding =
+          (user.communityDetails && user.communityDetails.trim() !== '') ||
+          (user.city && user.state && user.postalCost && user.community);
 
-      if (hasOnboarding) {
-        navigate('/dashboard');
+        if (hasOnboarding) {
+          navigate('/dashboard');
+        } else {
+          navigate('/profiledetails');
+        }
       } else {
-        navigate('/profiledetails');
+        navigate('/login');
       }
-    } else {
-      navigate('/login');
-    }
+    }, 500); // wait for 500ms before checking
+
+    return () => clearTimeout(timer);
   }, [dispatch, navigate]);
 
   return (
