@@ -23,12 +23,13 @@ const AdPosts = ({ ad }) => {
             </div>
             <h2 className="text-xl font-normal text-black mt-3">{ad.title}</h2>
             <p className="text-gray-400 leading-4 text-sm">{ad.description}</p>
-            <img
-                className="bg-gray-400 w-full h-56 rounded-md"
-                src={ad.imageUrl}
-                alt="Ad"
-            />
-
+            {ad.imagesArray?.[0] && (
+                <img
+                    className="bg-gray-400 w-full h-56 rounded-md object-cover"
+                    src={ad.imagesArray[0]}
+                    alt="Ad"
+                />
+            )}
             <a
                 href={ad.buttonLabel?.value || '#'}
                 target="_blank"

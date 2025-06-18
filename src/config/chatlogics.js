@@ -1,8 +1,20 @@
 export const getSender=(loggedUser,users)=>{
+  console.log(users, "users");
+  console.log(loggedUser, "loggedUser");
+  if (!users || users.length === 0 ) {
+    return null; // Handle the case when users array is empty
+  }
+  console.log(users[0]._id, "users[0]._id");
     return users[0]?._id === loggedUser?._id ? (users[1].firstName + " "+ users[1].lastName ) : (users[0].firstName +" "+ users[0].lastName);
 }
 
 export const getSenderFull = (loggedUser, users) => {
+  console.log(users, "users");
+  console.log(loggedUser, "loggedUser");
+
+  if (!users || users.length === 0 || users=== undefined) {
+    return null; // Handle the case when users array is empty
+  }
    
         return users[0]._id === loggedUser._id ? users[1] : users[0];
     

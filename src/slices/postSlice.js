@@ -1,11 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+  posts: [],
   loading: false,
-  posts: localStorage.getItem("posts")
-    ? JSON.parse(localStorage.getItem("posts"))
-    : [],
-    sharedPost:null,
   error: null,
 };
 
@@ -13,34 +10,41 @@ const postSlice = createSlice({
   name: "post",
   initialState,
   reducers: {
-    setLoading: (state, action) => {
-      state.loading = action.payload;
-    },
     setPosts: (state, action) => {
       state.posts = action.payload;
-      state.error = null;
-      localStorage.setItem("posts", JSON.stringify(action.payload));
+    },
+    appendPosts: (state, action) => {
+      state.posts = [...state.posts, ...action.payload];
+    },
+    addPostToTop: (state, action) => {
+      state.posts = [action.payload, ...state.posts];
     },
     updatePoll: (state, action) => {
       const { postId, updatedPoll } = action.payload;
       state.posts = state.posts.map((post) =>
-        post._id === postId
-          ? {
-              ...post,
-              pollOptions: updatedPoll, // Update only poll options
-            }
-          : post
+        post._id === postId ? { ...post, pollOptions: updatedPoll } : post
       );
-      localStorage.setItem("posts", JSON.stringify(state.posts));
+    },
+    removePost: (state, action) => {
+      state.posts = state.posts.filter((post) => post._id !== action.payload);
+    },
+    setLoading: (state, action) => {
+      state.loading = action.payload;
     },
     setError: (state, action) => {
       state.error = action.payload;
     },
-    setSharedPost: (state, action) => {
-    state.sharedPost = action.payload;
-  },
   },
 });
 
-export const { setLoading, setPosts, updatePoll, setError,setSharedPost } = postSlice.actions;
+export const {
+  setPosts,
+  appendPosts,
+  addPostToTop,
+  updatePoll,
+  removePost,
+  setLoading,
+  setError,
+} = postSlice.actions;
+
 export default postSlice.reducer;

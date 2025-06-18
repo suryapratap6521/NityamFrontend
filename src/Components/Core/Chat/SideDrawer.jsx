@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Box, Tooltip, TextField, Modal, Typography, Grid,
+  Avatar, IconButton, CircularProgress
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { toast } from "react-hot-toast";
+import CloseIcon from "@mui/icons-material/Close";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
-import CloseIcon from "@mui/icons-material/Close";
-import Loader from "../../Common/Loader";
+import { toast } from "react-hot-toast";
 import { accessChat } from "../../../services/operations/chatApi";
 import { setChats } from "../../../slices/chatSlice";
 import UserCard from "./ReusableComponents/UserCard";
+import { useLocation } from "react-router-dom";
 
 const SideDrawer = () => {
   const dispatch = useDispatch();
@@ -20,121 +21,115 @@ const SideDrawer = () => {
   const [open, setOpen] = useState(false);
   const { token } = useSelector((state) => state.auth);
   const { chats } = useSelector((state) => state.chat);
+  const location = useLocation();
 
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false);
+    setSearch("");
+    setSearchResult([]);
+  };
 
-  // Debounced search function
-  useEffect(() => {
-    if (!search) {
-      setSearchResult([]);
-      return;
-    }
+  const handleSearch = useCallback(async () => {
+    if (!search.trim()) return;
 
-    const delayDebounceFn = setTimeout(() => {
-      handleSearch();
-    }, 90); // Wait 2 seconds before making the API call
-
-    return () => clearTimeout(delayDebounceFn); // Cleanup timeout on every re-render
-  }, [search]); // Runs whenever `search` changes
-
-  const handleSearch = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-
       const { data } = await axios.get(
-        `https://nityambackend.onrender.com/api/v1/auth/search?search=${search}`,
-        config
+        `http://localhost:8080/api/v1/auth/search?search=${search}`,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
       );
       setSearchResult(data);
-      console.log(data);
       setOpen(true);
     } catch (error) {
-      console.error("Error searching:", error);
-      toast.error("An error occurred while searching.");
+      toast.error("Failed to search users");
+      console.error(error);
     } finally {
       setLoading(false);
     }
-  };
+  }, [search, token]);
+
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      handleSearch();
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [search, handleSearch]);
 
   const handleChat = async (userId) => {
     try {
       await accessChat(userId, dispatch, token, chats);
-      setOpen(false);
-    } catch (error) {
-      console.error("Error accessing chat:", error);
-      toast.error("An error occurred while accessing the chat.");
+      handleClose();
+    } catch (err) {
+      toast.error("Error accessing chat.");
     }
   };
 
   return (
     <Box>
-      <Tooltip title="Search Users to chat" arrow placement="bottom-end">
+      <Tooltip title="Search users to chat" arrow placement="bottom-end">
         <TextField
           sx={{
-            backgroundColor: "#D5F5E3",
-            padding: "5px",
+            backgroundColor: "#fff",
             borderRadius: "20px",
-            width: { xs: "100%", md: "300px" },
+            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+            width: { xs: "100%", md: location.pathname === "/dashboard/chat" ? "100%" : "280px" },
           }}
-          placeholder="Search Users..."
+          placeholder="Search users..."
           variant="standard"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           InputProps={{
-            startAdornment: <SearchIcon sx={{ color: "black" }} />,
+            startAdornment: <SearchIcon sx={{ color: "gray", mr: 1 }} />,
             disableUnderline: true,
           }}
         />
       </Tooltip>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
+
+      <Modal open={open} onClose={handleClose}>
         <Box
           sx={{
             position: "absolute",
-            top: "50%",
-            left: "50%",
+            top: "50%", left: "50%",
             transform: "translate(-50%, -50%)",
-            width: { xs: "90%", sm: 400 },
+            width: { xs: "90%", sm: 420 },
             bgcolor: "white",
-            border: "2px solid #000",
             boxShadow: 24,
-            borderRadius: "10px",
-            p: 4,
+            borderRadius: 3,
+            p: 3,
+            maxHeight: "80vh",
+            overflowY: "auto",
           }}
         >
-          <CloseIcon
+          <IconButton
             onClick={handleClose}
-            style={{ position: "absolute", top: "10px", right: "10px", cursor: "pointer" }}
-          />
-          <Typography
-            id="modal-modal-title"
-            variant="h6"
-            component="h2"
-            sx={{ marginBottom: "20px" }}
+            sx={{ position: "absolute", top: 10, right: 10 }}
           >
+            <CloseIcon />
+          </IconButton>
+
+          <Typography variant="h6" mb={2}>
             Search Results
           </Typography>
-          <Grid container spacing={2}>
-            {loading ? (
-              <Loader />
-            ) : searchResult.length > 0 ? (
-              searchResult.map((user) => (
-                <UserCard key={user._id} user={user} onClick={handleChat} />
-              ))
-            ) : (
-              <Typography>No results found</Typography>
-            )}
-          </Grid>
+
+          {loading ? (
+            <Box display="flex" justifyContent="center">
+              <CircularProgress />
+            </Box>
+          ) : searchResult.length > 0 ? (
+            <Grid container spacing={2}>
+              {searchResult.map((user) => (
+                <Grid item xs={12} key={user._id}>
+                  <UserCard user={user} onClick={handleChat} />
+                </Grid>
+              ))}
+            </Grid>
+          ) : (
+            <Typography color="textSecondary">No results found</Typography>
+          )}
         </Box>
       </Modal>
     </Box>

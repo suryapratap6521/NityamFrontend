@@ -130,26 +130,61 @@ function Navbar() {
               )}
             </Box>
 
-            <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-              {notification.length === 0 ? (
-                <MenuItem>No New Messages</MenuItem>
-              ) : (
-                notification.map((notif) => (
-                  <MenuItem
-                    key={notif._id}
-                    onClick={() => {
-                      dispatch(setSelectedChat(notif.chat));
-                      dispatch(setNotification(notification.filter((n) => n !== notif)));
-                      handleClose();
-                    }}
-                  >
-                    {notif.chat.isGroupChat
-                      ? `New Message in ${notif.chat.chatName}`
-                      : `New Message from ${getSender(user, notif.chat.users)}`}
-                  </MenuItem>
-                ))
-              )}
-            </Menu>
+         {token && (
+  <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+    {notification.length === 0 ? (
+      <MenuItem>No New Messages</MenuItem>
+    ) : (
+      notification
+        .reduce((acc, msg) => {
+          const existing = acc.find(n => n.chat._id === msg.chat._id);
+          if (existing) {
+            existing.count += 1;
+            existing.latestMessage = msg;
+          } else {
+            acc.push({ ...msg, count: 1, latestMessage: msg });
+          }
+          return acc;
+        }, [])
+        .map((notif) => {
+          const sender = notif.chat.isGroupChat
+            ? notif.chat.chatName
+            : getSender(user, notif.chat.users);
+          const latest = notif.latestMessage?.content?.slice(0, 30) || "New message";
+
+          return (
+            <MenuItem
+              key={notif.chat._id}
+              onClick={() => {
+                dispatch(setSelectedChat(notif.chat));
+                dispatch(setNotification(notification.filter((n) => n.chat._id !== notif.chat._id)));
+                handleClose();
+              }}
+              sx={{ gap: 2 }}
+            >
+              <Avatar
+                src={
+                  notif.chat.isGroupChat
+                    ? "/group-avatar.png"
+                    : notif.chat.users.find((u) => u._id !== user._id)?.image || "/default-avatar.png"
+                }
+                alt={sender}
+              />
+              <Box>
+                <Typography fontWeight={600} fontSize={14}>
+                  {sender}
+                </Typography>
+                <Typography fontSize={13} color="gray">
+                  {latest}
+                </Typography>
+              </Box>
+              <Badge color="error" badgeContent={notif.count} sx={{ ml: "auto" }} />
+            </MenuItem>
+          );
+        })
+    )}
+  </Menu>
+)}
 
             {!token ? (
               <Button component={Link} to="/login" variant="contained" color="success">

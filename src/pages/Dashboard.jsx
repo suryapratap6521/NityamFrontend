@@ -280,7 +280,7 @@ const Dashboard = () => {
         </div>
 
         {!isSmallScreen && (
-          <div className="w-3/12 bg-white p-4 hidden lg:block max-h-[84.5vh] no-scrollbar overflow-y-auto">
+          <div className="w-3/12 bg-white p-4 hidden lg:block max-h-[84.5vh] no-scrollbar overflow-y-auto mb-auto">
             <Advertisements />
           </div>
         )}
