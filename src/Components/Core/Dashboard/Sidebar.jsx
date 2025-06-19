@@ -20,12 +20,12 @@ const Sidebar = () => {
         <div className="w-full md:border-b-2 border-t-2 md:border-t-0 border-t-gray-200 md:border-b-gray-200 fixed md:fixed top-auto md:top-[56px] bottom-0 md:bottom-auto z-[100] bg-white">
           <div className="m-auto max-w-7xl bg-white md:text-gray-900 flex flex-row items-end md:pt-2 pt-0 pb-0  justify-center z-50">
 
-            <Link to="/dashboard" onClick={() => setTab(0)} className={`group w-[12%] flex items-center flex-col md:items-center ${isActive('/dashboard') ? 'border-b-4' : ''} hover:border-b-4 border-black p-2 cursor-pointer transition-all duration-300 w-full`}>
+            <Link to="/dashboard" onClick={() => setTab(0)} className={`group w-[12%] flex items-center flex-col md:items-center ${isActive('/dashboard') ? 'border-b-4' : ''} hover:border-b-4 border-[#695ea8] p-2 cursor-pointer transition-all duration-300 w-full`}>
               <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover: transition-opacity duration-300 p-1"><g><g fill="#000"><path d="M9.5 17.5a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1z" fill="#000000" opacity="1" data-original="#000000"></path><path fill-rule="evenodd" d="M14.169 2.575a3.5 3.5 0 0 0-4.338 0l-6.5 5.132A3.5 3.5 0 0 0 2 10.454V18.5A3.5 3.5 0 0 0 5.5 22h13a3.5 3.5 0 0 0 3.5-3.5v-8.046a3.5 3.5 0 0 0-1.331-2.747zm-3.718.785a2.5 2.5 0 0 1 3.098 0l6.5 5.132A2.5 2.5 0 0 1 21 10.454V18.5a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 18.5v-8.046a2.5 2.5 0 0 1 .95-1.962z" clip-rule="evenodd" fill="#000000" opacity="1" data-original="#000000"></path></g></g></svg>
               <span className="text-xs font-semibold    transition-opacity duration-300">Home</span>
             </Link>
 
-            <Link to="/dashboard/events" onClick={() => setTab(1)} className={`group w-[12%] flex items-center flex-col md:items-center ${isActive('/dashboard/events') ? 'border-b-4' : ''} hover:border-b-4 border-black p-2 cursor-pointer transition-all duration-300 w-full`}>
+            <Link to="/dashboard/events" onClick={() => setTab(1)} className={`group w-[12%] flex items-center flex-col md:items-center ${isActive('/dashboard/events') ? 'border-b-4' : ''} hover:border-b-4 border-[#695ea8] p-2 cursor-pointer transition-all duration-300 w-full`}>
               <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover: transition-opacity duration-300">
                 <rect x="7" y="9" width="22" height="21" fill="#EEEEEE" />
                 <path d="M22.3275 27C21.4505 27 20.7025 26.69 20.0835 26.07C19.4645 25.45 19.1545 24.7025 19.1535 23.8275C19.1525 22.9525 19.4625 22.204 20.0835 21.582C20.7045 20.96 21.4525 20.6505 22.3275 20.6535C23.2025 20.6565 23.9505 20.9665 24.5715 21.5835C25.1925 22.2005 25.502 22.9485 25.5 23.8275C25.498 24.7065 25.188 25.4545 24.57 26.0715C23.952 26.6885 23.2045 26.998 22.3275 27ZM8.4225 31.5C7.7325 31.5 7.1565 31.269 6.6945 30.807C6.2325 30.345 6.001 29.7685 6 29.0775V9.9225C6 9.2325 6.2315 8.6565 6.6945 8.1945C7.1575 7.7325 7.734 7.501 8.424 7.5H11.0775V4.155H12.693V7.5H23.424V4.155H24.924V7.5H27.5775C28.2675 7.5 28.844 7.7315 29.307 8.1945C29.77 8.6575 30.001 9.234 30 9.924V29.0775C30 29.7675 29.769 30.344 29.307 30.807C28.845 31.27 28.268 31.501 27.576 31.5H8.4225ZM8.4225 30H27.5775C27.8075 30 28.019 29.904 28.212 29.712C28.405 29.52 28.501 29.308 28.5 29.076V15.924H7.5V29.0775C7.5 29.3075 7.596 29.519 7.788 29.712C7.98 29.905 8.1915 30.001 8.4225 30ZM7.5 14.4225H28.5V9.9225C28.5 9.6925 28.404 9.481 28.212 9.288C28.02 9.095 27.808 8.999 27.576 9H8.424C8.193 9 7.981 9.096 7.788 9.288C7.595 9.48 7.499 9.692 7.5 9.924V14.4225Z" fill="black" />
@@ -35,14 +35,14 @@ const Sidebar = () => {
               <span className="text-xs font-semibold    transition-opacity duration-300">Events</span>
             </Link>
 
-            {/* <Link to="/dashboard/createpost" className={`group w-[12%] flex items-center flex-col md:items-center ${isActive('/dashboard')  ? 'border-b-4' : ''} hover:border-b-4 border-black p-2 cursor-pointer transition-all duration-300 w-full`}>
+            {/* <Link to="/dashboard/createpost" className={`group w-[12%] flex items-center flex-col md:items-center ${isActive('/dashboard')  ? 'border-b-4' : ''} hover:border-b-4 border-[#695ea8] p-2 cursor-pointer transition-all duration-300 w-full`}>
         <FontAwesomeIcon icon={faPlusCircle} className="text-3xl md:text-gray-900 text-gray-500" />
         <span className="text-xs font-semibold    transition-opacity duration-300">Post</span>
       </Link> */}
 
 
 
-            <Link to="/dashboard/services" onClick={() => setTab(2)} className={`group w-[12%] flex items-center flex-col md:items-center ${isActive('/dashboard/services') ? 'border-b-4' : ''} hover:border-b-4 border-black p-2 cursor-pointer transition-all duration-300 w-full`}>
+            <Link to="/dashboard/services" onClick={() => setTab(2)} className={`group w-[12%] flex items-center flex-col md:items-center ${isActive('/dashboard/services') ? 'border-b-4' : ''} hover:border-b-4 border-[#695ea8] p-2 cursor-pointer transition-all duration-300 w-full`}>
               <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover: transition-opacity duration-300">
                 <path d="M9.42377 23.9045C6.98059 21.2417 7.15864 17.1025 9.82146 14.6593V14.6593C12.8647 11.8671 17.5952 12.0706 20.3874 15.1138L21.7747 16.6257C24.7617 19.8813 24.5441 24.942 21.2885 27.929L16.8515 32L9.42377 23.9045Z" fill="#E8E8E8" />
                 <rect x="2" y="14.5455" width="14.8362" height="24.2709" rx="7.41808" transform="rotate(-45.3 2 14.5455)" fill="#E8E8E8" />
@@ -53,7 +53,7 @@ const Sidebar = () => {
 
               <span className="text-xs font-semibold    transition-opacity duration-300">Services</span>
             </Link>
-            <Link to="/dashboard/chat" onClick={() => setTab(3)} className={`group w-[12%] flex items-center flex-col md:items-center ${isActive('/dashboard/chat') ? 'border-b-4' : ''} hover:border-b-4 border-black p-2 cursor-pointer transition-all duration-300 w-full`}>
+            <Link to="/dashboard/chat" onClick={() => setTab(3)} className={`group w-[12%] flex items-center flex-col md:items-center ${isActive('/dashboard/chat') ? 'border-b-4' : ''} hover:border-b-4 border-[#695ea8] p-2 cursor-pointer transition-all duration-300 w-full`}>
               <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover: transition-opacity duration-300">
                 <path d="M18.0001 31.875C21.0142 31.8744 23.9461 30.8923 26.3524 29.0772C28.7587 27.2622 30.5085 24.713 31.3373 21.8151C32.166 18.9172 32.0286 15.8282 30.9458 13.0153C29.863 10.2025 27.8936 7.81872 25.3357 6.22456C22.7777 4.63039 19.7701 3.91254 16.7679 4.17955C13.7657 4.44657 10.932 5.68394 8.69554 7.70452C6.45905 9.7251 4.94133 12.419 4.37193 15.3788C3.80252 18.3386 4.2124 21.4033 5.53957 24.1095C5.70157 24.4395 5.75557 24.8115 5.67307 25.1685L4.44907 30.4725C4.41456 30.6213 4.41852 30.7765 4.46057 30.9234C4.50262 31.0703 4.58138 31.2041 4.68942 31.3121C4.79747 31.4202 4.93124 31.4989 5.07814 31.541C5.22504 31.583 5.38022 31.587 5.52907 31.5525L10.8316 30.327C11.1896 30.2486 11.5637 30.2963 11.8906 30.462C13.7917 31.3956 15.8821 31.8791 18.0001 31.875ZM11.9551 14.829H24.0451ZM11.9551 21.171H20.5771Z" fill="#E8E8E8" fill-opacity="0.9" />
                 <path d="M11.9551 14.829H24.0451M11.9551 21.171H20.5771M18.0001 31.875C21.0142 31.8744 23.9461 30.8923 26.3524 29.0772C28.7587 27.2622 30.5085 24.713 31.3373 21.8151C32.166 18.9172 32.0286 15.8282 30.9458 13.0153C29.863 10.2025 27.8936 7.81872 25.3357 6.22456C22.7777 4.63039 19.7701 3.91254 16.7679 4.17955C13.7657 4.44657 10.932 5.68394 8.69554 7.70452C6.45905 9.7251 4.94133 12.419 4.37193 15.3788C3.80252 18.3386 4.2124 21.4033 5.53957 24.1095C5.70157 24.4395 5.75557 24.8115 5.67307 25.1685L4.44907 30.4725C4.41456 30.6213 4.41852 30.7765 4.46057 30.9234C4.50262 31.0703 4.58138 31.2041 4.68942 31.3121C4.79747 31.4202 4.93124 31.4989 5.07814 31.541C5.22504 31.583 5.38022 31.587 5.52907 31.5525L10.8316 30.327C11.1896 30.2486 11.5637 30.2963 11.8906 30.462C13.7917 31.3956 15.8821 31.8791 18.0001 31.875Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" />
@@ -62,7 +62,7 @@ const Sidebar = () => {
               <span className="text-xs font-semibold    transition-opacity duration-300">Chat</span>
             </Link>
 
-            <Link to="/dashboard/page" onClick={() => setTab(4)} className={`group w-[12%] flex items-center flex-col md:items-center ${isActive('/dashboard/page') ? 'border-b-4' : ''} hover:border-b-4 border-black p-2 cursor-pointer transition-all duration-300 w-full`}>
+            <Link to="/dashboard/page" onClick={() => setTab(4)} className={`group w-[12%] flex items-center flex-col md:items-center ${isActive('/dashboard/page') ? 'border-b-4' : ''} hover:border-b-4 border-[#695ea8] p-2 cursor-pointer transition-all duration-300 w-full`}>
               <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" className="group-hover: transition-opacity duration-300">
                 <ellipse cx="17.9997" cy="12.1075" rx="4.16667" ry="3.75" fill="#E8E8E8" />
                 <ellipse cx="26.7497" cy="13.7741" rx="2.91667" ry="2.91667" fill="#E8E8E8" />

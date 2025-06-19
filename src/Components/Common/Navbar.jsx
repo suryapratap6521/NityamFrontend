@@ -82,7 +82,7 @@ function Navbar() {
               to="/"
               sx={{ mr: 4, display: { xs: "none", md: "flex" } }}
             >
-              <img src={logo} style={{ width: "20rem", height: "3rem" }} alt="logo" />
+              <img src={logo} style={{ height: "50px" }} alt="logo" />
             </Typography>
 
             <Typography
@@ -92,25 +92,25 @@ function Navbar() {
               to="/"
               sx={{ mr: 2, display: { xs: "flex", md: "none" }, flexGrow: 1 }}
             >
-              <img src={logo} style={{ width: "11rem", height: "2rem" }} alt="logo" />
+              <img src={logo} style={{ height: "3rem" }} alt="logo" />
             </Typography>
 
-            <Box   sx={{
-    display: "flex",
-    justifyContent: "flex-end", // This moves children to the right
-    alignItems: "center",
-    flexGrow: 1,
-  }}>
+            <Box sx={{
+              display: "flex",
+              justifyContent: "flex-end", // This moves children to the right
+              alignItems: "center",
+              flexGrow: 1,
+            }}>
               {token && location.pathname === "/dashboard/chat" && <SideDrawer />}
 
               {token && (
                 <IconButton
                   onClick={handleOpenModal}
                   sx={{
-                    backgroundColor: "green",
+                    backgroundColor: "#695ea8",
                     color: "white",
-                   
-                    "&:hover": { backgroundColor: "darkgreen" },
+
+                    "&:hover": { backgroundColor: "#403678" },
                     borderRadius: "50%",
                     width: 40,
                     height: 40,
@@ -169,7 +169,7 @@ function Navbar() {
                       src={user?.image || ""}
                       sx={{ width: "34px", height: "34px", marginRight: "10px" }}
                     />
-                    
+
                   </IconButton>
                 </Tooltip>
                 <Menu

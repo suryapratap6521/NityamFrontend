@@ -98,7 +98,7 @@ label input{
 } */
 
 .bg-gradient{
-  background: linear-gradient(0deg, rgba(142, 45, 226, 1) 0%, rgba(74, 0, 224, 1) 88%);
+  background: linear-gradient(0deg, #27aa90 0%, #4A00E0 88%);
 }
 input::placeholder {
   color: rgba(0, 0, 0, 0.6);

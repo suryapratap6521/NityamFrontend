@@ -77,7 +77,7 @@ const SideDrawer = () => {
       <Tooltip title="Search Users to chat" arrow placement="bottom-end">
         <TextField
           sx={{
-            backgroundColor: "#D5F5E3",
+            backgroundColor: "#695ea820",
             padding: "5px",
             borderRadius: "20px",
             width: { xs: "100%", md: "300px" },
