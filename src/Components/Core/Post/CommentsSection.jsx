@@ -1,167 +1,167 @@
-import React, { useState } from 'react';
-import { Button, IconButton } from "@mui/material";
+import React, { useState } from "react";
+import { Button } from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
 import like from "../../../assests/like.png";
 import unlike from "../../../assests/unlike.png";
 import { calculateTime } from "../../../utils/miliToHours";
-import SendIcon from '@mui/icons-material/Send';
 
-const CommentsSection = ({ post, handleComment, user, setCommentText, commentText, setReplyText, replyText, handleReply, handleCommentLike, handleReplyLike }) => {
-  const [showAllComments, setShowAllComments] = useState(false);
-  const [replyingToCommentId, setReplyingToCommentId] = useState(null);
+const CommentsSection = ({
+  post,
+  handleComment,
+  handleReply,
+  handleCommentLike,
+  handleReplyLike,
+  user,
+  commentText,
+  setCommentText,
+  replyText,
+  setReplyText,
+}) => {
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [showAll, setShowAll] = useState(false);
 
-  const handleShowAllComments = () => {
-    setShowAllComments(true);
-  };
+  const comments = post.comments || [];
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    handleComment(post._id, commentText);
+const onSubmitComment = (e) => {
+  e.preventDefault();
+  if (commentText.trim()) {
+    handleComment(commentText);  // ✅ send only text
     setCommentText("");
-  };
+  }
+};
 
-  const handleReplySubmit = (e, commentId) => {
+
+  const onSubmitReply = (e, commentId) => {
     e.preventDefault();
-    handleReply(post._id, commentId, replyText);
-    setReplyText("");
-    setReplyingToCommentId(null);
+    if (replyText.trim()) {
+      handleReply(post._id, commentId, replyText);
+      setReplyText("");
+      setReplyingTo(null);
+    }
   };
 
   return (
-    <div className="mx-auto bg-white rounded-xl overflow-hidden mb-4 p-0 md:p-3">
-      {post.comments.length > 1 && !showAllComments && (
-        <span
-          onClick={handleShowAllComments}
-          className="underline mb-4 cursor-pointer text-black block"
-        >
-          See {post.comments.length - 1} previous comments
-        </span>
+    <div className="p-2">
+      {comments.length > 1 && !showAll && (
+        <button className="text-blue-600" onClick={() => setShowAll(true)}>
+          See {comments.length - 1} more comments
+        </button>
       )}
-      <div>
-        {(showAllComments ? post.comments : post.comments.slice(-1)).map((comment) => (
-          <div key={comment._id} className="mb-4">
-            <div className="flex items-center mb-2">
-              <img
-                src={comment.commentedBy.image}
-                alt={`${comment.commentedBy.firstName} ${comment.commentedBy.lastName}`}
-                className="h-8 w-8 rounded-full"
-              />
-              <div className="ml-3">
-                <div className="text-sm font-medium text-gray-900">{`${comment.commentedBy.firstName} ${comment.commentedBy.lastName}`}</div>
-                <div className="text-xs text-gray-500">
-                  {comment.commentedBy.communityDetails.communityName} •{" "}
-                  {comment.commentedBy.city} •{" "}
-                  {`Posted ${calculateTime(comment.createdAt)}`} • 🌍
-                </div>
+      {(showAll ? comments : comments.slice(-1)).map((comment) => (
+        <div key={comment._id} className="mb-4">
+          <div className="flex gap-2 items-start">
+            <img
+              src={comment.commentedBy?.image}
+              className="h-8 w-8 rounded-full"
+              alt="avatar"
+            />
+            <div>
+              <p className="font-medium">
+                {comment.commentedBy?.firstName} {comment.commentedBy?.lastName}
+              </p>
+              <p className="text-sm text-gray-700">{comment.text}</p>
+              <div className="text-xs text-gray-500">
+                {calculateTime(comment.commentedAt)}
               </div>
-            </div>
-            <p className="ml-11 text-sm">{comment.text}</p>
-            <div className="flex items-center space-x-4 ml-11">
-              <Button size="small" onClick={() =>
-                comment.likes.includes(user._id)
-                  ? handleCommentLike(post._id, comment._id)
-                  : handleCommentLike(post._id, comment._id)
-              }>
-                {comment.likes.includes(user._id) ? (<span style={{ color: "red" }}><b>Like</b></span>) : (<span><b>Like</b></span>)}
-              </Button>
-              <Button size="small" onClick={() => setReplyingToCommentId(comment._id)}>
-                Reply
-              </Button>
-              <div className="flex">
+              <div className="flex gap-4 mt-1">
+                <Button
+                  size="small"
+                  onClick={() => handleCommentLike(comment._id)}
+                >
+                  {comment.likes?.includes(user._id) ? (
+                    <span style={{ color: "red" }}>Like</span>
+                  ) : (
+                    <span>Like</span>
+                  )}
+                </Button>
+                <Button
+                  size="small"
+                  onClick={() => setReplyingTo(comment._id)}
+                >
+                  Reply
+                </Button>
                 <img
-                  src={comment.likes.includes(user._id) ? like : unlike}
-                  alt="like/unlike"
-                  className="h-5 w-5"
+                  src={comment.likes?.includes(user._id) ? like : unlike}
+                  alt="like"
+                  className="w-5 h-5"
                 />
-                <span>{comment.likes.length === 0 ? "" : comment.likes.length}</span>
+                <span>{comment.likes?.length || 0}</span>
               </div>
-            </div>
-            {comment.replies && comment.replies.map((reply) => (
-              <div key={reply._id} className="ml-11 mt-4">
-                <div className="flex items-center mb-2">
-                  <img
-                    src={reply.repliedBy.image}
-                    alt={`${reply.repliedBy.firstName} ${reply.repliedBy.lastName}`}
-                    className="h-8 w-8 rounded-full"
-                  />
-                  <div className="ml-3">
-                    <div className="text-sm font-medium text-gray-900">{`${reply.repliedBy.firstName} ${reply.repliedBy.lastName}`}</div>
-                    <div className="text-xs text-gray-500">
-                      {reply.repliedBy.communityDetails.communityName} •{" "}
-                      {reply.repliedBy.city} •{" "}
-                      {`Posted ${calculateTime(reply.createdAt)}`} • 🌍
+
+              {comment.replies?.map((reply) => (
+                <div key={reply._id} className="ml-6 mt-2">
+                  <div className="flex gap-2 items-start">
+                    <img
+                      src={reply.repliedBy?.image}
+                      className="h-6 w-6 rounded-full"
+                      alt="reply avatar"
+                    />
+                    <div>
+                      <p className="font-medium text-sm">
+                        {reply.repliedBy?.firstName} {reply.repliedBy?.lastName}
+                      </p>
+                      <p className="text-sm">{reply.text}</p>
+                      <div className="flex gap-2 text-xs text-gray-500">
+                        {calculateTime(reply.repliedAt)}
+                        <Button
+                          size="small"
+                          onClick={() =>
+                            handleReplyLike(post._id, comment._id, reply._id)
+                          }
+                        >
+                          {reply.likes?.includes(user._id) ? (
+                            <span style={{ color: "red" }}>Like</span>
+                          ) : (
+                            <span>Like</span>
+                          )}
+                        </Button>
+                        <img
+                          src={reply.likes?.includes(user._id) ? like : unlike}
+                          alt="like"
+                          className="w-5 h-5"
+                        />
+                        <span>{reply.likes?.length || 0}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <p className="ml-11 text-sm">{reply.text}</p>
-                <div className="flex items-center space-x-4 ml-11">
-                  <Button size="small"
-                    onClick={() =>
-                      reply.likes.includes(user._id)
-                        ? handleReplyLike(post._id, comment._id, reply._id)
-                        : handleReplyLike(post._id, comment._id, reply._id)
-                    }
-                  >
-                    {reply.likes.includes(user._id) ? (<span style={{ color: "red" }}><b>Like</b></span>) : (<span><b>Like</b></span>)}
-                  </Button>
-                  <img
-                    src={reply.likes.includes(user._id) ? like : unlike}
-                    alt="like/unlike"
-                    className="h-5 w-5"
-                  />
-                  <span>{reply.likes.length === 0 ? "" : reply.likes.length}</span>
-                </div>
-              </div>
-            ))}
-            {replyingToCommentId === comment._id && (
-              <div className="mt-4 flex items-center ml-11 w-74">
-                <img
-                  src={user?.image}
-                  className="w-8 h-8 rounded-full mr-3"
-                  alt="User Avatar"
-                />
-                <form className="flex w-full items-center" onSubmit={(e) => handleReplySubmit(e, comment._id)}>
+              ))}
+
+              {replyingTo === comment._id && (
+                <form
+                  className="mt-2 flex items-center gap-2"
+                  onSubmit={(e) => onSubmitReply(e, comment._id)}
+                >
                   <input
                     type="text"
+                    className="flex-1 p-1 border rounded-lg"
+                    placeholder="Write a reply..."
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
-                    placeholder="Add a reply..."
-                    className="w-full border rounded-2xl p-2 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500 text-gray-700"
                   />
-                  <Button
-                    type="submit"
-                    variant="contained"
-                    color="success"
-                    sx={{ borderRadius: '18px', marginLeft: '8px' }}
-                  >
-                    Reply
-                  </Button>
+                  <button className="bg-green-500 p-1 rounded-full" type="submit">
+                    <SendIcon style={{ color: "white" }} />
+                  </button>
                 </form>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        ))}
-      </div>
-      <div className="mt-4 flex items-center">
-        <img
-          src={user?.image}
-          className="sm:w-8 sm:h-8 hidden sm:block rounded-full mr-3"
-          alt="User Avatar"
-        />
-        <form className="flex w-full items-center" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Add a comment..."
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            className="w-full border rounded-2xl p-2 bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500 text-gray-700"
-          />
-          <button
-            className='bg-gradient rounded-full p-2 ml-2'
-          >
-            <SendIcon sx={{ color: 'white' }} />
-          </button>
-        </form>
-      </div>
+        </div>
+      ))}
+
+     <form className="flex items-center gap-2 mt-4" onSubmit={onSubmitComment}>
+  <img src={user.image} className="h-8 w-8 rounded-full" alt="User" />
+  <input
+    type="text"
+    className="flex-1 p-2 bg-gray-100 rounded-full border"
+    placeholder="Add a comment..."
+    value={commentText}
+    onChange={(e) => setCommentText(e.target.value)}
+  />
+  <button className="bg-blue-500 p-2 rounded-full" type="submit">
+    <SendIcon style={{ color: "white" }} />
+  </button>
+</form>
     </div>
   );
 };

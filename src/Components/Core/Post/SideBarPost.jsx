@@ -29,8 +29,47 @@ import {
   useTheme,
   Button,
 } from "@mui/material";
+import { updatePost } from "../../../services/operations/postApi";
 
-const SideBarPost = ({ closeModal }) => {
+
+const SideBarPost = ({ closeModal, editData  }) => {
+  const isEditMode = !!editData;
+
+useEffect(() => {
+  if (!editData) return;
+
+  const { postType, title, pollOptions, location, startDate, endDate, hostedBy, description, imgPath } = editData;
+
+  if (postType === "post") {
+    setCurrentPost({
+      title: title || "",
+      postType,
+      mediaFiles: [],
+      mediaPreviews: imgPath || [],
+    });
+  } else if (postType === "poll") {
+    setCurrentPoll({
+      title: title || "",
+      postType,
+      options: pollOptions?.length ? pollOptions : ["", ""],
+    });
+  } else if (postType === "event") {
+    setCurrentEvent({
+      title: title || "",
+      postType,
+      location: location || "",
+      startDate: startDate || "",
+      endDate: endDate || "",
+      hostedBy: hostedBy || "",
+      description: description || "",
+      media: null,
+      mediaPreview: imgPath?.[0] || null,
+    });
+  }
+
+  setActiveTab(postType);
+}, [editData]);
+
   const [activeTab, setActiveTab] = useState("post");
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const textareaRef = useRef(null);
@@ -189,64 +228,47 @@ const SideBarPost = ({ closeModal }) => {
   };
 
   // Submit handler
-  const handleSubmit = async () => {
-    try {
-      const formData = new FormData();
+const handleSubmit = async () => {
+  try {
+    const formData = new FormData();
+    const postId = editData?._id;
 
-      if (activeTab === "post") {
-        if (!currentPost.title && currentPost.mediaFiles.length === 0) {
-          alert("Either text or media is required for a post.");
-          return;
-        }
-        formData.append("title", currentPost.title);
-        formData.append("postType", "post");
-        currentPost.mediaFiles.forEach((file) => formData.append("media", file));
-      } else if (activeTab === "poll") {
-        if (!currentPoll.title.trim()) {
-          alert("Poll question is required.");
-          return;
-        }
-
-        const validOptions = currentPoll.options.filter((option) => option.trim());
-        if (validOptions.length < 2) {
-          alert("At least two poll options are required.");
-          return;
-        }
-        formData.append("title", currentPoll.title);
-        formData.append("postType", "poll");
-        validOptions.forEach((option) => formData.append("pollOptions", option));
-      } else if (activeTab === "event") {
-        if (
-          !currentEvent.title ||
-          !currentEvent.startDate ||
-          !currentEvent.endDate ||
-          !currentEvent.hostedBy ||
-          !currentEvent.location
-        ) {
-          alert("Please fill out all required event fields.");
-          return;
-        }
-        formData.append("title", currentEvent.title);
-        formData.append("postType", "event");
-        formData.append("location", currentEvent.location);
-        formData.append("startDate", currentEvent.startDate);
-        formData.append("endDate", currentEvent.endDate);
-        formData.append("hostedBy", currentEvent.hostedBy);
-        formData.append("description", currentEvent.description);
-        if (currentEvent.media) {
-          formData.append("media", currentEvent.media);
-        }
-      }
-
-      await createPost(formData, token);
-      if (typeof closeModal === "function") {
-        closeModal();
-      }
-      navigate("/dashboard");
-    } catch (error) {
-      console.error("Error creating post:", error);
+    if (activeTab === "post") {
+      formData.append("title", currentPost.title);
+      formData.append("postType", "post");
+      currentPost.mediaFiles.forEach((file) => formData.append("media", file));
+    } else if (activeTab === "poll") {
+      formData.append("title", currentPoll.title);
+      formData.append("postType", "poll");
+      currentPoll.options
+        .filter((option) => option.trim())
+        .forEach((option) => formData.append("pollOptions", option));
+    } else if (activeTab === "event") {
+      formData.append("title", currentEvent.title);
+      formData.append("postType", "event");
+      formData.append("location", currentEvent.location);
+      formData.append("startDate", currentEvent.startDate);
+      formData.append("endDate", currentEvent.endDate);
+      formData.append("hostedBy", currentEvent.hostedBy);
+      formData.append("description", currentEvent.description);
+      if (currentEvent.media) formData.append("media", currentEvent.media);
     }
-  };
+
+    if (isEditMode) {
+        formData.append("postId", postId);
+  await updatePost(postId, formData, token);
+    } else {
+      await createPost(formData, token);
+    }
+
+   window.location.reload();
+
+    navigate("/dashboard");
+  } catch (error) {
+    console.error("Error submitting post:", error);
+  }
+};
+
 
   const handleClose = () => {
     if (typeof closeModal === "function") {
@@ -519,8 +541,9 @@ const SideBarPost = ({ closeModal }) => {
             </div>
           </div>
           <Button variant="contained" color="primary" onClick={handleSubmit}>
-            Post
-          </Button>
+  {isEditMode ? "Update" : "Post"}
+</Button>
+
         </div>
       </DialogActions>
     </Dialog>

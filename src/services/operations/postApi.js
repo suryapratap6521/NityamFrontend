@@ -18,17 +18,20 @@ const {
   DELETE_POST,
   CREATE_ADV,
   VOTE_ON_POLL,
+  UPDATE_POST,
   GET_POLL_VOTERS,
   COMMENT,
   COMMENT_DELETE,
-  COMMENT_LIKE,
+  LIKE_COMMENT,
   REPLY,
-  REPLY_LIKE,
+  LIKE_REPLY,
   SET_LIKE_UNLIKE,
 } = postEndpoints;
 
+
 // ✅ Get Community Posts with Pagination
 export const getAllPosts = async (token, dispatch, page = 1, limit = 10, append = false) => {
+  
   try {
     console.log("📡 Requesting posts from:", `${GET_ALL_POST}?page=${page}&limit=${limit}`);
     dispatch(setLoading(true));
@@ -102,11 +105,34 @@ export const likePost = async (postId, token) => {
     const res = await apiConnector('POST', SET_LIKE_UNLIKE, { postId }, {
       Authorization: `Bearer ${token}`,
     });
-    return res.data;
+    console.log("Post like/unlike response:", res.data);
+    
+    return res.data?.updatedPost;
+    
   } catch (err) {
     console.error(err);
   }
 };
+
+export const updatePost = async (postId, formData, token) => {
+  try {
+    const response = await apiConnector(
+      "POST",
+      `${postEndpoints.UPDATE_POST}`,
+      formData,
+      {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error updating post:", error);
+    throw error;
+  }
+};
+
 
 // ✅ Comment on Post
 export const comment = async (data, token) => {
@@ -114,7 +140,9 @@ export const comment = async (data, token) => {
     const res = await apiConnector('POST', COMMENT, data, {
       Authorization: `Bearer ${token}`,
     });
+    console.log("Comment response:", res.data);
     return res.data;
+    
   } catch (err) {
     console.error(err);
   }
@@ -133,40 +161,58 @@ export const commentDelete = async (commentId, token) => {
 };
 
 // ✅ Like Comment
-export const commentLike = async (commentId, token) => {
+export const commentLike = async (postId, commentId, token) => {
   try {
-    const res = await apiConnector('POST', COMMENT_LIKE, { commentId }, {
+    const res = await apiConnector("POST", LIKE_COMMENT, {
+      postId,
+      commentId,
+    }, {
       Authorization: `Bearer ${token}`,
     });
+console.log(res.data, "commentLike response");
     return res.data;
+    
   } catch (err) {
-    console.error(err);
+    console.error("❌ commentLike error:", err);
   }
 };
+
 
 // ✅ Reply to Comment
+
 export const reply = async (data, token) => {
   try {
-    const res = await apiConnector('POST', REPLY, data, {
+    const res = await apiConnector("POST", REPLY, data, {
       Authorization: `Bearer ${token}`,
     });
+    console.log("Reply response:", res.data);
     return res.data;
   } catch (err) {
-    console.error(err);
+    console.error("❌ reply error:", err);
+    return null;
   }
 };
 
+
 // ✅ Like a Reply
-export const replyLike = async (replyId, token) => {
+export const replyLike = async (postId, commentId, replyId, token) => {
+  console.log(LIKE_REPLY, "REPLY_LIKE endpoint");
   try {
-    const res = await apiConnector('POST', REPLY_LIKE, { replyId }, {
+    const res = await apiConnector("POST", LIKE_REPLY, {
+      postId,
+      commentId,
+      replyId,
+    }, {
       Authorization: `Bearer ${token}`,
     });
+    console.log("Reply like response:", res.data);
     return res.data;
   } catch (err) {
-    console.error(err);
+    console.error("❌ replyLike error:", err);
+    return null;
   }
 };
+
 
 // ✅ Vote on Poll
 export const voteOnPoll = async (postId, optionIndex, token, dispatch) => {

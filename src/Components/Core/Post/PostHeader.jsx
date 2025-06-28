@@ -17,7 +17,7 @@ const PostHeader = ({ post, onMenuOpen }) => {
             {user?.firstName} {user?.lastName}
           </h4>
           <p className="text-xs text-gray-500">
-            {user?.city} • {new Date(post.createdAt).toLocaleString()}
+            {user.community} • {user?.city} • {new Date(post.createdAt).toLocaleString()}
           </p>
         </div>
       </div>

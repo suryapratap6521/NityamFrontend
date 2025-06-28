@@ -85,11 +85,11 @@ useEffect(() => {
   if (token && user?._id) {
     dispatch(fetchNotifications(token));
 
-    if (!socket.connected) {
-      socket.connect(); // ✅ Only connect after auth
-    }
+    // Attach userId before connecting
+    socket.auth = { userId: user._id }; // ✅ Send userId here
+    socket.connect(); // ✅ Only connect after attaching auth
 
-    socket.emit("setup", user); // ✅ Send userData to backend
+    socket.emit("setup", user); // Optional: if your backend uses this
 
     socket.on("newNotification", (notification) => {
       dispatch(addNotification(notification));

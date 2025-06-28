@@ -120,6 +120,8 @@ function Navbar() {
                 </IconButton>
               )}
               {openModal && <SideBarPost closeModal={handleCloseModal} />}
+              
+
 
               {token && (
                 <IconButton style={{ marginRight: "20px" }} onClick={handleClick}>

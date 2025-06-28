@@ -1,3 +1,4 @@
+// Posts.jsx
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -10,11 +11,17 @@ import {
   commentLike,
   replyLike,
 } from "../../../services/operations/postApi";
-import { setPosts } from "../../../slices/postSlice";
+import {
+  setPosts,
+  appendPosts,
+  prependPost,
+  updateComments,
+} from "../../../slices/postSlice";
 import SinglePost from "./SinglePost";
 import AdPosts from "./AdPost";
 import PostSkeleton from "../../Common/PostSkeleton";
 import useSocket from "../../../config/useSocket";
+import SideBarPost from "./SideBarPost";
 
 const Posts = () => {
   const dispatch = useDispatch();
@@ -26,10 +33,9 @@ const Posts = () => {
   const [page, setPage] = useState(1);
   const [hasMorePosts, setHasMorePosts] = useState(true);
   const observer = useRef();
-
   const socket = useSocket();
+  const [editPostData, setEditPostData] = useState(null);
 
-  // Infinite Scroll Handler
   const lastPostRef = useCallback(
     (node) => {
       if (loading || !hasMorePosts) return;
@@ -44,7 +50,6 @@ const Posts = () => {
     [loading, hasMorePosts]
   );
 
-  // Fetch posts on page/token change
   useEffect(() => {
     const fetchPosts = async () => {
       setLoading(true);
@@ -62,33 +67,64 @@ const Posts = () => {
     fetchPosts();
   }, [token, page, dispatch]);
 
-  // Real-time socket listener for new posts
   useEffect(() => {
     if (!socket) return;
 
-    socket.on("newPostCreated", (newPost) => {
+    const handleNewPost = (newPost) => {
       const formatted = { ...newPost, type: 0 };
-      dispatch(setPosts((prev) => [formatted, ...prev]));
-    });
+      dispatch(prependPost(formatted));
+    };
+
+    socket.on("newPost", handleNewPost);
+    return () => socket.off("newPost", handleNewPost);
+  }, [socket, dispatch]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleLikeUpdate = ({ updatedPost }) => {
+      const newPosts = posts.map((p) =>
+        p._id === updatedPost._id ? { ...updatedPost, type: 0 } : p
+      );
+      dispatch(setPosts(newPosts));
+    };
+
+    socket.on("post liked", handleLikeUpdate);
+    return () => socket.off("post liked", handleLikeUpdate);
+  }, [socket, posts, dispatch]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleCommentUpdate = ({ postId, comments }) => {
+      dispatch(updateComments({ postId, comments }));
+    };
+
+    socket.on("comment added", handleCommentUpdate);
+    socket.on("comment updated", handleCommentUpdate);
 
     return () => {
-      socket.off("newPostCreated");
+      socket.off("comment added", handleCommentUpdate);
+      socket.off("comment updated", handleCommentUpdate);
     };
   }, [socket, dispatch]);
 
-  // Helper functions to update/delete from list
   const updatePostInList = (updatedPost) => {
-    dispatch(setPosts((prev) => prev.map((p) => (p._id === updatedPost._id ? updatedPost : p))));
+    const updatedPosts = posts.map((p) =>
+      p._id === updatedPost._id ? updatedPost : p
+    );
+    dispatch(setPosts(updatedPosts));
   };
 
   const removePostFromList = (postId) => {
-    dispatch(setPosts((prev) => prev.filter((p) => p._id !== postId)));
+    const updatedPosts = posts.filter((p) => p._id !== postId);
+    dispatch(setPosts(updatedPosts));
   };
 
-  // Error or empty fallback
   if (!Array.isArray(posts)) {
     return <div className="text-center text-red-500">Unable to load posts.</div>;
   }
+
   if (posts.length === 0 && !loading) {
     return <div className="text-center text-gray-500 mt-4">No posts available.</div>;
   }
@@ -103,16 +139,37 @@ const Posts = () => {
               <SinglePost
                 post={post}
                 user={user}
-                onLike={likePost}
-                onComment={comment}
-                onCommentDelete={commentDelete}
-                onReply={reply}
-                onCommentLike={commentLike}
-                onReplyLike={replyLike}
-                onDelete={deletePost}
+                onLike={(postId) => likePost(postId, token)}
+                onComment={(postId, text, cb) =>
+                  comment({ postId, text }, token).then((res) => {
+                    if (res?.success) cb(res.comments);
+                  })
+                }
+                onCommentDelete={(postId, commentId, replyId, cb) =>
+                  commentDelete(commentId, token).then(cb)
+                }
+                onCommentLike={(postId, commentId, cb) =>
+                  commentLike(postId, commentId, token).then((res) => {
+                    if (res?.success) cb(res.comments);
+                  })
+                }
+                onReplyLike={(postId, commentId, replyId, cb) =>
+                  replyLike(postId, commentId, replyId, token).then((res) => {
+                    if (res?.success) cb(res.comments);
+                  })
+                }
+                onReply={(postId, commentId, text, cb) =>
+                  reply({ postId, commentId, text }, token).then((res) => {
+                    if (res?.success) cb(res.comments);
+                  })
+                }
+                onDelete={(postId, cb) =>
+                  deletePost(postId, token, dispatch).then(cb)
+                }
                 updatePostInList={updatePostInList}
                 removePostFromList={removePostFromList}
                 token={token}
+                setEditPostData={setEditPostData}
               />
             ) : (
               <AdPosts ad={post} />
@@ -121,6 +178,12 @@ const Posts = () => {
         );
       })}
       {loading && <PostSkeleton />}
+      {editPostData && (
+        <SideBarPost
+          closeModal={() => setEditPostData(null)}
+          editData={editPostData}
+        />
+      )}
     </div>
   );
 };
