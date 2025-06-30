@@ -102,7 +102,7 @@ const AdPreview = () => {
       <p className="text-sm font-normal text-gray-400 w-full my-2 break-words">
         {adData.description || "Description..."}
       </p>
-      <button className="w-fit mt-2 p-2 text-[#4A00E0] text-sm px-8 rounded-md bg-[#4A00E020] truncate">
+      <button className="w-fit mt-2 p-2 text-[#695ea8] text-sm px-8 rounded-md bg-[#695ea820] truncate">
         {adData.type || "Button Label"}
       </button>
     </div>

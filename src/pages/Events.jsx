@@ -233,7 +233,7 @@ const Events = () => {
       <div className="w-full md:w-9/12 md:py-4 md:px-16 md:pl-24 p-4 mt-2 lg:mb-0 mb-14 max-h-[86vh] overflow-y-auto no-scrollbar">
         <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-end">
           <div>
-            <h1 className="text-3xl font-semibold text-[#8E2DE2] mb-1">
+            <h1 className="text-3xl font-semibold text-[#695ea8] mb-1">
               Events
             </h1>
             <p className="text-gray-500 text-sm">
@@ -247,8 +247,8 @@ const Events = () => {
             onClick={() => handleEventClick({})}
             className="flex items-center bg-purple-100 hover:bg-purple-200 px-4 py-2 rounded-lg transition-colors"
           >
-            <AddIcon style={{ fontSize: "24px", fill: "#8E2DE2" }} />
-            <span className="ml-2 text-[#8E2DE2] font-medium">Add New Event</span>
+            <AddIcon style={{ fontSize: "24px", fill: "#695ea8" }} />
+            <span className="ml-2 text-[#695ea8] font-medium">Add New Event</span>
           </Link>
           */}
         </div>

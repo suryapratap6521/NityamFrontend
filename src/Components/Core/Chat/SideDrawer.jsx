@@ -73,7 +73,8 @@ const SideDrawer = () => {
       <Tooltip title="Search users to chat" arrow placement="bottom-end">
         <TextField
           sx={{
-            backgroundColor: "#fff",
+            backgroundColor: "#695ea820",
+            padding: "5px",
             borderRadius: "20px",
             boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
             width: { xs: "100%", md: location.pathname === "/dashboard/chat" ? "100%" : "280px" },

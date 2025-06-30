@@ -57,8 +57,7 @@ const HomeService = () => {
       <Box sx={styles.headingBox}>
         <Typography sx={styles.largeText}>
           Our{"\t"}
-          <span style={styles.greenText}>Ser</span>
-          <span style={styles.gradientText}>vice</span>
+          <span style={styles.gradientText}>Service</span>
         </Typography>
       </Box>
       <Box sx={styles.outerBox}>
@@ -69,12 +68,16 @@ const HomeService = () => {
               <Typography sx={styles.largeText2}>Provided By Us:</Typography>
             </Box>
             <Box sx={styles.changingTextBox}>
-              <Typography sx={styles.changingText}>
+              {/* <Typography sx={styles.changingText}>
                 {slidesContent[currentSlide].text.split(" ").slice(0, -1).join(" ")}
                 <span style={styles.gradientText}>
                   {" "}
                   {slidesContent[currentSlide].text.split(" ").slice(-1)}
                 </span>
+              </Typography> */}
+              <Typography sx={[styles.largeText3, { fontSize: '36px' }]}>
+                Connect With{"\t"}
+                <span style={{ ...styles.gradientText, fontSize: '36.8px' }}>Friends</span>
               </Typography>
             </Box>
             <Box sx={styles.btnBox}>{/* CustomButton component */}</Box>

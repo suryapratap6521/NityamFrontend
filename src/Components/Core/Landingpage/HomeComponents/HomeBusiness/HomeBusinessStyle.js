@@ -53,14 +53,15 @@ const HomeBusinessStyle = {
     },
     fontFamily: fontFamilies.secondary,
     fontWeight: "500",
-    // color: "black",
+    color: "#695ea8",
   },
   gradientText: {
-    background: "linear-gradient(90deg, #F9ED25 0%, #1E8D44 100%)",
+    background: "linear-gradient(90deg, #2faa90 0%, #695ea8 100%)",
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
     backgroundClip: "text",
     color: "transparent",
+    display: "inline-block", // ✅ ensures proper clipping/rendering
   },
   paraText: {
     color: "#4E4E4E",
@@ -68,7 +69,7 @@ const HomeBusinessStyle = {
     fontWeight: "400",
   },
   greenText: {
-    color: "green",
+    color: "#695ea8",
   },
   btn: {
     color: "#F4F4F4",

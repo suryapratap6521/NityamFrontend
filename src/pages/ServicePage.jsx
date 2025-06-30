@@ -15,18 +15,18 @@ const ServicePage = () => {
       <div className="w-full md:w-9/12 md:py-4 md:px-16 md:pl-24 p-4 md:mt-0 mt-2 max-h-[86vh] no-scrollbar overflow-scroll">
         <div className="w-full mb-4 flex md:flex-row flex-col justify-between md:items-end">
           <div>
-            <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#8E2DE2]">
+            <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#695ea8]">
               Services
             </h1>
             <p className="text-gray-400 leading-4 text-sm">
               Explore a range of professional services designed to meet your needs. </p></div>
           <Link to="/dashboard/addservice"
 
-            className="flex justify-center items-center hover:bg-gray-200 p-2 px-6 rounded-lg cursor-pointer transition-all duration-300 bg-[#8E2DE220] w-fit mt-1 md:mt-0">
+            className="flex justify-center items-center hover:bg-gray-200 p-2 px-6 rounded-lg cursor-pointer transition-all duration-300 bg-[#695ea820] w-fit mt-1 md:mt-0">
             <div className="flex justify-center items-center">
 
-              <h3 className="md:text-base text-sm font-medium text-center text-[#8E2DE2] ">Add New Service</h3>
-              <AddIcon style={{ fontSize: "24px", fill: "#8E2DE2" }} />
+              <h3 className="md:text-base text-sm font-medium text-center text-[#695ea8] ">Add New Service</h3>
+              <AddIcon style={{ fontSize: "24px", fill: "#695ea8" }} />
 
             </div>
           </Link>

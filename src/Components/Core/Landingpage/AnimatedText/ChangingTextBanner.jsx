@@ -67,33 +67,34 @@ const ChangingTextBanner = () => {
         sx={{
           position: 'absolute',
           animation: isAnimating ? `${scrollUp} 1s ease forwards` : 'none',
-          background: "linear-gradient(90deg, #1E8D44  0%,  #F9ED25 100%)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          backgroundClip: "text",
-          color: "transparent",
+          // background: "linear-gradient(90deg, #1E8D44  0%,  #F9ED25 100%)",
+          // WebkitBackgroundClip: "text",
+          // WebkitTextFillColor: "transparent",
+          // backgroundClip: "text",
+          color: "#ffffff80",
         }}
       >
         {texts[currentTextIndex]}
       </Typography>
       {isAnimating &&
-      <Typography
-        key={nextTextIndex}
-        variant="h6"
-        component="div"
-        sx={{
-          position: 'absolute',
-          animation: isAnimating ? `${scrollDown} 1s ease forwards` : 'none',
-          background: "linear-gradient(90deg, #1E8D44  0%,  #F9ED25 100%)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          backgroundClip: "text",
-          color: "transparent",
-          
-        }}
-      >
-        {texts[nextTextIndex]}
-      </Typography>
+        <Typography
+          key={nextTextIndex}
+          variant="h6"
+          component="div"
+          sx={{
+            position: 'absolute',
+            animation: isAnimating ? `${scrollDown} 1s ease forwards` : 'none',
+            // background: "linear-gradient(90deg, #1E8D44  0%,  #F9ED25 100%)",
+            // WebkitBackgroundClip: "text",
+            // WebkitTextFillColor: "transparent",
+            // backgroundClip: "text",
+            color: "#ffffff80",
+
+
+          }}
+        >
+          {texts[nextTextIndex]}
+        </Typography>
       }
     </Box>
   );

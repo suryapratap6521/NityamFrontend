@@ -57,8 +57,17 @@ const ScrollableChat = ({ messages }) => {
             className={`rounded-xl px-4 py-2 text-sm shadow-sm max-w-[75%] whitespace-pre-wrap break-words
             ${m.sender._id === user._id ? 'bg-gray-200 ml-auto text-right' : 'bg-purple-100 text-left'}`}
             style={{
-              marginLeft: isSameSenderMargin(sortedMessages, m, i, user._id),
-              marginTop: isSameUser(sortedMessages, m, i, user._id) ? 3 : 10,
+              backgroundColor: `${m.sender._id === user._id ? "#E0E0E060" : "#695ea820"
+                }`,
+              marginLeft: isSameSenderMargin(messages, m, i, user._id),
+              marginTop: isSameUser(messages, m, i, user._id) ? 3 : 10,
+              borderRadius: "8px",
+              padding: "10px 15px",
+              maxWidth: "75%",
+              wordWrap: 'break-word',
+              wordBreak: 'break-word',
+              overflowWrap: 'break-word',
+              display: 'inline-block'
             }}
           >
             {m.content}

@@ -32,16 +32,19 @@ const MyChat = ({ fetchAgain }) => {
     <div
       className={`rounded-lg overflow-hidden bg-[#FAFAFA] border border-[#00000020] p-4 lg:w-4/12 w-full lg:max-h-[72vh] lg:h-[72vh] max-h-[82vh] h-[82vh] ${!selectedChat ? 'block' : 'lg:block hidden'}`}
     >
-      <div className="flex justify-between items-center mt-3 mb-5 w-full">
-        <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#8E2DE2]">
+      <div
+        className="flex justify-between items-center mt-3 mb-5 w-full"
+
+      >
+        <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#695ea8]">
           Chats
         </h1>
         <GroupChatModal>
-          <div className="flex justify-center items-center hover:bg-gray-200 p-2 px-6 rounded-lg cursor-pointer transition-all duration-300 bg-[#8E2DE220] w-fit mt-1 md:mt-0">
-            <h3 className="md:text-base text-sm font-medium text-center text-[#8E2DE2] ">
+          <div className="flex justify-center items-center hover:bg-gray-200 p-2 px-6 rounded-lg cursor-pointer transition-all duration-300 bg-[#695ea820] w-fit mt-1 md:mt-0">
+            <h3 className="md:text-base text-sm font-medium text-center text-[#695ea8] ">
               New Group Chat
             </h3>
-            <AddIcon style={{ fontSize: "24px", fill: "#8E2DE2" }} />
+            <AddIcon style={{ fontSize: "24px", fill: "#695ea8" }} />
           </div>
         </GroupChatModal>
       </div>

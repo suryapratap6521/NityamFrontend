@@ -2,7 +2,7 @@ import { fontFamilies, varColors } from "../../variable";
 
 const FooterStyle = {
   footerBox: {
-    backgroundColor: varColors.varDarkGreen,
+    backgroundColor: '#1f1b36',
     padding: "5rem 0 1rem 0",
     position: "relative",
   },
@@ -33,14 +33,14 @@ const FooterStyle = {
   footerLogoBox: {
     width: "100%",
     height: "3rem",
-    
+
   },
   footerLogoImage: {
-    width: "100%",
-    height: "100%",
-    objectFit: "cover",
+
+    height: "66px",
     objectPosition: "center",
     objectRepeat: "no-repeat",
+    margin: "auto"
   },
   footerIconRow: {
     display: "flex",
@@ -51,7 +51,7 @@ const FooterStyle = {
   footerIconBox: {
     height: "35px",
     width: "35px",
-    cursor:"pointer",
+    cursor: "pointer",
   },
   footerIcon: {
     width: "100%",
@@ -63,7 +63,7 @@ const FooterStyle = {
   footerHeading: {
     fontFamily: fontFamilies.primary,
     color: varColors.lightGrayText,
-    fontSize: {xl:"1.8rem",lg:"1.8rem",md:"1.7rem",sm:"1.6rem",xs:"1.5rem"},
+    fontSize: { xl: "1.8rem", lg: "1.8rem", md: "1.7rem", sm: "1.6rem", xs: "1.5rem" },
     // textAlign:"left"
   },
 
@@ -84,7 +84,7 @@ const FooterStyle = {
     color: varColors.lightGrayText,
   },
   footerLinkText: {
-    fontSize: {xl:"1rem",lg:"1rem",md:"1rem",sm:"0.9rem",xs:"0.9rem"},
+    fontSize: { xl: "1rem", lg: "1rem", md: "1rem", sm: "0.9rem", xs: "0.9rem" },
     color: varColors.lightGrayText,
     cursor: "pointer",
     transition: "0.3s ease-in",
@@ -119,7 +119,7 @@ const FooterStyle = {
   },
 
   footerBoldText: {
-    fontSize: {xl:"0.9rem",lg:"0.9rem",md:"0.9rem",sm:"0.8rem",xs:"0.8rem"},
+    fontSize: { xl: "0.9rem", lg: "0.9rem", md: "0.9rem", sm: "0.8rem", xs: "0.8rem" },
     fontFamily: fontFamilies.primary,
     fontWeight: "550",
     color: "#fff",
