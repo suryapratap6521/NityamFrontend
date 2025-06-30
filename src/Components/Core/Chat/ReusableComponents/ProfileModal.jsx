@@ -9,6 +9,7 @@ const ProfileModal = ({ user, children }) => {
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  if(!user) return <h1>Laoding...</h1>;
 
   return (
     <>

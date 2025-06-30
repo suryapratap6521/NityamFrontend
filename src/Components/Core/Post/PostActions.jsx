@@ -1,45 +1,79 @@
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { setSharedPost } from "../../../slices/postSlice";
-import { useNavigate } from "react-router-dom";
-import { FiShare } from "react-icons/fi";
-import { FaHeart, FaRegHeart, FaRegComment } from "react-icons/fa";
-import IconButton from "@mui/material/IconButton";
-import ShareModal from "./ShareModal";
+import React, { useState } from "react";
+import { FaRegHeart, FaHeart, FaRegComment } from "react-icons/fa";
+import { FiSend } from "react-icons/fi";
+import { BiRepost } from "react-icons/bi"; // Repost icon
+import LikesModal from "./LikeModal";
 
-export default function PostActions({ post, isLiked, onLike, onUnlike, onComment }) {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
+const PostActions = ({ post, userId, onLike, onCommentClick, onShareClick }) => {
+  const [openLikesModal, setOpenLikesModal] = useState(false);
 
-  const handleConfirmShare = () => {
-    dispatch(setSharedPost(post));
-    setOpen(false);
-    navigate("/dashboard/chat");
-  };
+  if (!post || !post.likes) return null;
+
+  const isLiked = post.likes.some((like) =>
+    typeof like === "object" ? like._id === userId : like === userId
+  );
+
+  const likeCount = post.likes.length;
+  const commentCount = post.comments?.length || 0;
+
+  const likeIcons = ["👍", "❤️", "👏"];
+  const visibleIcons = likeIcons.slice(0, Math.min(likeCount, 3));
 
   return (
-    <div className="flex items-center justify-between mt-4 px-4 py-2 border-t border-b border-gray-100">
-      <div className="flex items-center space-x-1">
-        <span className="text-sm text-gray-600">{post.likes.length} likes</span>
-      </div>
-      <div className="flex space-x-4">
-        <IconButton onClick={isLiked ? () => onUnlike(post._id) : () => onLike(post._id)}>
-          {isLiked ? <FaHeart className="text-red-500" /> : <FaRegHeart className="text-gray-600" />}
-        </IconButton>
-        <IconButton onClick={onComment}>
-          <FaRegComment className="text-gray-600" />
-        </IconButton>
-        <IconButton onClick={() => setOpen(true)}>
-          <FiShare className="text-gray-600" />
-        </IconButton>
+    <div className="mt-3 text-gray-600 text-sm border-t border-gray-200">
+      {/* Top section: Like icons and counts */}
+      <div className="flex justify-between items-center px-4 pt-2">
+        <div
+          className="flex items-center space-x-1 cursor-pointer"
+          onClick={() => setOpenLikesModal(true)}
+        >
+          {visibleIcons.map((icon, index) => (
+            <span key={index} className="text-sm">{icon}</span>
+          ))}
+          <span className="ml-1 text-gray-800 font-medium">{likeCount}</span>
+        </div>
+        <span
+          className="text-gray-500 cursor-pointer"
+          onClick={() => onCommentClick && onCommentClick(post._id)}
+        >
+          {commentCount} comments
+        </span>
       </div>
 
-      <ShareModal
-        open={open}
-        onClose={() => setOpen(false)}
-        onConfirm={handleConfirmShare}
+      {/* Bottom section: Buttons */}
+      <div className="flex justify-around mt-2 py-1 border-t border-gray-100">
+        <button
+          onClick={() => onLike && onLike(post._id)}
+          className="flex items-center gap-2 py-2 hover:text-blue-600 transition"
+        >
+          {isLiked ? <FaHeart className="text-red-500" /> : <FaRegHeart />}
+          <span className="text-sm font-medium">Like</span>
+        </button>
+
+        <button
+          onClick={() => onCommentClick && onCommentClick(post._id)}
+          className="flex items-center gap-2 py-2 hover:text-blue-600 transition"
+        >
+          <FaRegComment />
+          <span className="text-sm font-medium">Comment</span>
+        </button>
+
+        <button
+          className="flex items-center gap-2 py-2 hover:text-blue-600 transition"
+        >
+          <FiSend />
+          <span className="text-sm font-medium">Send</span>
+        </button>
+      </div>
+
+      {/* Likes Modal */}
+      <LikesModal
+        open={openLikesModal}
+        onClose={() => setOpenLikesModal(false)}
+        likes={post.likes}
       />
     </div>
   );
-}
+};
+
+export default PostActions;

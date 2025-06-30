@@ -1,51 +1,61 @@
-import React from 'react'
-import ScrollableFeed from "react-scrollable-feed";
-import { Tooltip, Avatar } from '@mui/material'
-import { isSameSender, isLastMessage, isSameSenderMargin, isSameUser } from "../../../../config/chatlogics";
-import { useSelector } from "react-redux";
+// ✅ ScrollableChat.jsx - Production UI & Functional
+import React, { useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
+import { Avatar, Tooltip } from '@mui/material';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
+import DoneIcon from '@mui/icons-material/Done';
+import {
+  isSameSender,
+  isLastMessage,
+  isSameSenderMargin,
+  isSameUser
+} from '../../../../config/chatlogics';
+
 const ScrollableChat = ({ messages }) => {
-
   const { user } = useSelector((state) => state.profile);
-  console.log("User Info:", user);
-  function formatDateTime(dateTimeString) {
-    const date = new Date(dateTimeString);
-    const now = new Date();
+  const scrollRef = useRef(null);
 
-    // Convert to local time
-    const options = { hour: '2-digit', minute: '2-digit', hour12: true };
-    let time = date.toLocaleTimeString('en-US', options).replace(':', ' ');
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
-    // Ensure leading zero for hour
-    time = time.replace(/^(\d) /, '0$1 ');
+  const formatTime = (timestamp) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
 
-    // Check if it's the same date
-    if (date.toDateString() === now.toDateString()) {
-      return time; // Only return time if the date is the same
-    } else {
-      const day = date.getDate();
-      const month = date.toLocaleString('en-US', { month: 'short' });
-      return `${day} ${month} ${time}`;
-    }
-  }
+  const renderTick = (msg) => {
+    if (msg.sender._id !== user._id) return null;
+    if (msg.seenBy?.length > 0)
+      return <DoneAllIcon fontSize="small" sx={{ color: '#25D366', ml: 1 }} />;
+    if (msg.deliveredTo?.length > 0)
+      return <DoneAllIcon fontSize="small" sx={{ color: 'gray', ml: 1 }} />;
+    return <DoneIcon fontSize="small" sx={{ color: 'gray', ml: 1 }} />;
+  };
+
+  const sortedMessages = [...messages].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
   return (
+    <div className="px-3 py-2 overflow-y-auto flex flex-col gap-1 h-full">
+      {sortedMessages.map((m, i) => (
+        <div key={m._id} className="flex items-end gap-1">
+          {(isSameSender(sortedMessages, m, i, user._id) || isLastMessage(sortedMessages, i, user._id)) && (
+            <Tooltip
+              title={`${m.sender.firstName} ${m.sender.lastName}`}
+              arrow
+              placement="bottom-start"
+            >
+              <Avatar
+                alt={m.sender.firstName}
+                src={m.sender.image}
+                sx={{ width: 30, height: 30, marginRight: '6px' }}
+              />
+            </Tooltip>
+          )}
 
-    <>
-      {messages && messages.map((m, i) => (<>
-        <div style={{ display: "flex", alignItems: 'center' }} key={m._id}>
-          {(isSameSender(messages, m, i, user._id) ||
-            isLastMessage(messages, i, user._id)) && (
-              <Tooltip label={m.sender.firstName + " " + m.sender.lastName} placement="bottom-start" hasArrow>
-                <Avatar
-                  mt="7px"
-                  mr={1}
-                  size="medium"
-                  cursor="pointer"
-                  name={m.sender.firstName + " " + m.sender.lastName}
-                  src={m.sender.image}
-                />
-              </Tooltip>
-            )}
-          <span
+          <div
+            className={`rounded-xl px-4 py-2 text-sm shadow-sm max-w-[75%] whitespace-pre-wrap break-words
+            ${m.sender._id === user._id ? 'bg-gray-200 ml-auto text-right' : 'bg-purple-100 text-left'}`}
             style={{
               backgroundColor: `${m.sender._id === user._id ? "#E0E0E060" : "#695ea820"
                 }`,
@@ -61,19 +71,16 @@ const ScrollableChat = ({ messages }) => {
             }}
           >
             {m.content}
-          </span>
+            <div className="text-xs text-gray-500 flex items-center justify-end mt-1">
+              <span>{formatTime(m.createdAt)}</span>
+              {renderTick(m)}
+            </div>
+          </div>
         </div>
-        {messages.length > 1 && i != messages.length - 1 ? (<>
-          {/* <p class="text-sm text-gray-600 dddd ">{(messages[i].sender._id != messages[i - 1].sender._id && i != 0) ? m.createdAt : null}</p> */}
-          <p class={`text-sm text-gray-600 mt-1 ${m.sender._id == user._id ? 'text-right' : 'text-left'}`}>{(messages[i].sender._id != messages[i + 1].sender._id && i != 0) ? formatDateTime(m.createdAt) : null}</p>
-        </>) : (<>
-          <p class={`text-sm text-gray-600 mt-1 ${m.sender._id == user._id ? 'text-right' : 'text-left'}`}>{formatDateTime(m.createdAt)}</p>
-        </>)}
-
-      </>
       ))}
-    </>
-  )
-}
+      <div ref={scrollRef} />
+    </div>
+  );
+};
 
-export default ScrollableChat
+export default ScrollableChat;
