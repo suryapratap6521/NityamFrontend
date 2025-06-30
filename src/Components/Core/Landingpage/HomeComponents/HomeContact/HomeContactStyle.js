@@ -15,7 +15,7 @@ const HomeContactStyle = {
       sm: "center",
       xs: "center",
     },
-    gap:{xl:"1rem",lg:"1rem",md:"1rem",sm:"2rem",xs:"2rem"}
+    gap: { xl: "1rem", lg: "1rem", md: "1rem", sm: "2rem", xs: "2rem" }
   },
   hcl: {
     height: "100%",
@@ -26,7 +26,7 @@ const HomeContactStyle = {
     alignItems: "flex-start",
   },
   tangibleheadingone: {
-    color: "#000",
+    color: "#695ea8",
     fontWeight: "550",
     fontSize: {
       xl: "3rem",
@@ -56,7 +56,7 @@ const HomeContactStyle = {
       xs: "2rem",
     },
     // backgroundImage: `linear-gradient(90deg, #9BFFD9 40%, #523DFC 100%)`,
-    background: "linear-gradient(90deg, #F9ED25 0%, #1E8D44 100%)",
+    background: "linear-gradient(90deg, #2faa90 0%, #695ea8 100%)",
     WebkitBackgroundClip: "text",
     backgroundClip: "text",
   },
@@ -94,19 +94,19 @@ const HomeContactStyle = {
   },
   hcr: {
     // height: "100%",
-  
+
     width: "100%",
     background: "#fff",
     backgroundBlendMode: "luminosity, normal",
     boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.4)",
     backdropFilter: " blur(50px)",
-    border: "2px solid #000",
+    border: "2px solid #00000020",
     borderRadius: "24px",
     padding: "20px 30px",
     color: "#000",
   },
   inptfield: {
-    color:"#000",
+    color: "#000",
     width: "100%",
     "& .MuiInputLabel-root": {
       color: "#000",
@@ -114,29 +114,29 @@ const HomeContactStyle = {
     },
     "& .MuiInput-underline:before": {
       // color:"#fff",
-      borderBottomColor:  "#000",
+      borderBottomColor: "#000",
     },
     "& .MuiInput-underline:after": {
-      color:  "#000",
-      borderBottomColor:  "#000",
+      color: "#000",
+      borderBottomColor: "#000",
     },
     "& .MuiInputLabel-root.Mui-focused": {
       color: "rgba(0,0,0,0.9)",
-      fontWeight:"550"
+      fontWeight: "550"
     },
     "& .MuiInput-underline:focused": {
-      color:  "#000",
-      borderBottomColor:  "#000",
+      color: "#000",
+      borderBottomColor: "#000",
     },
     "& .MuiInput-underline::hover": {
-      color:  "#000",
-      borderBottomColor:  "#000",
+      color: "#000",
+      borderBottomColor: "#000",
     },
     "&:hover .MuiInput-underline:before": {
-      borderBottomColor:  "#000",
+      borderBottomColor: "#000",
     },
     "& .MuiInputBase-input": {
-      color:  "#000",
+      color: "#000",
     },
     input: {
       "&:-webkit-autofill": {

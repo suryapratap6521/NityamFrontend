@@ -232,7 +232,7 @@ const Footer = () => {
                 </Box>
                 <Box>
                   <Typography sx={styles.footerLinkText}>
-                     info@ Nityam Needs.com
+                    info@ truePadosi.com
                   </Typography>
                 </Box>
               </Box>
@@ -285,7 +285,7 @@ const Footer = () => {
             <Box>
               <Typography sx={styles.footerBoldText}>
                 2024{" "}
-                <span style={{ color: varColors.varGreen }}>Nityam Needs.</span>{" "}
+                <span style={{ color: varColors.varGreen }}>True Padosi.</span>{" "}
                 All Rights Reserved
               </Typography>
             </Box>

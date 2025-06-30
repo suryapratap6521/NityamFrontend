@@ -14,7 +14,7 @@ const HomeBannerStyle = {
     display: "flex",
     justifyContent: "center",
     background:
-      "linear-gradient(133.88deg, #FEFEFE 18.32%, rgba(10, 211, 23, 0.33) 100%)",
+      "linear-gradient(133.88deg, #2faa90 18.32%, #695ea8 100%)",
   },
   bannerGrid: {
     width: "90%",
@@ -47,6 +47,7 @@ const HomeBannerStyle = {
   },
   largeText: {
     fontWeight: "600",
+    color: '#ffffff',
     fontSize: {
       xl: "3.2rem",
       lg: "3rem",
@@ -68,12 +69,13 @@ const HomeBannerStyle = {
     // color: "black",
   },
   gradientText: {
-    background: "linear-gradient(90deg, #F9ED25 0%, #1E8D44 100%)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    backgroundClip: "text",
+    // background: "linear-gradient(90deg, #fff 0%, #fff 100%)",
+    color: '#ffff',
+    // WebkitBackgroundClip: "text",
+    // WebkitTextFillColor: "transparent",
+    // backgroundClip: "text",
     fontWeight: "600",
-    color: "transparent",
+    // color: "transparent",
     fontFamily: fontFamilies.secondary,
   },
   // paraText: {
@@ -82,7 +84,7 @@ const HomeBannerStyle = {
   //   fontWeight: "400",
   // },
   greenText: {
-    color: "green",
+    color: "white",
     fontWeight: "600",
     fontFamily: fontFamilies.secondary,
   },
@@ -101,7 +103,7 @@ const HomeBannerStyle = {
       sm: "2.3rem",
       xs: "2rem",
     },
-    color: "green",
+    color: "white",
     // fontWeight: "bold",
 
     fontWeight: "600 !important",
@@ -126,7 +128,7 @@ const HomeBannerStyle = {
     backgroundColor: "#fff",
     borderRadius: "10%",
     /* Component 1 */
-    border: "0.948806px solid #282828",
+    border: "0.948806px solid #28282830",
     boxShadow: " 0px 1.09234px 1.09234px rgba(0, 0, 0, 0.25)",
     borderRadius: "38.5347px",
     zIndex: "1000",
@@ -134,7 +136,7 @@ const HomeBannerStyle = {
 
   searchBtn: {
     borderRadius: "38.5347px",
-    backgroundColor: "#2250F0",
+    backgroundColor: "linear-gradient(133.88deg, #2faa90 18.32%, #695ea8 100%)",
 
     // padding:""
     // width:"4rem"
@@ -174,10 +176,10 @@ const HomeBannerStyle = {
   },
   searchBtn: {
     borderRadius: "38.5347px",
-    backgroundColor: "#2250F0",
+    backgroundImage: "linear-gradient(133.88deg, #2faa90 18.32%, #695ea8 100%)",
     color: "#ffffff",
     "&:hover": {
-      backgroundColor: "#1a3fb8",
+      backgroundImage: "linear-gradient(133.88deg, #2faa90 18.32%, #695ea8 100%)",
     },
   },
   imageRow: {
@@ -205,9 +207,9 @@ const HomeBannerStyle = {
   imageTop: {
     height: "100%",
     width: "100%",
-    objectFit:"cover",
-    objectPosition:"center",
-    objectRepeat:"no-repeat",
+    objectFit: "cover",
+    objectPosition: "center",
+    objectRepeat: "no-repeat",
     borderRadius: "1rem",
   },
   imageBottomBox: {

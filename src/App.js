@@ -37,6 +37,7 @@ import Profession from "./Components/Core/Auth/Profession";
 import CreatePage from "./Components/Core/Page/CreatePage";
 import ViewPage from "./Components/Core/Page/ViewPage"
 import GoogleAuthHandler from "./Components/Core/Auth/GoogleAuthHandler";
+import GoogleAuthSuccess from "./pages/GoogleAuthSuccess";
 import AdCenter from "./Components/Core/Page/AdCenter"
 import Pages from "./pages/Pages";
 
@@ -47,7 +48,7 @@ import WelcomeSplash from "./Components/Common/WelcomeSplash";
 import {useLocation} from "react-router-dom";
 // import PostView from "./Components/Core/Post/PostView";
 import Events from "./pages/Events";
-import GoogleAuthSuccess from "./pages/GoogleAuthSuccess";
+import { socket } from "./config/socket";
 // import PostView from "./Components/Core/Post/PostView";
 function App() {
   
@@ -65,20 +66,41 @@ function App() {
 
 
 
+// useEffect(() => {
+//   if (token) {
+//     dispatch(fetchNotifications(token)); // ✅ Correct way to dispatch async thunk
+//   }
+
+  
+
+//   socket.on("newNotification", (notification) => {
+//     dispatch(addNotification(notification));
+//   });
+
+//   return () => socket.disconnect();
+// }, [token, dispatch]);
+
+
 useEffect(() => {
-  if (token) {
-    dispatch(fetchNotifications(token)); // ✅ Correct way to dispatch async thunk
+  if (token && user?._id) {
+    dispatch(fetchNotifications(token));
+
+    // Attach userId before connecting
+    socket.auth = { userId: user._id }; // ✅ Send userId here
+    socket.connect(); // ✅ Only connect after attaching auth
+
+    socket.emit("setup", user); // Optional: if your backend uses this
+
+    socket.on("newNotification", (notification) => {
+      dispatch(addNotification(notification));
+    });
+
+    return () => {
+      socket.off("newNotification");
+      socket.disconnect(); // Optional: disconnect on unmount
+    };
   }
-
-  const socket = io('https://nityambackend.onrender.com');
-
-  socket.on("newNotification", (notification) => {
-    dispatch(addNotification(notification));
-  });
-
-  return () => socket.disconnect();
-}, [token, dispatch]);
-
+}, [token, user, dispatch]);
 
 
   return (

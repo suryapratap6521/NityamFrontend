@@ -53,7 +53,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
                 },
             };
             const { data } = await axios.get( // Use axios.get for search
-                `https://nityambackend.onrender.com/api/v1/auth/search?search=${search}`,
+                `http://localhost:8080/api/v1/auth/search?search=${search}`,
                 config
             );
             setLoading(false);

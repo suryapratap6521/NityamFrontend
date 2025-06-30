@@ -1,5 +1,5 @@
-// const BASE_URL = "https://nityambackend.onrender.com/api/v1";
-const BASE_URL = 'http://localhost:8080/api/v1';
+const BASE_URL = "https://nityambackend.onrender.com/api/v1";
+// const BASE_URL = 'http://localhost:8080/api/v1';
 // const BASE_URL = "https://nityambackend-production.up.railway.app/api/v1";
 
 
@@ -19,17 +19,24 @@ export const endpoints = {
 };
 
 export const postEndpoints = {
-  GET_ALL_POST: `${BASE_URL}/post/getcommunitypost`,
   CREATE_POST: `${BASE_URL}/post/createpost`,
-  SET_LIKE: `${BASE_URL}/like/setlike`,
-  UNLIKE: `${BASE_URL}/like/setunlike`,
   DELETE_POST: `${BASE_URL}/post/deletepost`,
-  COMMENT: `${BASE_URL}/comment/createcomment`,
+  UPDATE_POST: `${BASE_URL}/post/updatepost`,
+  GET_ALL_POST: `http://localhost:8080/api/v1/post/getcommunitypost`,
+  GET_COMMUNITY_EVENTS: `${BASE_URL}/post/events`,
+  GET_EVENT_BY_ID: `${BASE_URL}/post/event`, // append /:id later in API
+
+  // Poll voting & voters
+  VOTE_ON_POLL: `${BASE_URL}/post`, // + /:postId/vote
+  GET_POLL_VOTERS: `${BASE_URL}/post`, // + /:postId/voters/:index
+
+  // Post engagement
+  SET_LIKE_UNLIKE: `${BASE_URL}/like/setlike-unlike`, // (if exists, otherwise remove)
+  COMMENT: `${BASE_URL}/comment/comment`,
   UNCOMMENT: `${BASE_URL}/comment/deletecomment`,
   REPLY: `${BASE_URL}/comment/reply`,
   LIKE_COMMENT: `${BASE_URL}/comment/like-comment`,
   LIKE_REPLY: `${BASE_URL}/comment/like-reply`,
-  NESTED_REPLY: `${BASE_URL}/comment/nestedreply`,
 };
 
 export const chatEndpoints = {

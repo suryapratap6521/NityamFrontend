@@ -1,11 +1,11 @@
 import React from "react";
 import Button from "@mui/material/Button";
 
-const CustomButton = ({ title,onClick }) => {
+const CustomButton = ({ title, onClick }) => {
   const styles = {
     btn: {
       color: "#F4F4F4",
-      backgroundColor: "#1A8E45",
+      backgroundImage: "linear-gradient(133.88deg, #2faa90 18.32%, #695ea8 100%)",
       boxShadow: "none",
       borderRadius: "10px",
       overflow: "hidden",
@@ -22,7 +22,7 @@ const CustomButton = ({ title,onClick }) => {
         transition: "left 0.3s ease-in",
         zIndex: 0,
         // border:"2px solid red",
-        boxShadow:"none"
+        boxShadow: "none"
       },
       "&:hover::before": {
         left: 0,
@@ -30,7 +30,7 @@ const CustomButton = ({ title,onClick }) => {
       "&:hover": {
         color: "#1A8E45",
         backgroundColor: "#1A8E45", // Ensure the background remains green on hover
-        border:"2px solid #1A8E45",
+        border: "2px solid #1A8E45",
       },
       "&:hover .button-content": {
         position: "relative",
@@ -39,7 +39,7 @@ const CustomButton = ({ title,onClick }) => {
       "&:active": {
         boxShadow: "none", // Remove shadow on active state
         backgroundColor: "#1A8E45", // Prevent blue background on click
-        
+
       },
       "&:focus": {
         backgroundColor: "#1A8E45", // Prevent blue background on focus

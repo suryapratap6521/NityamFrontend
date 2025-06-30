@@ -15,7 +15,7 @@ import EVENT_IMAGE from "../assests/events.jpg";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Button } from "@mui/material";
-import {location} from 'react-router-dom';
+import { location } from 'react-router-dom';
 /** 
  * Utility function to parse date/time 
  */
@@ -150,7 +150,7 @@ const Dashboard = () => {
               <div className="flex w-full items-center justify-between">
                 <h1 className="text-lg font-semibold text-gray-600">Services</h1>
                 <Link to="/dashboard/services">
-                  <span className="text-sm font-normal text-[#4A00E0]">View All</span>
+                  <span className="text-sm font-normal text-[#695ea8]">View All</span>
                 </Link>
               </div>
               {allUsers &&
@@ -227,7 +227,7 @@ const Dashboard = () => {
               <div className="flex w-full items-center justify-between">
                 <h1 className="text-lg font-semibold text-gray-600">Upcoming Events</h1>
                 <Link to="/dashboard/events">
-                  <span className="text-sm font-normal text-[#4A00E0]">View All</span>
+                  <span className="text-sm font-normal text-[#695ea8]">View All</span>
                 </Link>
               </div>
               {eventData.map((ad) => {
@@ -280,7 +280,7 @@ const Dashboard = () => {
         </div>
 
         {!isSmallScreen && (
-          <div className="w-3/12 bg-white p-4 hidden lg:block max-h-[84.5vh] no-scrollbar overflow-y-auto">
+          <div className="w-3/12 bg-white p-4 hidden lg:block max-h-[84.5vh] no-scrollbar overflow-y-auto mb-auto">
             <Advertisements />
           </div>
         )}

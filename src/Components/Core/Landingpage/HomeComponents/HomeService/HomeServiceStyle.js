@@ -5,13 +5,14 @@ const HomeServiceStyle = {
     width: "100%",
     padding: "1rem 0",
     display: "flex",
-    justifyContent:"center",
+    justifyContent: "center",
     alignItems: "center",
     // height: "100vh",
   },
   largeText: {
-    // fontWeight: "600",
-    textAlign: "center",
+    fontWeight: "600",
+    color: "#695ea8",
+    textAlign: 'center',
     fontSize: {
       xl: "3.2rem",
       lg: "3rem",
@@ -27,7 +28,6 @@ const HomeServiceStyle = {
       xs: "2rem",
     },
     fontFamily: fontFamilies.secondary, // Example font family
-    fontWeight: "600",
     "&.MuiTypography-root": {
       fontWeight: "600",
       fontSize: {
@@ -39,14 +39,44 @@ const HomeServiceStyle = {
       },
     },
   },
+  largeText3: {
+    fontWeight: "600",
+    color: "#695ea8",
+    fontSize: {
+      xl: "2.6rem",
+      lg: "2.3rem",
+      md: "2.1rem",
+      sm: "1.9rem",
+      xs: "1.5rem",
+    },
+    lineHeight: {
+      xl: "2.6rem",
+      lg: "2.3rem",
+      md: "2.1rem",
+      sm: "1.9rem",
+      xs: "1.5rem",
+    },
+    fontFamily: fontFamilies.secondary, // Example font family
+    fontWeight: "600",
+    "&.MuiTypography-root": {
+      fontWeight: "600",
+      fontSize: {
+        xl: "2.6rem",
+        lg: "2.3rem",
+        md: "2.1rem",
+        sm: "1.9rem",
+        xs: "1.5rem",
+      },
+    },
+  },
   gradientText: {
-    background: "linear-gradient(90deg, #F9ED25 0%, #1E8D44 100%)",
+    backgroundImage: "linear-gradient(133.88deg, #2faa90 18.32%, #695ea8 100%)", // ✅ correct
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
-    backgroundClip: "text",
-    fontWeight: "600",
-    color: "transparent",
-    fontFamily: "Roboto, Arial, sans-serif", // Example font family
+    backgroundClip: "text", // for Firefox
+    fontWeight: 600,
+    fontFamily: "Roboto, Arial, sans-serif",
+    color: "transparent", // fallback
   },
   //   greenText: {
   //     color: "green",
@@ -75,6 +105,7 @@ const HomeServiceStyle = {
   largeText2: {
     // fontWeight: "600",
     textAlign: "left",
+    color: "#695ea8",
     fontSize: {
       xl: "2.6rem",
       lg: "2.3rem",
@@ -102,8 +133,8 @@ const HomeServiceStyle = {
       },
     },
   },
-  gridLeft:{
-    paddingLeft:"2rem"
+  gridLeft: {
+    paddingLeft: "2rem"
   },
   changingText: {
     fontSize: {
@@ -113,7 +144,7 @@ const HomeServiceStyle = {
       sm: "2.3rem",
       xs: "2rem",
     },
-    width:{
+    width: {
       xl: "70%",
       lg: "70%",
       md: "70%",
@@ -135,14 +166,6 @@ const HomeServiceStyle = {
       width: "100%",
       backgroundColor: "#000", // Adjust underline color as needed
     },
-  },
-  gradientText: {
-    background: "linear-gradient(90deg, #F9ED25 0%, #1E8D44 100%)",
-    WebkitBackgroundClip: "text",
-    WebkitTextFillColor: "transparent",
-    backgroundClip: "text",
-    color: "transparent",
-    fontWeight: "650",
   },
   changingTextBox: {
     padding: "1rem 0",

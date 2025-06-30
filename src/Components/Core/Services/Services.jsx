@@ -19,7 +19,7 @@ const Services = () => {
     const handleGetAllServices = async () => {
       try {
         const response = await getServices(token, dispatch);
-        console.log(response,"-->");
+        console.log(response, "-->");
         setAllUsers(response.data.allUsers);
         setServices(response.data.userMadeServices);
       } catch (error) {
@@ -66,7 +66,7 @@ const Services = () => {
                   <p className="text-gray-600">City: {users?.city}</p>
                   <p className="text-gray-600">Charge: ₹{users?.hourlyCharge}</p>
                   <div className="flex justify-end mt-4">
-                    <button className="flex items-center bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    <button className="flex items-center bg-[#695ea8] text-white px-4 py-2 rounded hover:bg-[#403678]">
                       <span className="h-5 w-5 mr-2">
                         {/* Replace ChatIcon if needed */}
                       </span>

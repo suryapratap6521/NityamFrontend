@@ -69,21 +69,47 @@ const HeaderStyle = {
     alignItems: "center",
   },
   box3: {
-    // width: "20%",
-    // height: "100%",
-    padding: "0.7rem 2rem",
-    border: "1.5px solid #1A8E45",
-    // background: "yellow",
-    display: "flex",
-    gap: "1rem",
-    borderRadius: "20px",
-    alignItems: "center",
-    cursor: "pointer",
+    color: "#F4F4F4",
+    backgroundImage: "linear-gradient(133.88deg, #2faa90 18.32%, #695ea8 100%)",
+    boxShadow: "none",
+    borderRadius: "10px",
+    overflow: "hidden",
+    position: "relative",
+    transition: "color 0.3s ease-in, background-color 0.3s ease-in",
+    "&::before": {
+      content: '""',
+      position: "absolute",
+      top: 0,
+      left: "-100%",
+      width: "100%",
+      height: "100%",
+      backgroundColor: "#fff",
+      transition: "left 0.3s ease-in",
+      zIndex: 0,
+      // border:"2px solid red",
+      boxShadow: "none"
+    },
+    "&:hover::before": {
+      left: 0,
+    },
     "&:hover": {
-      backgroundColor: "#1A8E45", // Change this to your desired hover background color
-      ".loginText": {
-        color: "#fff", // Change this to your desired hover text color
-      },
+      color: "#1A8E45",
+      backgroundColor: "#1A8E45", // Ensure the background remains green on hover
+      border: "2px solid #1A8E45",
+    },
+    "&:hover .button-content": {
+      position: "relative",
+      zIndex: 1,
+    },
+    "&:active": {
+      boxShadow: "none", // Remove shadow on active state
+      backgroundColor: "#1A8E45", // Prevent blue background on click
+
+    },
+    "&:focus": {
+      backgroundColor: "#1A8E45", // Prevent blue background on focus
+      boxShadow: "none", // Remove shadow on focus state
+      // border:"2px solid red",
     },
   },
   loginText: {

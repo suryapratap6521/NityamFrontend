@@ -41,8 +41,8 @@ const HomeAbout = () => {
               </Box>
               <Box>
                 <Typography sx={styles.largeText}>
-                  Welcome to <span style={styles.greenText}>Nityam</span>
-                  <span style={styles.gradientText}> Needs</span>{" "}
+                  Welcome to <span style={styles.greenText}>True</span>
+                  <span style={styles.gradientText}> Padosi</span>{" "}
                 </Typography>
               </Box>
             </Box>
@@ -71,7 +71,7 @@ const HomeAbout = () => {
             data-aos-offset="300" // Offset to trigger animation earlier/later
           >
             <Box sx={styles.imgbox}>
-            <Lottie animationData={AboutAnimation}  style={{ height: "100%", width: "100%", objectFit: "contain" }}/>
+              <Lottie animationData={AboutAnimation} style={{ height: "100%", width: "100%", objectFit: "contain" }} />
             </Box>
           </Grid>
         </Grid>

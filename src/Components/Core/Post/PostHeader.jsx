@@ -1,29 +1,31 @@
 import { IconButton } from "@mui/material";
 import { BsThreeDots } from "react-icons/bs";
 
-export default function PostHeader({ post, onMenuOpen, calculateTime }) {
+const PostHeader = ({ post, onMenuOpen }) => {
+  const user = post.postByUser;
+
   return (
-    <div className="flex items-start justify-between mb-4">
+    <div className="flex justify-between items-center">
       <div className="flex items-center space-x-3">
         <img
-          className="h-12 w-12 rounded-full object-cover border-2 border-white"
-          src={post?.postByUser?.image || "https://via.placeholder.com/150"}
-          referrerPolicy="no-referrer"
-          alt={`${post.postByUser?.firstName}`}
+          src={user?.image || "https://via.placeholder.com/100"}
+          alt="avatar"
+          className="w-10 h-10 rounded-full"
         />
         <div>
           <h4 className="font-semibold text-gray-800">
-            {`${post.postByUser?.firstName} ${post.postByUser?.lastName}`}
+            {user?.firstName} {user?.lastName}
           </h4>
-          <p className="text-sm text-gray-500">
-            {post.postByUser?.communityDetails?.communityName} •
-            {post.postByUser?.city} • {calculateTime(post?.createdAt)}
+          <p className="text-xs text-gray-500">
+            {user.community} • {user?.city} • {new Date(post.createdAt).toLocaleString()}
           </p>
         </div>
       </div>
-      <IconButton onClick={onMenuOpen} className="text-gray-600">
+      <IconButton onClick={onMenuOpen}>
         <BsThreeDots />
       </IconButton>
     </div>
   );
-}
+};
+
+export default PostHeader;

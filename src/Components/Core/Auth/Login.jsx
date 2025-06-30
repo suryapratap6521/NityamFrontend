@@ -19,6 +19,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from 'react-hot-toast';
 import Cookies from 'js-cookie';
 import login_image from "../../../assests/login_image.jpg";
+import logo from "../../../assests/nityam_mlogo.png";
 
 function Copyright(props) {
   return (
@@ -58,7 +59,7 @@ export default function Login() {
     <div className="flex flex-col md:flex-row w-full min-h-screen">
       {/* Image Section */}
       <div className="relative w-full md:w-1/2 h-64 md:h-auto">
-        <div 
+        <div
           className="absolute w-full h-full top-0 left-0 z-10 flex flex-col justify-end p-4 sm:p-10"
           style={{ background: 'linear-gradient(180deg, rgba(255, 255, 255, 0) 44%, rgb(0 0 0 / 52%) 80%)' }}
         >
@@ -80,12 +81,12 @@ export default function Login() {
       <div className="flex w-full md:w-1/2 justify-center items-center p-4">
         <div className="w-full max-w-sm sm:max-w-md px-4 sm:px-6 lg:px-8 space-y-6">
           <img
-            src="/static/media/nityam_mlogo.ef49c119a46a1f2bf2f9.png"
+            src={logo}
             alt="Nityam Needs"
             className="h-16 sm:h-20 w-auto"
           />
           <div className='w-full mb-4'>
-            <h1 className="text-2xl sm:text-3xl font-semibold mb-1 text-[#8E2DE2]">
+            <h1 className="text-2xl sm:text-3xl font-semibold mb-1 text-[#695ea8]">
               Login
             </h1>
             <p className="text-gray-400 text-sm sm:text-base">
@@ -130,13 +131,13 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full text-lg bg-gradient-to-r from-purple-500 to-indigo-500 text-white py-4 rounded-full mt-4"
+              className="w-full text-lg bg-gradient text-white py-4 rounded-full mt-4"
             >
               {loading ? "Signing In..." : "Sign In"}
             </button>
             <div className="flex w-full justify-center items-center mt-1">
               <Link href="/signup" className="text-gray-700 text-sm">
-                Don't have an account? <span className="text-[#8E2DE2] font-medium">Sign Up</span>
+                Don't have an account? <span className="text-[#695ea8] font-medium">Sign Up</span>
               </Link>
             </div>
             <hr className="my-4" style={{ borderTop: "0.5px solid #00000070" }} />

@@ -1,164 +1,191 @@
-import React, { useState, useEffect } from "react";
+// Posts.jsx
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllPosts, likePost, unlikePost, deletePost, comment, commentDelete, reply, replyLike, commentLike } from "../../../services/operations/postApi";
-import { setPosts } from "../../../slices/postSlice";
+import {
+  getAllPosts,
+  likePost,
+  deletePost,
+  comment,
+  commentDelete,
+  reply,
+  commentLike,
+  replyLike,
+} from "../../../services/operations/postApi";
+import {
+  setPosts,
+  appendPosts,
+  prependPost,
+  updateComments,
+} from "../../../slices/postSlice";
 import SinglePost from "./SinglePost";
-import 'tailwindcss/tailwind.css';
-import CommentSection from "./CommentsSection";
-import PostSkeleton from "../../Common/PostSkeleton";
-import { IconButton } from "@mui/material";
-import { FaRegComment, FaRegHeart, FaHeart } from "react-icons/fa";
-import { FiShare } from "react-icons/fi";
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import AdPosts from "./AdPost";
-
+import PostSkeleton from "../../Common/PostSkeleton";
+import useSocket from "../../../config/useSocket";
+import SideBarPost from "./SideBarPost";
 
 const Posts = () => {
   const dispatch = useDispatch();
   const { token } = useSelector((state) => state.auth);
   const { user } = useSelector((state) => state.profile);
   const { posts } = useSelector((state) => state.post);
-  const adData = useSelector((state) => state.ad.allAds || []);
 
-  const [loading, setLoading] = useState(true);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [selectedPost, setSelectedPost] = useState(null);
-  const [expandedPostId, setExpandedPostId] = useState(null);
-  const [commentText, setCommentText] = useState("");
-  const [replyText, setReplyText] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMorePosts, setHasMorePosts] = useState(true);
+  const observer = useRef();
+  const socket = useSocket();
+  const [editPostData, setEditPostData] = useState(null);
+
+  const lastPostRef = useCallback(
+    (node) => {
+      if (loading || !hasMorePosts) return;
+      if (observer.current) observer.current.disconnect();
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          setPage((prev) => prev + 1);
+        }
+      });
+      if (node) observer.current.observe(node);
+    },
+    [loading, hasMorePosts]
+  );
 
   useEffect(() => {
-    const getPosts = async () => {
+    const fetchPosts = async () => {
+      setLoading(true);
       try {
-        const response = await getAllPosts(token, dispatch);
-        // dispatch(setPosts(response));
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
+        const data = await getAllPosts(token, dispatch, page);
+        if (!data?.posts?.length && !data?.advertisedPosts?.length) {
+          setHasMorePosts(false);
+        }
+      } catch (err) {
+        console.error("Error loading posts:", err);
+      } finally {
         setLoading(false);
       }
     };
+    fetchPosts();
+  }, [token, page, dispatch]);
 
-    getPosts();
-  }, [token, dispatch]);
+  useEffect(() => {
+    if (!socket) return;
 
-  const handleLike = async (postId) => {
-    try {
-      await likePost(postId, token, dispatch);
-    } catch (error) {
-      console.error("Error liking post:", error);
-    }
+    const handleNewPost = (newPost) => {
+      const formatted = { ...newPost, type: 0 };
+      dispatch(prependPost(formatted));
+    };
+
+    socket.on("newPost", handleNewPost);
+    return () => socket.off("newPost", handleNewPost);
+  }, [socket, dispatch]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleLikeUpdate = ({ updatedPost }) => {
+      const newPosts = posts.map((p) =>
+        p._id === updatedPost._id ? { ...updatedPost, type: 0 } : p
+      );
+      dispatch(setPosts(newPosts));
+    };
+
+    socket.on("post liked", handleLikeUpdate);
+    return () => socket.off("post liked", handleLikeUpdate);
+  }, [socket, posts, dispatch]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleCommentUpdate = ({ postId, comments }) => {
+      dispatch(updateComments({ postId, comments }));
+    };
+
+    socket.on("comment added", handleCommentUpdate);
+    socket.on("comment updated", handleCommentUpdate);
+
+    return () => {
+      socket.off("comment added", handleCommentUpdate);
+      socket.off("comment updated", handleCommentUpdate);
+    };
+  }, [socket, dispatch]);
+
+  const updatePostInList = (updatedPost) => {
+    const updatedPosts = posts.map((p) =>
+      p._id === updatedPost._id ? updatedPost : p
+    );
+    dispatch(setPosts(updatedPosts));
   };
 
-  const handleUnlike = async (postId) => {
-    try {
-      await unlikePost(postId, token, dispatch);
-    } catch (error) {
-      console.error("Error unliking post:", error);
-    }
+  const removePostFromList = (postId) => {
+    const updatedPosts = posts.filter((p) => p._id !== postId);
+    dispatch(setPosts(updatedPosts));
   };
 
-  const handlePopoverOpen = (event, postId) => {
-    setAnchorEl(event.currentTarget);
-    setSelectedPost(postId);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-    setSelectedPost(null);
-  };
-
-  const handleDeletePost = async (postId) => {
-    try {
-      await deletePost(token, postId);
-      const updatedPosts = posts.filter((post) => post._id !== postId);
-      dispatch(setPosts(updatedPosts));
-      handlePopoverClose();
-    } catch (error) {
-      console.error("Error deleting post:", error);
-    }
-  };
-
-
-  if (posts === null || posts?.length === 0) {
-    return <div>No Posts available</div>
+  if (!Array.isArray(posts)) {
+    return <div className="text-center text-red-500">Unable to load posts.</div>;
   }
 
-  const handleComment = async (postId, commentText) => {
-    try {
-      await comment(postId, commentText, user._id, token, dispatch);
-      setCommentText("");
-    } catch (error) {
-      console.error("Error commenting post:", error);
-    }
-  };
-
-  const handleCommentDelete = async (postId, commentId) => {
-    try {
-      await commentDelete(postId, commentId, dispatch, token);
-    } catch (error) {
-      console.error("Error in commenting delete", error);
-    }
-  };
-
-  const handleReply = async (postId, commentId) => {
-    try {
-      await reply(postId, commentId, replyText, dispatch, token);
-    } catch (error) {
-      console.error("Error in replying the comment", error);
-    }
+  if (posts.length === 0 && !loading) {
+    return <div className="text-center text-gray-500 mt-4">No posts available.</div>;
   }
-  const handleCommentLike = async (postId, commentId) => {
-    try {
-      await commentLike(postId, commentId, dispatch, token);
-    } catch (error) {
-      console.error("Error in liking the comment", error);
-    }
-  }
-  const handleReplyLike = async (postId, commentId, replyId) => {
-    try {
-      await replyLike(postId, commentId, replyId, dispatch, token);
-
-    } catch (error) {
-      console.error("Error in liking the reply", error);
-    }
-  }
-
-  const handleExpandClick = (postId) => {
-    setExpandedPostId(expandedPostId === postId ? null : postId);
-  };
-
-
-
 
   return (
-    <div className="posts-container">
-      {posts.map((post, index) => (
-        <React.Fragment key={post._id}>
-          <SinglePost
-            post={post}
-            user={user}
-            handleLike={handleLike}
-            handleUnlike={handleUnlike}
-            handleComment={handleComment}
-            setCommentText={setCommentText}
-            commentText={commentText}
-            handleDeletePost={handleDeletePost}
-            setReplyText={setReplyText}
-            replyText={replyText}
-            handleCommentLike={handleCommentLike}
-            handleReply={handleReply}
-            handleReplyLike={handleReplyLike}
-          />
-          {((index + 1) % 5 === 0) && adData.length > 0 && (
-
-            <AdPosts ad={adData[(Math.floor(index / 5)) % adData.length]} />
-          )}
-        </React.Fragment>
-      ))}
+    <div className="posts-container space-y-4">
+      {posts.map((post, index) => {
+        const isLast = posts.length === index + 1;
+        return (
+          <div key={post._id || `ad-${index}`} ref={isLast ? lastPostRef : null}>
+            {post.type === 0 ? (
+              <SinglePost
+                post={post}
+                user={user}
+                onLike={(postId) => likePost(postId, token)}
+                onComment={(postId, text, cb) =>
+                  comment({ postId, text }, token).then((res) => {
+                    if (res?.success) cb(res.comments);
+                  })
+                }
+                onCommentDelete={(postId, commentId, replyId, cb) =>
+                  commentDelete(commentId, token).then(cb)
+                }
+                onCommentLike={(postId, commentId, cb) =>
+                  commentLike(postId, commentId, token).then((res) => {
+                    if (res?.success) cb(res.comments);
+                  })
+                }
+                onReplyLike={(postId, commentId, replyId, cb) =>
+                  replyLike(postId, commentId, replyId, token).then((res) => {
+                    if (res?.success) cb(res.comments);
+                  })
+                }
+                onReply={(postId, commentId, text, cb) =>
+                  reply({ postId, commentId, text }, token).then((res) => {
+                    if (res?.success) cb(res.comments);
+                  })
+                }
+                onDelete={(postId, cb) =>
+                  deletePost(postId, token, dispatch).then(cb)
+                }
+                updatePostInList={updatePostInList}
+                removePostFromList={removePostFromList}
+                token={token}
+                setEditPostData={setEditPostData}
+              />
+            ) : (
+              <AdPosts ad={post} />
+            )}
+          </div>
+        );
+      })}
+      {loading && <PostSkeleton />}
+      {editPostData && (
+        <SideBarPost
+          closeModal={() => setEditPostData(null)}
+          editData={editPostData}
+        />
+      )}
     </div>
   );
-
 };
 
 export default Posts;

@@ -67,7 +67,7 @@ const ViewPage = () => {
 
       <div className="lg:w-4/12 w-full p-4">
         <div>
-          <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#8E2DE2]">
+          <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#695ea8]">
             Manage
           </h1>
           <p className="text-gray-400 leading-4 text-sm mb-4">
@@ -75,36 +75,36 @@ const ViewPage = () => {
           </p></div>
         {step === 1 && (
           <div>
-            <div className="font-medium flex pl-0 py-2 bg-white rounded-md px-3 cursor-pointer hover:bg-[#8E2DE230] hover:pl-3 transition-all">
-              <DashboardIcon style={{ fontSize: "24px", fill: "#8E2DE2" }} />
+            <div className="font-medium flex pl-0 py-2 bg-white rounded-md px-3 cursor-pointer hover:bg-[#695ea830] hover:pl-3 transition-all">
+              <DashboardIcon style={{ fontSize: "24px", fill: "#695ea8" }} />
               <h2 className="text-lg font-normal ml-3"> Dashboard</h2>
             </div>
 
-            <div className="font-medium flex pl-0 py-2 bg-white rounded-md px-3 mt-3 cursor-pointer hover:bg-[#8E2DE230] hover:pl-3 transition-all">
-              <InsightsIcon style={{ fontSize: "24px", fill: "#8E2DE2" }} />
+            <div className="font-medium flex pl-0 py-2 bg-white rounded-md px-3 mt-3 cursor-pointer hover:bg-[#695ea830] hover:pl-3 transition-all">
+              <InsightsIcon style={{ fontSize: "24px", fill: "#695ea8" }} />
               <h2 className="text-lg font-normal ml-3">View Insights</h2>
             </div>
             <Link to="/dashboard/page/adCenter" className="  cursor-pointer transition-all w-full">
-              <div className="font-medium flex pl-0 py-2 bg-white rounded-md px-3 mt-3 cursor-pointer hover:bg-[#8E2DE230] hover:pl-3 ">
-                <AdsClickIcon style={{ fontSize: "24px", fill: "#8E2DE2" }} />
+              <div className="font-medium flex pl-0 py-2 bg-white rounded-md px-3 mt-3 cursor-pointer hover:bg-[#695ea830] hover:pl-3 ">
+                <AdsClickIcon style={{ fontSize: "24px", fill: "#695ea8" }} />
                 <h2 className="text-lg font-normal ml-3">Ad Center</h2>
               </div>
             </Link>
             <Link to="/dashboard/page/create" className="  cursor-pointer transition-all w-full">
-              <div className="font-medium flex pl-0 py-2 bg-white rounded-md px-3 mt-3 cursor-pointer hover:bg-[#8E2DE230] hover:pl-3 transition-all">
-                <DriveFileRenameOutlineIcon style={{ fontSize: "24px", fill: "#8E2DE2" }} />
+              <div className="font-medium flex pl-0 py-2 bg-white rounded-md px-3 mt-3 cursor-pointer hover:bg-[#695ea830] hover:pl-3 transition-all">
+                <DriveFileRenameOutlineIcon style={{ fontSize: "24px", fill: "#695ea8" }} />
                 <h2 className="text-lg font-normal ml-3">Edit Page Details</h2>
               </div>
             </Link>
-            <div className="font-medium flex pl-0 py-2 bg-white rounded-md px-3 mt-3 cursor-pointer hover:bg-[#8E2DE230] hover:pl-3 transition-all">
-              <RocketIcon style={{ fontSize: "24px", fill: "#8E2DE2" }} />
+            <div className="font-medium flex pl-0 py-2 bg-white rounded-md px-3 mt-3 cursor-pointer hover:bg-[#695ea830] hover:pl-3 transition-all">
+              <RocketIcon style={{ fontSize: "24px", fill: "#695ea8" }} />
               <h2 className="text-lg font-normal ml-3">Boost Page</h2>
             </div>
-            <div className="font-medium flex pl-0 py-2 bg-white rounded-md px-3 mt-3 cursor-pointer hover:bg-[#8E2DE230] hover:pl-3 transition-all">
-              <SettingsIcon style={{ fontSize: "24px", fill: "#8E2DE2" }} />
+            <div className="font-medium flex pl-0 py-2 bg-white rounded-md px-3 mt-3 cursor-pointer hover:bg-[#695ea830] hover:pl-3 transition-all">
+              <SettingsIcon style={{ fontSize: "24px", fill: "#695ea8" }} />
               <h2 className="text-lg font-normal ml-3">Settings</h2>
             </div>
-            <div className="font-medium flex pl-0 py-2 bg-white rounded-md px-3 mt-3 cursor-pointer hover:bg-[#8E2DE230] hover:pl-3 transition-all" onClick={handleDeletePage} >
+            <div className="font-medium flex pl-0 py-2 bg-white rounded-md px-3 mt-3 cursor-pointer hover:bg-[#695ea830] hover:pl-3 transition-all" onClick={handleDeletePage} >
               <DeleteForeverIcon style={{ fontSize: "24px", fill: "#FF0000" }} />
               <h2 className="text-lg font-normal ml-3">Delete Page</h2>
             </div>

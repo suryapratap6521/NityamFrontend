@@ -406,10 +406,10 @@ const AdCenter = () => {
     <div className="max-w-[1320px] items-start flex flex-col lg:flex-row mx-auto md:p-6 p-3 lg:mb-0 mb-14">
       <div className="lg:w-3/5 w-full p-4">
         <div>
-          <div className="p-2 bg-[#8E2DE220] rounded-full w-8 h-8 flex justify-center align-items-center pl-3 mb-3 hover:scale-110" onClick={handleBackClick}>
-            <ArrowBackIosIcon fontSize="14" style={{ color: "#8E2DE2" }} />
+          <div className="p-2 bg-[#695ea820] rounded-full w-8 h-8 flex justify-center align-items-center pl-3 mb-3 hover:scale-110" onClick={handleBackClick}>
+            <ArrowBackIosIcon fontSize="14" style={{ color: "#695ea8" }} />
           </div>
-          <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#8E2DE2]">
+          <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#695ea8]">
             Create New Ad
           </h1>
           <p className="text-gray-400 leading-4 text-sm mb-4">
@@ -822,7 +822,7 @@ const AdCenter = () => {
               {step < 2 ? (
                 <button
                   onClick={handleNext}
-                  className="px-8 py-3 bg-[#4A00E0] text-base font-semibold text-white rounded-full hover:bg-gray-400 ml-auto"
+                  className="px-8 py-3 bg-[#695ea8] text-base font-semibold text-white rounded-full hover:bg-gray-400 ml-auto"
                 >
                   Next
                 </button>

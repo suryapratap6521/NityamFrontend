@@ -234,7 +234,7 @@ const CreatePage = () => {
     <div className="container items-start border-t-0 flex flex-row mx-auto p-6">
       <div className="lg:w-2/5 w-full p-4">
         <div>
-          <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#8E2DE2]">
+          <h1 className="md:text-3xl text-xl text-left font-semibold mb-1 text-[#695ea8]">
             Create New Page
           </h1>
           <p className="text-gray-400 leading-4 text-sm mb-4">Create/Edit Details of your page which will help people reach you.</p>
@@ -456,7 +456,7 @@ const CreatePage = () => {
           {step < 3 ? (
             <button
               onClick={() => handleNext(1)}
-              className="px-8 py-3 bg-[#4A00E0] text-base font-semibold text-white rounded-full hover:bg-gray-400"
+              className="px-8 py-3 bg-[#695ea8] text-base font-semibold text-white rounded-full hover:bg-gray-400"
             >
               Next
             </button>

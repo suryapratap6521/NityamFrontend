@@ -12,8 +12,8 @@ const HomeAboutStyle = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    paddingBottom:"2rem",
-    gap:{xl:"2rem",lg:"2rem",md:"2rem",sm:"2rem",xs:"3rem"}
+    paddingBottom: "2rem",
+    gap: { xl: "2rem", lg: "2rem", md: "2rem", sm: "2rem", xs: "3rem" }
   },
   leftBox: {
     width: "100%",
@@ -34,18 +34,42 @@ const HomeAboutStyle = {
     fontSize: "1rem",
   },
   largeText: {
-   
-    fontSize: {xl:"3rem",lg:"2.7rem",md:"2.5rem",sm:"2.3rem",xs:"2rem"},
-    fontFamily:fontFamilies.secondary,
-    fontWeight: "550",
-    // color: "black",
+    fontWeight: "600",
+    color: "#695ea8",
+    fontSize: {
+      xl: "3.2rem",
+      lg: "3rem",
+      md: "2.8rem",
+      sm: "2.3rem",
+      xs: "2rem",
+    },
+    lineHeight: {
+      xl: "3.2rem",
+      lg: "3rem",
+      md: "2.8rem",
+      sm: "2.3rem",
+      xs: "2rem",
+    },
+    fontFamily: fontFamilies.secondary, // Example font family
+    "&.MuiTypography-root": {
+      fontWeight: "600",
+      fontSize: {
+        xl: "3.2rem",
+        lg: "3rem",
+        md: "2.8rem",
+        sm: "2.3rem",
+        xs: "2rem",
+      },
+    },
   },
   gradientText: {
-    background: "linear-gradient(90deg, #F9ED25 0%, #1E8D44 100%)",
+    backgroundImage: "linear-gradient(133.88deg, #2faa90 18.32%, #695ea8 100%)", // ✅ correct
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
-    backgroundClip: "text",
-    color: "transparent",
+    backgroundClip: "text", // for Firefox
+    fontWeight: 600,
+    fontFamily: "Roboto, Arial, sans-serif",
+    color: "transparent", // fallback
   },
   paraText: {
     color: "#4E4E4E",
@@ -53,7 +77,7 @@ const HomeAboutStyle = {
     fontWeight: "400",
   },
   greenText: {
-    color: "green",
+    color: "#695ea8",
   },
   btn: {
     color: "#F4F4F4",
@@ -71,7 +95,7 @@ const HomeAboutStyle = {
   },
   imageBox: {
     width: "100%",
-    height:{ xl: "29rem", lg: "25rem", md: "23rem", sm: "21rem", xs: "18rem" },
+    height: { xl: "29rem", lg: "25rem", md: "23rem", sm: "21rem", xs: "18rem" },
     // background: "red",
   },
   imgbox: {
@@ -88,10 +112,10 @@ const HomeAboutStyle = {
     objectPosition: "center",
     objectRepeat: "no-repeat",
   },
-  btnBox:{
+  btnBox: {
     padding: "1rem 0",
   }
-  
+
 };
 
 export default HomeAboutStyle;

@@ -25,8 +25,8 @@ const HomeBenefits = () => {
         <Box sx={{ width: "100%", textAlign: "center", paddingBottom: "2rem" }}>
           <Typography sx={styles.largeText}>
             Explore Your{"\t"}
-            <span style={styles.greenText}>Neig</span>
-            <span style={styles.gradientText}>hbours</span>
+            {/* <span style={styles.greenText}>Neig</span> */}
+            <span style={styles.gradientText}>Neighbours</span>
           </Typography>
         </Box>
         <Grid
