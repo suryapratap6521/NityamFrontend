@@ -55,6 +55,7 @@ const HomeBenefitStyle = {
   },
   largeText: {
     fontWeight: "600",
+    color: "#695ea8",
     fontSize: {
       xl: "3.2rem",
       lg: "3rem",
@@ -82,16 +83,16 @@ const HomeBenefitStyle = {
     },
   },
   gradientText: {
-    background: "linear-gradient(90deg, #F9ED25 0%, #1E8D44 100%)",
+    backgroundImage: "linear-gradient(133.88deg, #2faa90 18.32%, #695ea8 100%)", // ✅ correct
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
-    backgroundClip: "text",
-    fontWeight: "600",
-    color: "transparent",
-    fontFamily: "Roboto, Arial, sans-serif", // Example font family
+    backgroundClip: "text", // for Firefox
+    fontWeight: 600,
+    fontFamily: "Roboto, Arial, sans-serif",
+    color: "transparent", // fallback
   },
   greenText: {
-    color: "green",
+    color: "#695ea8",
     fontWeight: "600",
     fontFamily: "Roboto, Arial, sans-serif", // Example font family
   },

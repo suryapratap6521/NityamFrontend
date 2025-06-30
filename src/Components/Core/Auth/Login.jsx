@@ -131,7 +131,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full text-lg bg-gradient-to-r from-purple-500 to-indigo-500 text-white py-4 rounded-full mt-4"
+              className="w-full text-lg bg-gradient text-white py-4 rounded-full mt-4"
             >
               {loading ? "Signing In..." : "Sign In"}
             </button>

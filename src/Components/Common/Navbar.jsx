@@ -120,7 +120,7 @@ function Navbar() {
                 </IconButton>
               )}
               {openModal && <SideBarPost closeModal={handleCloseModal} />}
-              
+
 
 
               {token && (
@@ -132,64 +132,108 @@ function Navbar() {
               )}
             </Box>
 
-         {token && (
-  <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
-    {notification.length === 0 ? (
-      <MenuItem>No New Messages</MenuItem>
-    ) : (
-      notification
-        .reduce((acc, msg) => {
-          const existing = acc.find(n => n.chat._id === msg.chat._id);
-          if (existing) {
-            existing.count += 1;
-            existing.latestMessage = msg;
-          } else {
-            acc.push({ ...msg, count: 1, latestMessage: msg });
-          }
-          return acc;
-        }, [])
-        .map((notif) => {
-          const sender = notif.chat.isGroupChat
-            ? notif.chat.chatName
-            : getSender(user, notif.chat.users);
-          const latest = notif.latestMessage?.content?.slice(0, 30) || "New message";
+            {token && (
+              <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
+                {notification.length === 0 ? (
+                  <MenuItem>No New Messages</MenuItem>
+                ) : (
+                  notification
+                    .reduce((acc, msg) => {
+                      const existing = acc.find(n => n.chat._id === msg.chat._id);
+                      if (existing) {
+                        existing.count += 1;
+                        existing.latestMessage = msg;
+                      } else {
+                        acc.push({ ...msg, count: 1, latestMessage: msg });
+                      }
+                      return acc;
+                    }, [])
+                    .map((notif) => {
+                      const sender = notif.chat.isGroupChat
+                        ? notif.chat.chatName
+                        : getSender(user, notif.chat.users);
+                      const latest = notif.latestMessage?.content?.slice(0, 30) || "New message";
 
-          return (
-            <MenuItem
-              key={notif.chat._id}
-              onClick={() => {
-                dispatch(setSelectedChat(notif.chat));
-                dispatch(setNotification(notification.filter((n) => n.chat._id !== notif.chat._id)));
-                handleClose();
-              }}
-              sx={{ gap: 2 }}
-            >
-              <Avatar
-                src={
-                  notif.chat.isGroupChat
-                    ? "/group-avatar.png"
-                    : notif.chat.users.find((u) => u._id !== user._id)?.image || "/default-avatar.png"
-                }
-                alt={sender}
-              />
-              <Box>
-                <Typography fontWeight={600} fontSize={14}>
-                  {sender}
-                </Typography>
-                <Typography fontSize={13} color="gray">
-                  {latest}
-                </Typography>
-              </Box>
-              <Badge color="error" badgeContent={notif.count} sx={{ ml: "auto" }} />
-            </MenuItem>
-          );
-        })
-    )}
-  </Menu>
-)}
+                      return (
+                        <MenuItem
+                          key={notif.chat._id}
+                          onClick={() => {
+                            dispatch(setSelectedChat(notif.chat));
+                            dispatch(setNotification(notification.filter((n) => n.chat._id !== notif.chat._id)));
+                            handleClose();
+                          }}
+                          sx={{ gap: 2 }}
+                        >
+                          <Avatar
+                            src={
+                              notif.chat.isGroupChat
+                                ? "/group-avatar.png"
+                                : notif.chat.users.find((u) => u._id !== user._id)?.image || "/default-avatar.png"
+                            }
+                            alt={sender}
+                          />
+                          <Box>
+                            <Typography fontWeight={600} fontSize={14}>
+                              {sender}
+                            </Typography>
+                            <Typography fontSize={13} color="gray">
+                              {latest}
+                            </Typography>
+                          </Box>
+                          <Badge color="error" badgeContent={notif.count} sx={{ ml: "auto" }} />
+                        </MenuItem>
+                      );
+                    })
+                )}
+              </Menu>
+            )}
 
             {!token ? (
-              <Button component={Link} to="/login" variant="contained" color="success">
+              <Button sx={{
+                color: "#F4F4F4",
+                backgroundImage: "linear-gradient(133.88deg, #2faa90 18.32%, #695ea8 100%)",
+                boxShadow: "none",
+                borderRadius: "10px",
+                overflow: "hidden",
+                position: "relative",
+                fontSize: '16px',
+                transition: "color 0.3s ease-in, background-color 0.3s ease-in",
+                "&::before": {
+                  content: '""',
+                  position: "absolute",
+                  top: 0,
+                  left: "-100%",
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "#fff",
+                  transition: "left 0.3s ease-in",
+                  zIndex: 0,
+                  // border:"2px solid red",
+                  boxShadow: "none"
+                },
+                "&:hover::before": {
+                  left: 0,
+                },
+                "&:hover": {
+                  color: "#1A8E45",
+                  backgroundColor: "#1A8E45", // Ensure the background remains green on hover
+                  border: "2px solid #1A8E45",
+                },
+                "&:hover .button-content": {
+                  position: "relative",
+                  zIndex: 1,
+                },
+                "&:active": {
+                  boxShadow: "none", // Remove shadow on active state
+                  backgroundColor: "#1A8E45", // Prevent blue background on click
+
+                },
+                "&:focus": {
+                  backgroundColor: "#1A8E45", // Prevent blue background on focus
+                  boxShadow: "none", // Remove shadow on focus state
+                  // border:"2px solid red",
+                },
+              }} component={Link} to="/login" variant="contained" color="success">
                 Login
               </Button>
             ) : (
