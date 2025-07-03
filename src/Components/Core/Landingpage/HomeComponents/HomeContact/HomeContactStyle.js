@@ -56,7 +56,7 @@ const HomeContactStyle = {
       xs: "2rem",
     },
     // backgroundImage: `linear-gradient(90deg, #9BFFD9 40%, #523DFC 100%)`,
-    background: "linear-gradient(90deg, #2faa90 0%, #695ea8 100%)",
+    background: "linear-gradient(90deg, #f36f27 0%, #695ea8 100%)",
     WebkitBackgroundClip: "text",
     backgroundClip: "text",
   },

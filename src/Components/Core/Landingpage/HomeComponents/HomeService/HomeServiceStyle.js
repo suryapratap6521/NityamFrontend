@@ -70,7 +70,7 @@ const HomeServiceStyle = {
     },
   },
   gradientText: {
-    backgroundImage: "linear-gradient(133.88deg, #2faa90 18.32%, #695ea8 100%)", // ✅ correct
+    backgroundImage: "linear-gradient(133.88deg, #f36f27 18.32%, #695ea8 100%)", // ✅ correct
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
     backgroundClip: "text", // for Firefox

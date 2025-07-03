@@ -5,7 +5,7 @@ const CustomButton = ({ title, onClick }) => {
   const styles = {
     btn: {
       color: "#F4F4F4",
-      backgroundImage: "linear-gradient(133.88deg, #2faa90 18.32%, #695ea8 100%)",
+      backgroundImage: "linear-gradient(133.88deg, #f36f27 18.32%, #695ea8 100%)",
       boxShadow: "none",
       borderRadius: "10px",
       overflow: "hidden",

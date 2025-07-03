@@ -56,7 +56,7 @@ const HomeBusinessStyle = {
     color: "#695ea8",
   },
   gradientText: {
-    background: "linear-gradient(90deg, #2faa90 0%, #695ea8 100%)",
+    background: "linear-gradient(90deg, #f36f27 0%, #695ea8 100%)",
     WebkitBackgroundClip: "text",
     WebkitTextFillColor: "transparent",
     backgroundClip: "text",

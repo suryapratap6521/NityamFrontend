@@ -14,7 +14,7 @@ const HomeBannerStyle = {
     display: "flex",
     justifyContent: "center",
     background:
-      "linear-gradient(133.88deg, #2faa90 18.32%, #695ea8 100%)",
+      "linear-gradient(133.88deg, #f36f27 18.32%, #695ea8 100%)",
   },
   bannerGrid: {
     width: "90%",
@@ -136,7 +136,7 @@ const HomeBannerStyle = {
 
   searchBtn: {
     borderRadius: "38.5347px",
-    backgroundColor: "linear-gradient(133.88deg, #2faa90 18.32%, #695ea8 100%)",
+    backgroundColor: "linear-gradient(133.88deg, #f36f27 18.32%, #695ea8 100%)",
 
     // padding:""
     // width:"4rem"
@@ -176,10 +176,10 @@ const HomeBannerStyle = {
   },
   searchBtn: {
     borderRadius: "38.5347px",
-    backgroundImage: "linear-gradient(133.88deg, #2faa90 18.32%, #695ea8 100%)",
+    backgroundImage: "linear-gradient(133.88deg, #f36f27 18.32%, #695ea8 100%)",
     color: "#ffffff",
     "&:hover": {
-      backgroundImage: "linear-gradient(133.88deg, #2faa90 18.32%, #695ea8 100%)",
+      backgroundImage: "linear-gradient(133.88deg, #f36f27 18.32%, #695ea8 100%)",
     },
   },
   imageRow: {
